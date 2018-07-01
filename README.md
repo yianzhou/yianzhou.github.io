@@ -1,37 +1,14 @@
 ## Welcome to GitHub Pages
 
-You can use the [editor on GitHub](https://github.com/yianzhou/yianzhou.github.io/edit/master/README.md) to maintain and preview the content for your website in Markdown files.
+欢迎来到我的主页。这是一个由 [GitHub Pages](https://pages.github.com/) 构建的网站。
 
-Whenever you commit to this repository, GitHub Pages will run [Jekyll](https://jekyllrb.com/) to rebuild the pages in your site, from the content in your Markdown files.
+[GitHub](https://github.com/) 是领先的开源社区。GitHub Pages 可以用来创建个人/组织或项目的网站，还可以[使用定制的域名](https://help.github.com/articles/using-a-custom-domain-with-github-pages/)，而这一切，是完全免费的。
 
-### Markdown
+[Markdown](https://guides.github.com/features/mastering-markdown/) 适用于任何文字工作者，而不仅仅是程序员。这是一个[欢迎](welcome)页面。通过 Markdown 你可以轻松地写出排版整齐美观的文本。你可以将 Markdown 文件加载到 GitHub Pages 上，你不需要任何关于服务器和数据库的知识，你甚至不需要学习 HTML！
 
-Markdown is a lightweight and easy-to-use syntax for styling your writing. It includes conventions for
+Markdown 美观、高效的工作方式，让写文字成为一种乐趣。而 Github Pages 简洁的建站方式，也让我可以将更多精力放在内容创作，而不是服务器维护上。这也是我决定将原本使用 Wordpress 搭建的博客迁移至此的原因。本网站同时也是[开源](https://github.com/yianzhou/yianzhou.github.io)的，很惭愧，就做了一点[微小的工作](https://opensource.guide/how-to-contribute/)。
 
-```markdown
-Syntax highlighted code block
+开始使用 GitHub Pages，[只需要10分钟](https://guides.github.com/features/pages/)。你可以完全在线编辑；也可以先[在自己的电脑上编辑](https://help.github.com/articles/setting-up-your-github-pages-site-locally-with-jekyll/)，再发布，当然，这需要一些额外的安装。
 
-# Header 1
-## Header 2
-### Header 3
-
-- Bulleted
-- List
-
-1. Numbered
-2. List
-
-**Bold** and _Italic_ and `Code` text
-
-[Link](url) and ![Image](src)
-```
-
-For more details see [GitHub Flavored Markdown](https://guides.github.com/features/mastering-markdown/).
-
-### Jekyll Themes
-
-Your Pages site will use the layout and styles from the Jekyll theme you have selected in your [repository settings](https://github.com/yianzhou/yianzhou.github.io/settings). The name of this theme is saved in the Jekyll `_config.yml` configuration file.
-
-### Support or Contact
-
-Having trouble with Pages? Check out our [documentation](https://help.github.com/categories/github-pages-basics/) or [contact support](https://github.com/contact) and we’ll help you sort it out.
+## 关于我
+邮箱： [yianz@outlook.com](mailto:yianzhou.outlook.com)

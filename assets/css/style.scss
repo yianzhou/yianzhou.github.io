@@ -3,5 +3,5 @@
 
 @import "{{ site.theme }}";
 body{
-    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto;
+    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto !important;
 }

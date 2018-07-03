@@ -8,4 +8,6 @@ defaults:
       type: "posts, pages, posts, drafts"
     values:
       layout: "default"
-show_downloads: true
+github:
+  zip_url: https://codeload.github.com/yianzhou/yianzhou.github.io/zip/master
+  tar_url: https://codeload.github.com/yianzhou/yianzhou.github.io/tar.gz/master

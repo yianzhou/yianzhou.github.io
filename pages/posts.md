@@ -1,3 +1,12 @@
+---
+permalink: posts
+---
+## 建设中...
+
+- [欢迎页面](/pages/welcome)
+- [Jekyll设置](/pages/jekyll)
+- [Slate主题](/pages/slate)
+
 <ul>
   {% for post in site.posts %}
     <li>

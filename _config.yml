@@ -1,3 +1,11 @@
 theme: jekyll-theme-slate
 title: hahaha
 description: Feel free to bookmark this to keep an eye on my updates
+defaults:
+  -
+    scope:
+      path: "" # an empty string here means all files in the project
+      type: "posts, pages, posts, drafts"
+    values:
+      layout: "default"
+show_downloads: true

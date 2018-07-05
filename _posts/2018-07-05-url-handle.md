@@ -1,7 +1,6 @@
 ---
 title:  "URL 的处理"
-date:   2018-07-04 23:25:01 +0800
-categories: Apple
+categories: [Apple]
 ---
 # URL 的处理
 

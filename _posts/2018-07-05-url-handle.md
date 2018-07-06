@@ -4,7 +4,7 @@ categories: [Apple]
 ---
 # URL 的处理
 
-Universal URL: https://example.com/p?connect=true&page=1
+Universal URL: <https://example.com/p?connect=true&page=1>
 
 ```
 url.scheme = "https"

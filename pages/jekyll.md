@@ -21,14 +21,14 @@ Jekyll [Quickstart](https://jekyllrb.com/docs/quickstart/)
 # Build the site on the preview server
 bundle exec jekyll serve
 ```
-Now browse to http://localhost:4000
+Now browse to <http://localhost:4000>
 
 # Work
 To work with [draft](https://jekyllrb.com/docs/drafts/),
 ```
 bundle exec jekyll serve --drafts
 ```
-Now browse to http://localhost:4000/year/month/day/title
+Now browse to <http://localhost:4000/year/month/day/title>
 
 Check directory structure [here](https://jekyllrb.com/docs/structure/).
 

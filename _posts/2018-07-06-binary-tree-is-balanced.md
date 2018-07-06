@@ -27,3 +27,7 @@ private int height(Node x) {
     return 1 + Math.max(height(x.left), height(x.right));
 }
 ```
+
+可以看到，平衡二叉树的定义本身也是递归的，这就是算法之美。
+
+©️ 本文原创，转载请注明出处。

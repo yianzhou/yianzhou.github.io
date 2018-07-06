@@ -37,3 +37,5 @@ if let components = URLComponents(url: url, resolvingAgainstBaseURL: true),
     print(item.name, item.value)
 }
 {% endhighlight %}
+
+©️ 本文原创，转载请注明出处。

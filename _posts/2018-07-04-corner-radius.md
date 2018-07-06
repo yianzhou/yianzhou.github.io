@@ -28,3 +28,5 @@ label.layer.masksToBounds = true
 ✅ 对于 `UIImageView`，使用 `UIBezierPath` 画出圆角路径，直接截取图片。
 
 ✅ 对于 `UIView`，利用 Core Graphics 画出一个圆角矩形，作为 `UIImageView` 加在 `UIView` 的底部。
+
+©️ 本文原创，转载请注明出处。

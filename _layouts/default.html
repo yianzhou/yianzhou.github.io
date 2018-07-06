@@ -34,20 +34,15 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         {{ content }}
-        {% if page.path contains '_posts' %}
-        <br> ©️ 本文原创，转载请注明出处。
-        {% endif %}
       </section>
     </div>
 
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
-        {% if site.github.is_project_page %}
-        <p class="copyright">{{ site.title | default: site.github.repository_name }} maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a></p>
-        {% endif %}
+        <p class="copyright">Maintained by <a href="{{ site.github.owner_url }}">{{ site.github.owner_name }}</a></p>
         <p>Published with <a href="https://pages.github.com">GitHub Pages</a></p>
-        <p><a href="http://www.miitbeian.gov.cn">粤ICP备15029205号</a></p>
+        {% include footer.html %}
       </footer>
     </div>
 

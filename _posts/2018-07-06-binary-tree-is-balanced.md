@@ -1,6 +1,6 @@
 ---
 title:  "二叉树是否平衡"
-categories: [?]
+categories: [Algorithms]
 ---
 
 # 二叉树是否平衡

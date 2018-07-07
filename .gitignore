@@ -18,3 +18,6 @@ _book
 # Jekyll build output
 _site
 .jekyll-metadata
+
+# I choose to ignore draft
+_drafts

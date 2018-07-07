@@ -9,22 +9,11 @@ permalink: posts
 - [Slate主题](/pages/slate)
 
 # 建设中...
-<ul>
+<!-- <ul>
   {% for post in site.posts %}
     <li>
       <a href="{{ post.url }}">{{ post.title }}</a>
       {{ post.date | date_to_long_string }}
     </li>
   {% endfor %}
-</ul>
-
-<!-- ## Category: Apple
-<ul>
-  {% for post in site.categories['Apple'] %}
-    <li>
-      <a href="{{ post.url | absolute_url }}">
-      {{ post.title }}
-      </a>
-    </li>
-{% endfor %}
 </ul> -->

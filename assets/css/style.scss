@@ -3,3 +3,6 @@
 
 @import "{{ site.theme }}";
 .header_menu { color: #ffffff; margin: 0px 40px 0px 0px; }
+@media screen and (min-width: 1000px) {
+    .inner { max-width: 800px; }
+}

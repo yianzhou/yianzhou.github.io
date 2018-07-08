@@ -9,11 +9,11 @@ permalink: posts
 - [Slate主题](/pages/slate)
 
 # 建设中...
-<!-- <ul>
+<ul>
   {% for post in site.posts %}
     <li>
       <a href="{{ post.url }}">{{ post.title }}</a>
       {{ post.date | date_to_long_string }}
     </li>
   {% endfor %}
-</ul> -->
+</ul>

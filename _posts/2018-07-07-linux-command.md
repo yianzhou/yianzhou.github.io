@@ -46,4 +46,20 @@ Viewing the Permissions: `ls -l`
 - The second set of three characters is for the Group permissions.
 - The third set of three characters is for the All Users permissions.
 
+在本地电脑上压缩：
+`local$ tar zcvf name.tar.gz directory`
+
+然后上传到远端的 home 目录：
+`local$ scp localfile user@ip:~/`
+
+从远端下载文件：
+ `username@remote:/file/to/send /where/to/put`
+
+解压缩：
+`$tar zxvf name.tar.gz`
+
+To print run-level: `systemctl get-default`
+
+To print system version: `cat /etc/redhat-release`
+
 ©️ 本文原创，转载请注明出处。

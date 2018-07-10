@@ -11,4 +11,9 @@ show_downloads: true
 
 Markdown 美观、高效的工作方式，让写文字成为一种乐趣。Github Pages 支持 [Jekyll](https://jekyllrb.com/)，这种简洁的建站方式，让我可以将精力放在内容创作，而不是服务器维护上。这也是我决定将原本使用 [Wordpress](https://wordpress.org) 搭建的[博客](https://www.yianzhou.com)迁移至此的原因。本网站同时也是[开源](https://github.com/yianzhou/yianzhou.github.io)的，很惭愧，就做了一点[微小的工作](https://opensource.guide/how-to-contribute/)。
 
-开始使用 GitHub Pages，[只需要10分钟](https://guides.github.com/features/pages/)。你可以完全在线编辑；也可以先[在自己的电脑上编辑](https://help.github.com/articles/setting-up-your-github-pages-site-locally-with-jekyll/)，再发布，当然，这需要一些额外的安装。
+# 关于我
+- 在线简历：<https://www.visualcv.com/yianzhou>
+- 邮箱： [yianzhou2@gmail.com](mailto:yianzhou2@gmail.com)
+- 手机：+86 186 8870 9498（微信同号）
+- 香港号：+852 9558 0321
+本人目前在香港，如果内地手机号没接到的话，可以拨打香港手机号或加微信，谢谢。

@@ -11,7 +11,7 @@ categories: [Development]
 
 [How To Configure SSH Key-Based Authentication on a Linux Server](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server)
 
-记得该权限否则无法 ssh 连上去！
+记得改权限否则无法 ssh 连上去！
 ```
 chmod 700 .ssh
 chmod 600 .ssh/authorized_keys

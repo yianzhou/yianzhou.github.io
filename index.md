@@ -13,7 +13,7 @@ Markdown 美观、高效的工作方式，让写文字成为一种乐趣。Githu
 
 # 关于我
 - 在线简历：<https://www.visualcv.com/yianzhou>
-- 知识树：<https://io.yianzhou.com>
+- 知识树：<https://io.yianzhou.com/lego>
 - 邮箱： [yianzhou2@gmail.com](mailto:yianzhou2@gmail.com)
-- 手机：+86 186 8870 9498（微信同号）
+- 手机：+86 186 8870 9498
 - 香港：+852 9558 0321

@@ -5,7 +5,7 @@ categories: [Algorithm]
 
 # Majority Element 的几种解法
 
-原题地址：<https://www.lintcode.com/problem/majority-element/description>
+原题地址：<https://leetcode.com/problems/majority-element/description/>
 
 ### 两层循环
 抽取一个元素，把它与数组中逐一比较并计数；最后计数最大的获胜。很暴力。时间复杂度O(n*n)。
@@ -40,11 +40,12 @@ return candidate; // always exist as decribed in question
 
 这个方法普遍适用于“找在一个数组中出现最多次数的元素”的问题。定义 HashMap<候选人, 票数> 。时间复杂度O(n)。
 ```
-public int majority(List<Integer> nums) {
+public int majority(int[] nums) {
     //boundary
-    if (nums.size()==0) return -1;
-    if (nums.size()==1) return nums.get(0);
+    if (nums.length==0) return -1;
+    if (nums.length==1) return nums[0];
 
+    // count
     HashMap<Integer, Integer> counters = new HashMap<>();
     for (Integer num : nums) {
         if (!counters.containsKey(num)) {
@@ -53,7 +54,8 @@ public int majority(List<Integer> nums) {
             counters.put(num, counters.get(num) + 1);
         }
     }
-        
+    
+    // find the majority
     int _key = 0;
     int _value = 0;
     for (Integer key : counters.keySet()) {
@@ -66,7 +68,6 @@ public int majority(List<Integer> nums) {
 }
 ```
 
-- 也适用于 <https://www.lintcode.com/problem/majority-element-ii/description>
-- 也适用于 <https://www.lintcode.com/problem/majority-number-iii/description>
+- 也适用于 <https://leetcode.com/problems/majority-element-ii/description/>
 
 ©️ 本文原创，转载请注明出处。

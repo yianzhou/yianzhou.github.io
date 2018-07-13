@@ -1,6 +1,6 @@
 ---
 title:  "Majority Element 的几种解法"
-categories: [Algorithm]
+categories: [Algorithms]
 ---
 
 # Majority Element 的几种解法

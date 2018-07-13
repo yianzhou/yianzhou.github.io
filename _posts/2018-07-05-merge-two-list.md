@@ -5,7 +5,7 @@ categories: [Algorithms]
 
 # 合并两个有序链表
 
-原题地址：<https://www.lintcode.com/problem/merge-two-sorted-lists/description>
+原题地址：<https://leetcode.com/problems/merge-two-sorted-lists/description/>
 
 假设链表 L1 和 L2 都是有序的，要将它们合并为新的有序链表，就像归并排序一样，左边小就从左边拿，右边小就从右边拿。运用递归思想。这个算法也是很简洁以及有美感的！
 

@@ -1,5 +1,5 @@
 ---
-title:  "两个排序数组的中位数（困难）"
+title:  "两个排序数组的中位数"
 categories: [Algorithms]
 ---
 

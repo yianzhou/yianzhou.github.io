@@ -1,4 +1,4 @@
-theme: jekyll-theme-slate
+theme: jekyll-theme-cayman
 title: hahaha
 description: Feel free to bookmark this to keep an eye on my updates
 defaults:
@@ -11,3 +11,4 @@ defaults:
 github:
   zip_url: https://codeload.github.com/yianzhou/yianzhou.github.io/zip/master
   tar_url: https://codeload.github.com/yianzhou/yianzhou.github.io/tar.gz/master
+google_analytics: UA-122096793-1

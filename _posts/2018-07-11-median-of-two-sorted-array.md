@@ -11,7 +11,7 @@ categories: [Algorithms]
 
 这道题难度为**困难**，我花了好几个小时的时间，很多时间都是耗费在边界条件的判断上。最终我的算法也是站在了金字塔的顶端，没有白费这几个小时的努力。
 
-![image]({{"/assets/img/Screen Shot 2018-07-12 at 14.44.17.png"}})
+![image]({{"/assets/images/Screen Shot 2018-07-12 at 14.44.17.png"}})
 
 ## 确定整体思路
 

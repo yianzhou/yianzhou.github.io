@@ -2,11 +2,11 @@
 permalink: posts
 ---
 
-# 页面
+# 开始使用
 
-- [欢迎页面](/pages/welcome)
-- [Jekyll设置](/pages/jekyll)
-- [Slate主题](/pages/slate)
+- [快速开始](/pages/setup)
+- [Mastering Markdown - GitHub](https://guides.github.com/features/mastering-markdown/)
+- [当前使用的主题](https://github.com/pages-themes/cayman)
 
 # 建设中...
 <ul>

@@ -9,17 +9,17 @@ categories: [Apple]
 
 整体构造过程:
 
-![Image]({{"/assets/img/Screen Shot 2018-07-15 at 12.09.47.jpg"}})
+![Image]({{"/assets/images/Screen Shot 2018-07-15 at 12.09.47.jpg"}})
 
 构造过程可以用有向图来表示：
 
-![Image]({{"/assets/img/Screen Shot 2018-07-15 at 12.43.33.png"}})
+![Image]({{"/assets/images/Screen Shot 2018-07-15 at 12.43.33.png"}})
 
 The build process **automates a series of tasks**. Tasks are executed in **dependency order**.
 
 在满足依赖次序的前提下，Xcode 会自动将任务并发处理：
 
-![Image]({{"/assets/img/Screen Shot 2018-07-15 at 12.51.04.png"}})
+![Image]({{"/assets/images/Screen Shot 2018-07-15 at 12.51.04.png"}})
 
 # Swift 是如何编译的
 

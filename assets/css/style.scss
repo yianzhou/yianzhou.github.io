@@ -2,7 +2,40 @@
 ---
 
 @import "{{ site.theme }}";
-.header_menu { color: #ffffff; margin: 0px 40px 0px 0px; }
-@media screen and (min-width: 1000px) {
-    .inner { max-width: 800px; }
+// .header_menu { color: #ffffff; margin: 0px 40px 0px 0px; }
+// @media screen and (min-width: 1000px) {
+//     .inner { max-width: 800px; }
+// }
+
+.page-header {
+    padding: 2rem 1rem;
+    // padding: 2rem 1rem 0.7rem 1rem;
+}
+
+#forkme_banner {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 10px;
+    z-index: 10;
+    padding: 10px 50px 10px 10px;
+    color: #fff;
+    background: url(../images/blacktocat.png) #0090ff no-repeat 95% 50%;
+    font-weight: 700;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+    border-bottom-left-radius: 2px;
+    border-bottom-right-radius: 2px;
+}
+
+.btn {
+    display: inline;
+    // margin-bottom: 0rem;
+    color: rgba(255, 255, 255, 0.8);
+    background-color: transparent;
+    border-width: 0px;
+    font-size: 1rem;
+}
+
+.site-footer-icp{
+    display: block;
 }

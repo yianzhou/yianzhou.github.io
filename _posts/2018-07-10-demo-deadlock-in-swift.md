@@ -13,7 +13,7 @@ func demoDeadlock() {
     }
 }
 ```
-![Image]({{"/assets/img/Screen Shot 2018-07-10 at 17.27.24.png"}})
+![Image]({{"/assets/images/Screen Shot 2018-07-10 at 17.27.24.png"}})
 
 在这个例子中，block 在等待外层的函数返回后才会执行；而外层的函数只有在执行完这个 block 之后才会返回；又造成死锁！
 ```

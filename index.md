@@ -1,6 +1,9 @@
 ---
 show_downloads: true
 ---
+
+> 路漫漫其修远兮，吾将上下而求索。——屈原
+
 # 欢迎
 欢迎来到我的主页。这是一个由 [GitHub Pages](https://pages.github.com/) 构建的网站。
 
@@ -15,7 +18,10 @@ Markdown 美观、高效的工作方式，让写文字成为一种乐趣。Githu
 - [Mastering Markdown - GitHub](https://guides.github.com/features/mastering-markdown/)
 - [当前使用的主题](https://github.com/pages-themes/cayman)
 
-# 漂亮的 GitHub Pages
+# 漂亮的 GitHub Pages 案例
 - [Microsoft Open Source](https://opensource.microsoft.com/)
 - [Facebook React](https://reactjs.org/)
 - [GitHub Government](https://government.github.com/)
+
+# 职业生涯
+- [程序员技能图谱](https://github.com/TeamStuQ/skill-map)

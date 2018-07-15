@@ -28,5 +28,6 @@ Library | 用途
 ------------ | -------------
 [SDWebImage](https://github.com/rs/SDWebImage) | 图片异步下载、缓存、后台解压
 [Alamofie](https://github.com/Alamofire/Alamofire#features) | 链式的网络请求和处理，非常优雅
+[Masonry](https://github.com/SnapKit/Masonry) | 强大的 AutoLayout 库
 
 ©️ 本文原创，转载请注明出处。

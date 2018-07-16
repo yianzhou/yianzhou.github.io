@@ -2,8 +2,6 @@
 show_downloads: true
 ---
 
-> 路漫漫其修远兮，吾将上下而求索。——屈原
-
 # 欢迎
 欢迎来到我的主页。这是一个由 [GitHub Pages](https://pages.github.com/) 构建的网站。
 
@@ -14,14 +12,9 @@ show_downloads: true
 Markdown 美观、高效的工作方式，让写文字成为一种乐趣。Github Pages 支持 [Jekyll](https://jekyllrb.com/)，这种简洁的建站方式，让我可以将精力放在内容创作，而不是服务器维护上。这也是我决定将原本使用 [Wordpress](https://wordpress.org) 搭建的[博客](https://www.yianzhou.com)迁移至此的原因。本网站同时也是[开源](https://github.com/yianzhou/yianzhou.github.io)的，很惭愧，就做了一点[微小的工作](https://opensource.guide/how-to-contribute/)。
 
 # 开始使用
-- [快速开始](/pages/setup)
-- [Mastering Markdown - GitHub](https://guides.github.com/features/mastering-markdown/)
+- [配置](/pages/setup)
+- [Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
 - [当前使用的主题](https://github.com/pages-themes/cayman)
-
-# 漂亮的 GitHub Pages 案例
-- [Microsoft Open Source](https://opensource.microsoft.com/)
-- [Facebook React](https://reactjs.org/)
-- [GitHub Government](https://government.github.com/)
 
 # 职业生涯
 - [程序员技能图谱](https://github.com/TeamStuQ/skill-map)

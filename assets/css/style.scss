@@ -2,17 +2,23 @@
 ---
 
 @import "{{ site.theme }}";
-// .header_menu { color: #ffffff; margin: 0px 40px 0px 0px; }
-// @media screen and (min-width: 1000px) {
-//     .inner { max-width: 800px; }
-// }
+
+// MARK: - scss for theme Cayman
+.site-footer {
+    padding-top: 1rem;
+}
+
+.site-footer-owner {
+    font-weight: normal;
+    margin-bottom: 0.5rem;
+}
+  
 .main-content {
     font-size: 1.0rem;
 }
 
 .page-header {
     padding: 2rem 1rem;
-    // padding: 2rem 1rem 0.7rem 1rem;
 }
 
 #forkme_banner {
@@ -32,13 +38,29 @@
 
 .btn {
     display: inline;
-    // margin-bottom: 0rem;
     color: rgba(255, 255, 255, 0.8);
     background-color: transparent;
     border-width: 0px;
     font-size: 1rem;
 }
 
-.site-footer-icp{
-    display: block;
+// MARK: - scss for table of contents
+#markdown-toc::before {
+    content: "内容";
+    font-weight: bold;
+}
+
+#markdown-toc li {
+    list-style: outside none none !important;
+}
+
+#markdown-toc ul {
+    padding-left: 1rem;
+}
+
+#markdown-toc {
+    background: #f9f9f9;
+    border: 1px solid #aaa;
+    display: table;
+    padding: 20px;
 }

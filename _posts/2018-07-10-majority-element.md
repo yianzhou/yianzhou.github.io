@@ -3,6 +3,9 @@ title:  "Majority Element 的几种解法"
 categories: [Algorithms]
 ---
 
+* Do not remove this line (it will not be displayed)
+{:toc}
+
 # Majority Element 的几种解法
 
 原题地址：<https://leetcode.com/problems/majority-element/description/>

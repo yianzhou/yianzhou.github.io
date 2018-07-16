@@ -4,6 +4,9 @@
 @import "{{ site.theme }}";
 
 // MARK: - scss for theme Cayman
+body {
+    color: #444444;
+}
 .site-footer {
     padding-top: 1rem;
 }

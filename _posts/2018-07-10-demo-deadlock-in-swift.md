@@ -5,6 +5,8 @@ categories: [Apple]
 
 # 用 Playground 写了一个死锁的演示
 
+©️ 本文原创，转载请注明出处。
+
 当 App 启动时，系统自动创建了一个主队列，主队列是串行的，试图在主队列里面执行一个同步任务会导致死锁！
 ```
 func demoDeadlock() {
@@ -50,4 +52,3 @@ func fixDeadlock2() {
     }
 }
 ```
-©️ 本文原创，转载请注明出处。

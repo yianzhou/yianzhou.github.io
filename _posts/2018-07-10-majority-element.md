@@ -8,6 +8,8 @@ categories: [Algorithms]
 
 # Majority Element 的几种解法
 
+©️ 本文原创，转载请注明出处。
+
 原题地址：<https://leetcode.com/problems/majority-element/description/>
 
 ### 两层循环
@@ -72,5 +74,3 @@ public int majority(int[] nums) {
 ```
 
 - 也适用于 <https://leetcode.com/problems/majority-element-ii/description/>
-
-©️ 本文原创，转载请注明出处。

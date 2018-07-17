@@ -5,6 +5,8 @@ categories: [Development]
 
 # 常用的 Linux 命令
 
+©️ 本文原创，转载请注明出处。
+
 `grep` searches the given file for lines containing a match to the given strings or words. 
 
 `pwd` which directory you are in
@@ -61,5 +63,3 @@ Viewing the Permissions: `ls -l`
 To print run-level: `systemctl get-default`
 
 To print system version: `cat /etc/redhat-release`
-
-©️ 本文原创，转载请注明出处。

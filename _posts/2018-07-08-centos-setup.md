@@ -5,6 +5,8 @@ categories: [Development]
 
 # CentOS 7 配置
 
+©️ 本文原创，转载请注明出处。
+
 首先做基本的服务器配置，以及基本的安全策略：
 
 [Initial Server Setup with CentOS 7](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-centos-7)
@@ -61,5 +63,3 @@ SSL 相关文件存放在`etc/httpd/ssl`
 [My SSL Lock is not displaying properly](http://www.inmotionhosting.com/support/website/security/ssl-lock-display)
 
 [SSL/TLS Strong Encryption: How-To](https://httpd.apache.org/docs/2.4/ssl/ssl_howto.html)
-
-©️ 本文原创，转载请注明出处。

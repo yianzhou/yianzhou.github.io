@@ -2,6 +2,8 @@
 show_downloads: true
 ---
 
+[👍 开源社区](/development/2018/07/18/open-source-community.html)
+
 # 欢迎
 欢迎来到我的主页。这是一个由 [GitHub Pages](https://pages.github.com/) 构建的网站。
 
@@ -15,6 +17,3 @@ Markdown 美观、高效的工作方式，让写文字成为一种乐趣。Githu
 - [配置](/pages/setup)
 - [Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
 - [当前使用的主题](https://github.com/pages-themes/cayman)
-
-# 职业生涯
-- [程序员技能图谱](https://github.com/TeamStuQ/skill-map)

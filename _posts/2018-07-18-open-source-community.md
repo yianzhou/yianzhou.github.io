@@ -15,7 +15,7 @@ categories: [Development]
 - [Visual Studio Code](https://code.visualstudio.com/)
 
 ## 📱
-
+[free-programming-books](https://github.com/EbookFoundation/free-programming-books) | Freely available programming books
 [open-source-ios-apps](https://github.com/dkhamsing/open-source-ios-apps) | Collaborative List of Open-Source iOS Apps
 [TimLiu-iOS](https://github.com/Tim9Liu9/TimLiu-iOS) | iOS开发常用三方库、插件、知名博客等等
 [awesome-ios](https://github.com/vsouza/awesome-ios) | A curated list of awesome iOS ecosystem, including Objective-C and Swift Projects
@@ -28,9 +28,9 @@ categories: [Development]
 [GPUImage](https://github.com/BradLarson/GPUImage) | An open source iOS framework for GPU-based **image and video processing**
 [IQKeyboardManager](https://github.com/hackiftekhar/IQKeyboardManager) | Prevent issues of **keyboard** sliding up and cover UITextField/UITextView
 [FLAnimatedImage](https://github.com/Flipboard/FLAnimatedImage) | Performant animated **GIF** engine for iOS by Flipboard
+[Charts](https://github.com/danielgindi/Charts) | Beautiful charts for iOS/tvOS/OSX! The Apple side of the crossplatform MPAndroidChart.
 
 ## ⭐️
 
 [LazyScrollView](https://github.com/alibaba/LazyScrollView) | 阿里巴巴开源的一个 ScrollView，支持 UIView 的重用
 [Texture](https://github.com/TextureGroup/Texture) | Facebook 和 Pinterest 采用的异步显示框架
-

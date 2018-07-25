@@ -17,6 +17,7 @@ categories: [Development]
 ## 编辑器/集成开发环境
 - [Atom](https://atom.io/)
 - [Visual Studio Code](https://code.visualstudio.com/)
+- [IntelliJ](https://www.jetbrains.com/idea/)
 
 ## iOS
 

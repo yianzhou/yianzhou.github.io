@@ -21,6 +21,7 @@ categories: [Development]
 
 ## iOS
 
+[Design-Patterns-In-Swift](https://github.com/ochococo/Design-Patterns-In-Swift) | Design Patterns implemented in Swift
 [open-source-ios-apps](https://github.com/dkhamsing/open-source-ios-apps) | Collaborative List of Open-Source iOS Apps
 [TimLiu-iOS](https://github.com/Tim9Liu9/TimLiu-iOS) | iOS开发常用三方库、插件、知名博客等等
 [awesome-ios](https://github.com/vsouza/awesome-ios) | A curated list of awesome iOS ecosystem, including Objective-C and Swift Projects

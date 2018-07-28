@@ -13,6 +13,7 @@ categories: [Development]
 - [泊学 - 一个全栈工程师的自学网站](https://boxueio.com/)
 - [GitHub Developer](https://developer.github.com/)
 - [Freely available programming books](https://github.com/EbookFoundation/free-programming-books)
+- [Apple Development Videos](https://developer.apple.com/videos/)
 
 ## 编辑器/集成开发环境
 - [Atom](https://atom.io/)
@@ -28,7 +29,7 @@ categories: [Development]
 
 ## iOS ⭐️⭐️⭐️⭐️⭐️
 
-[RxSwift](https://github.com/ReactiveX/RxSwift) | Reactive Programming in Swift
+[RxSwift](https://github.com/ReactiveX/RxSwift) | **Reactive** Programming in Swift
 [SDWebImage](https://github.com/rs/SDWebImage) | **Asynchronous image downloader** with cache support as a UIImageView category
 [Alamofie](https://github.com/Alamofire/Alamofire#features) | Elegant **HTTP Networking** in Swift
 [Masonry](https://github.com/SnapKit/Masonry) | Harness the power of **AutoLayout** NSLayoutConstraints with a simplified, chainable and expressive syntax.

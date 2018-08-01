@@ -13,3 +13,5 @@ categories: [Development]
 * [Office for Mac](https://products.office.com/zh-CN/mac/latest-office-for-mac)
 * [Acrobat Pro DC](https://acrobat.adobe.com/cn/zh-Hans/free-trial-download.html)
 * [VMWare Fusion](https://www.vmware.com/cn/products/fusion.html)
+* [Lightroom](https://www.digitalriser.com/download-adobe-lightroom-cc-2018-offline-installer.html)
+* [Photoshop](https://www.digitalriser.com/download-adobe-photoshop-cc-2018-offline-installer.html)

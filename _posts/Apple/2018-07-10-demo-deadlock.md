@@ -3,7 +3,7 @@ title:  "用 Playground 写了一个死锁的演示"
 categories: [Apple]
 ---
 
-# 用 Playground 写了一个死锁的演示
+# 死锁的演示
 
 ©️ 本文原创，转载请注明出处。
 

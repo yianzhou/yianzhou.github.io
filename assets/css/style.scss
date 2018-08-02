@@ -3,11 +3,18 @@
 
 @import "{{ site.theme }}";
 
+// font-family adopted by GitHub
 * {
     font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif
 }
 
-// MARK: customize
+// theme
+code.highlighter-rouge { 
+    border-radius: 5px; 
+    border: 1px solid #e5e5e5;
+    background-color: #f8f8f8;
+    padding: 2px 10px;
+ }
 
 body {
     color: #555555;

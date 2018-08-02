@@ -2,6 +2,8 @@
 show_downloads: true
 ---
 
+![image](/assets/images/1440_380.jpg)
+
 [👍 开源社区](/development/2018/07/18/open-source-community.html)
 
 # 欢迎

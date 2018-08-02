@@ -3,71 +3,16 @@
 
 @import "{{ site.theme }}";
 
-// MARK: - scss for theme Cayman
 * {
     font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif
 }
 
+// MARK: customize
+
 body {
-    color: #222222;
-}
-.site-footer {
-    padding-top: 1rem;
+    color: #555555;
 }
 
-.site-footer-owner {
-    font-weight: normal;
-    margin-bottom: 0.5rem;
-}
-
-.main-content {
-    font-size: 1.0rem;
-}
-
-.page-header {
-    padding: 2rem 1rem;
-}
-
-#forkme_banner {
-    display: block;
-    position: absolute;
-    top: 0;
-    right: 10px;
-    z-index: 10;
-    padding: 10px 50px 10px 10px;
-    color: #fff;
-    background: url(../images/blacktocat.png) #0090ff no-repeat 95% 50%;
-    font-weight: 700;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    border-bottom-left-radius: 2px;
-    border-bottom-right-radius: 2px;
-}
-
-.btn {
-    display: inline;
-    color: rgba(255, 255, 255, 0.8);
-    background-color: transparent;
-    border-width: 0px;
-    font-size: 1rem;
-}
-
-// MARK: - scss for table of contents
-#markdown-toc::before {
-    content: "内容";
-    font-weight: bold;
-}
-
-#markdown-toc li {
-    list-style: outside none none !important;
-}
-
-#markdown-toc ul {
-    padding-left: 1rem;
-}
-
-#markdown-toc {
-    background: #f9f9f9;
-    border: 1px solid #aaa;
-    display: table;
-    padding: 20px;
-}
+.wrapper { width: 90%; }
+header { width: 20%; }
+section { width: 70%; }

@@ -16,4 +16,5 @@ Markdown 美观、高效的工作方式，让写文字成为一种乐趣。Githu
 # 开始使用
 - [配置](/pages/setup)
 - [Mastering Markdown](https://guides.github.com/features/mastering-markdown/)
-- [当前使用的主题](https://github.com/pages-themes/cayman)
+- [当前使用的主题](https://github.com/pages-themes/minimal)
+- [Liquid reference](https://help.shopify.com/en/themes/liquid)

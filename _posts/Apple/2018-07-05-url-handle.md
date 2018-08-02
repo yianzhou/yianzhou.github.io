@@ -2,9 +2,6 @@
 title:  "URL 的处理"
 categories: [Apple]
 ---
-# URL 的处理
-
-©️ 本文原创，转载请注明出处。
 
 Universal URL: <https://example.com/p?connect=true&page=1>
 

@@ -3,10 +3,6 @@ title:  "Xcode build process"
 categories: [Apple]
 ---
 
-# Xcode build process
-
-©️ 本文原创，转载请注明出处。
-
 总结自：[Behind the Scenes of the Xcode Build Process](https://developer.apple.com/videos/play/wwdc2018/415/)
 
 整体构造过程:

@@ -3,10 +3,6 @@ title:  "CentOS 7 配置"
 categories: [Development]
 ---
 
-# CentOS 7 配置
-
-©️ 本文原创，转载请注明出处。
-
 首先做基本的服务器配置，以及基本的安全策略：
 
 [Initial Server Setup with CentOS 7](https://www.digitalocean.com/community/tutorials/initial-server-setup-with-centos-7)

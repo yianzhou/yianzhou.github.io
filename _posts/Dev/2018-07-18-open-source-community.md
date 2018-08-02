@@ -3,10 +3,6 @@ title:  "开源社区"
 categories: [Development]
 ---
 
-# 开源社区
-
-©️ 本文原创，转载请注明出处。
-
 ## 职业生涯
 
 - [程序员技能图谱](https://github.com/TeamStuQ/skill-map)

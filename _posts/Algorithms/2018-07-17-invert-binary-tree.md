@@ -3,10 +3,6 @@ title:  "二叉树的反转"
 categories: [Algorithms]
 ---
 
-# 二叉树的反转
-
-©️ 本文原创，转载请注明出处。
-
 > [226. Invert Binary Tree](https://leetcode.com/problems/invert-binary-tree/description/)
 
 这个题目的由来是，[Homebrew](https://brew.sh/) 的作者 [Max Howell](https://twitter.com/mxcl) 发了一个[推特](https://twitter.com/mxcl/status/608682016205344768)引发了热议：

@@ -6,10 +6,6 @@ categories: [Algorithms]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
-# Majority Element 的几种解法
-
-©️ 本文原创，转载请注明出处。
-
 原题地址：<https://leetcode.com/problems/majority-element/description/>
 
 ### 两层循环

@@ -2,7 +2,6 @@
 title:  "iOS 动画"
 categories: [Apple]
 ---
-©️ 本文原创，转载请注明出处。
 
 > [iOS Core Animation 进阶技术](https://github.com/AttackOnDobby/iOS-Core-Animation-Advanced-Techniques)
 

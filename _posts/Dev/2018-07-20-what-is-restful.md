@@ -3,8 +3,6 @@ title:  "什么是 RESTful"
 categories: [Development]
 ---
 
-# 什么是 RESTful
-
 Representational State Transfer.
 
 > @Ivony 老师的一句话概括很精辟：URL定位资源，用HTTP动词（GET,POST,DELETE,DETC）描述操作。

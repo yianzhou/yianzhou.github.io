@@ -3,10 +3,6 @@ title:  "在 CentOS 7 上搭建 Git Server"
 categories: [Development]
 ---
 
-# 在 CentOS 7 上搭建 Git Server
-
-©️ 本文原创，转载请注明出处。
-
 I want my project url something like this: https://www.yianzhou.com/git/project.git
 
 So the clone command can be in this format: $ git clone https://www.yianzhou.com/git/project.git

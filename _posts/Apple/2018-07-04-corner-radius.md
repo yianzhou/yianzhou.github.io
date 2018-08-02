@@ -3,10 +3,6 @@ title:  "圆角的使用"
 categories: [Apple]
 ---
 
-# 圆角的使用
-
-©️ 本文原创，转载请注明出处。
-
 首先，设置圆角非常简单，
 ```
 view.layer.cornerRadius = 5

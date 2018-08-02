@@ -3,10 +3,6 @@ title:  "两个排序数组的中位数"
 categories: [Algorithms]
 ---
 
-# 两个排序数组的中位数
-
-©️ 本文原创，转载请注明出处。
-
 原题地址：<https://leetcode.com/problems/median-of-two-sorted-arrays/description/>
 
 解决这类问题，一定要先列出思路，用草图的方式把抽象的东西具体化，这样才有利于找到解决问题的方法，也有利于在算法出错时快速找到原因，还可以帮助确立边界条件。

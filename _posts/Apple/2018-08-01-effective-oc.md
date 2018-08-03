@@ -188,7 +188,8 @@ Method Swizzling can be used to great advantage, as it can be used to change fun
 
 A class's method list contains a list of **selector names to implementation mappings**, telling the dynamic messaging system where to find the implementation of a given method. 
 
-The implementations are stored as function pointers called IMPs
+The implementations are stored as **function pointers** called **IMPs** and having the following prototype: `id (*IMP)(id, SEL, ...)`
 
+Being able to add logging functionality by method swizzling can be a very useful **debugging** feature.
 
 ## Toll-free bridging

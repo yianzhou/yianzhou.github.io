@@ -23,6 +23,8 @@ section p.post-date {
 body {color: #555555;}
 
 @media print, screen and (min-width: 960px) {
+ul.downloads { width: 90%; }    
+.downloads li { width: 33%;}
 .wrapper { width: 90%; }
 header { width: 20%; }
 section { width: 70%; }

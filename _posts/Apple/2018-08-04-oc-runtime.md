@@ -6,8 +6,7 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
-> AW.Effective.Objective-C.2.0\
-> （第二章，对象、消息、运行时）
+> AW.Effective.Objective-C.2.0（第二章，对象、消息、运行时）
 
 # 属性 Property
 ```
@@ -24,7 +23,7 @@ print(per.firstName); //getter
 ```
 实际上编译器使用 `_属性名` 如 `_firstName` 的方式作为真正的实例变量，并生成了存取方法。使用 @systhesize 可以更改这个默认的名字，但不建议这么做。
 
-@dynamic 可以告诉编译器不要自动创建 `_属性名` 和存取方法，比如 Core Data 框架里。
+@dynamic 可以告诉编译器不要自动创建 `_属性名` 和存取方法，Core Data 框架中使用了这种声明。
 
 # 属性的 attribute
 
@@ -108,11 +107,11 @@ The `objc_msgSend` function calls the correct method, depending on the type of t
 
 如果消息接受者没有实现所调用方法，一直到它的继承关系中最顶层的父类也没有实现这个方法，那么消息转发就发生了。
 
-**Dynamic Method Resolution** 首先，调用 `+(BOOL)resolveInstanceMethod:(SEL)selector` 这个方法在实现与 Core Data 有关的 @dynamic 属性时经常被用到。
+1. Dynamic Method Resolution：首先，调用 `+(BOOL)resolveInstanceMethod:(SEL)selector`。这个方法在实现与 Core Data 有关的 @dynamic 属性时经常被用到。
 
-**Replacement Receiver** 第二次尝试处理一个未知的 selector，是看有没有替补的消息接受者，方法是 `-(id)forwardingTargetForSelector:(SEL)selector` 一个对象可能在内部拥有多个对象，在这个方法中返回实际处理消息的对象，在外部看来好像它自己处理这个消息一样。
+2. Replacement Receiver：第二次尝试处理一个未知的 selector，是看有没有替补的消息接受者，方法是 `-(id)forwardingTargetForSelector:(SEL)selector` 一个对象可能在内部拥有多个对象，在这个方法中返回实际处理消息的对象，在外部看来好像它自己处理这个消息一样。
 
-**Full forward mechanism** 如果以上都不能处理消息，最后一个方法就是通过创建一个 `NSInvocation` 对象，包装着未被处理的消息，然后调用 `-(void)forwardInvocation:(NSInvocation*)invocation`。并向上转发，如果继承关系里的所有父类都没有处理，那么最后，NSObject 的 `doesNotRecognizeSelector:` 方法会抛出一个异常。
+3. Full forward mechanism：如果以上都不能处理消息，最后一个方法就是通过创建一个 `NSInvocation` 对象，包装着未被处理的消息，然后调用 `-(void)forwardInvocation:(NSInvocation*)invocation`。并向上转发，如果继承关系里的所有父类都没有处理，那么最后，NSObject 的 `doesNotRecognizeSelector:` 方法会抛出一个异常。
 
 ⚠️ 注意，消息转发是需要开销的，而且越往后的步骤开销越大。
 

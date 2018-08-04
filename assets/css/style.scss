@@ -8,6 +8,25 @@
     font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif
 }
 
+// table of content
+#markdown-toc::before {
+    content: "Table of Contents";
+    font-weight: bold;
+}
+
+#markdown-toc {
+    background: #f9f9f9 none repeat scroll 0 0;
+    border: 1px solid #aaa;
+    display: table;
+    margin-bottom: 2em;
+    padding: 20px;
+    width: auto;
+}
+
+#markdown-toc li, #markdown-toc ul, #markdown-toc ul li{
+    list-style: outside none none;
+}
+
 // theme
 code.highlighter-rouge { 
     border-radius: 5px; 

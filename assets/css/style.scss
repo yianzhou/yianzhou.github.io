@@ -19,12 +19,16 @@
     border: 1px solid #aaa;
     display: table;
     margin-bottom: 2em;
-    padding: 20px;
-    width: auto;
+    padding-top: 1rem;
+    padding-right: 2rem;
 }
 
 #markdown-toc li, #markdown-toc ul, #markdown-toc ul li{
-    list-style: outside none none;
+    margin: 0;
+}
+
+#markdown-toc ul {
+    padding-left: 20px;
 }
 
 // theme

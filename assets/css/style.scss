@@ -5,7 +5,7 @@
 
 // font-family adopted by GitHub
 * {
-    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif
+    font-family: -apple-system,system-ui,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif,'Microsoft YaHei','STHeiti';
 }
 
 // table of content
@@ -21,6 +21,7 @@
     margin-bottom: 2em;
     padding-top: 1rem;
     padding-right: 2rem;
+    padding-bottom: 1rem;
 }
 
 #markdown-toc li, #markdown-toc ul, #markdown-toc ul li{

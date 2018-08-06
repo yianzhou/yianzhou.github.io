@@ -57,7 +57,12 @@ The previous chapter introduced the concept of implicit animations. Implicit ani
 
 In this chapter, we will look at explicit animations 显式动画, which allow us to specify custom animations for particular properties or create nonlinear animations, such as a movement along an arbitrary curve 沿着任意曲线运动.
 
-我们先了解这几个类的继承关系：CAAnimation(Abstract) - CAPropertyAnimation(Abstract) - CABasicAnimation/CAKeyframeAnimation
+### CAPropertyAnimation 属性动画
+
+The first type of explicit animation we will look at is the property animation. Property animations target a single property of a layer and specify a target value or range of values for that property to animate between. Property animations come in two flavors: basic and keyframe.
+
+类的继承关系：`CAAnimation`(Abstract)->`CAPropertyAnimation`(Abstract)->`CABasicAnimation`/`CAKeyframeAnimation`。
+
  
 ### CABasicAnimation
 我们通过自己实现一个 CABasicAnimation 的例子，揭示了大多数隐式动画背后依赖的机制，这的确很有趣，但是显式地给图层添加 CABasicAnimation 相较于隐式动画而言，只能说费力不讨好。我们通常不会这么做。

@@ -57,18 +57,21 @@ The previous chapter introduced the concept of implicit animations. Implicit ani
 
 In this chapter, we will look at explicit animations 显式动画, which allow us to specify custom animations for particular properties or create nonlinear animations, such as a movement along an arbitrary curve 沿着任意曲线运动.
 
-### CAPropertyAnimation 属性动画
-
 The first type of explicit animation we will look at is the property animation. Property animations target a single property of a layer and specify a target value or range of values for that property to animate between. Property animations come in two flavors: basic and keyframe.
 
 类的继承关系：`CAAnimation`(Abstract)->`CAPropertyAnimation`(Abstract)->`CABasicAnimation`/`CAKeyframeAnimation`。
 
+`CABasicAnimation` is interesting in that it shows us the underlying mechanism behind most of the implicit animations on iOS, but adding a CABasicAnimation to a layer explicitly is a lot of work for little benefit when there are simpler ways to achieve the same effect (either using implicit animations for hosted layers, or UIView animation for views and backing layers).
  
-### CABasicAnimation
-我们通过自己实现一个 CABasicAnimation 的例子，揭示了大多数隐式动画背后依赖的机制，这的确很有趣，但是显式地给图层添加 CABasicAnimation 相较于隐式动画而言，只能说费力不讨好。我们通常不会这么做。
- 
-### CAKeyframeAnimation
-CAKeyframeAnimation 依然作用于单一的一个属性，但是和 CABasicAnimation 不一样的是，它不限制于设置一个起始和结束的值，而是可以根据一连串随意的值来做动画。
+`CAKeyframeAnimation`, however, is considerably more powerful and has no equivalent interface exposed in UIKit. It still operates on a **single property**, but it is not limited to just a single start and end value, and instead can be given an arbitrary sequence of values to animate between.
+
+Multiple such animations can be gathered together using a `CAAnimationGroup`. Adding an animation group to a layer is not fundamentally different from adding the animations individually. It only really becomes apparent when it comes to **hierarchical timing**, which is explained in Chapter 9.
+
+## 转场
+
+Property animations only work on animatable **properties** of a layer, so if you need to change a nonanimatable property (such as an image) or actually add and remove layers from the hierarchy, property animations won’t work.
+
+**Transitions** affect an **entire layer** instead of just a specific property.
 
 # UIView
 

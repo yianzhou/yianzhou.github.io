@@ -27,7 +27,7 @@ print(per.firstName); //getter
 
 # 属性的 attribute
 
-属性的 attribute会影响编译器所生成的存取方法。
+属性的 attribute 会影响编译器所生成的存取方法。
 
 第一类：原子性。如果没有声明 nonatomic，那么编译器默认使用同步锁，保证对该属性的操作是原子的（atomic）。
 
@@ -58,9 +58,13 @@ NSObject 协议中有两个用于判断对象是否相等的关键方法：
 
 设计 hash 算法时，可以多做试验，在减少碰撞（collision）频度与降低运算复杂程度之间取舍。
 
-默认的 isEqual 比较的是内存地址，默认的哈希方法直接返回了内存地址，这对于我们来说没有什么意义。
+默认的 isEqual 比较的是内存地址，这对于我们来说没有什么意义。
 
-重写了 isEqual，不一定需要重写 hash 方法。但当对象需要放进 collection 时，必须重写 hash 方法。
+hash方法什么时候被调用? hash 方法在对象被添加至 NSSet 和设置为 NSDictionary 的 key 时会调用。NSSet 添加新成员时，会根据 hash 值来快速查找成员，以判断集合中是否已经存在该成员；NSDictionary 在查找 key 时, 也利用了 hash 值来提高查找的效率。为了优化判等的效率，NSSet 和 NSDictionary 在判断成员是否相等时，会首先判断 hash 值是否相等，如果不相等，再调用 `isEqual:`。
+
+This last point is particularly important if you define `isEqual:` in a subclass and intend to put instances of that subclass into a collection. Make sure you also define `hash` in your subclass.
+
+默认的哈希方法直接返回了内存地址，当我们定义了
 
 # Factory Pattern
 

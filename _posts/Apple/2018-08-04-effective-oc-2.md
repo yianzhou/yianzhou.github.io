@@ -1,5 +1,5 @@
 ---
-title:  "Objective-C Runtime"
+title:  "Effective Objective-C (2) 运行时"
 categories: [Apple]
 ---
 
@@ -56,17 +56,15 @@ NSObject 协议中有两个用于判断对象是否相等的关键方法：
 ```
 如果两个对象相等，其 hash 值必须相同；但两个 hash 值相同的对象不一定相等。
 
-设计 hash 算法时，可以多做试验，在减少碰撞（collision）频度与降低运算复杂程度之间取舍。
-
 默认的 isEqual 比较的是内存地址，这对于我们来说没有什么意义。
 
 hash方法什么时候被调用? hash 方法在对象被添加至 NSSet 和设置为 NSDictionary 的 key 时会调用。NSSet 和 NSDictionary 在判断成员是否相等时，会首先判断 hash 值是否相等，hash 值不同的两个对象直接判断不相等；如果相等，再调用 `isEqual:`。
 
-This last point is particularly important if you define `isEqual:` in a subclass and intend to put instances of that subclass into a collection. Make sure you also define `hash` in your subclass.
-
 默认的哈希方法直接返回了内存地址，所以总是不同的。如果只实现了 `isEqual:` 而不实现 `hash`，那么即使 object a is equals to object b，他们还是可以被放在 NSSet 里面，或者作为 NSDictionary 的 key，这不符合我们的定义。
 
 If two different objects produce the same hash value, the hash table seeks from the calculated index and places the new object in the first available spot. We call this a hash collision. As a hash table becomes more congested, the likelihood of collision increases, which leads to more time spent looking for a free space (hence why a hash function with a uniform distribution is so desirable).
+
+设计 hash 算法时，可以多做试验，在减少碰撞（collision）频度与降低运算复杂程度之间取舍。
 
 # Factory Pattern
 

@@ -45,12 +45,12 @@ B[0], B[1], ..., B[j-1]  |  B[j], B[j+1], ..., B[b-1]
 
 如果 a+b 为奇数，满足：
 1. 左边的长度比右边的长度小 1，即 i+j == a-i + b-j -1
-2. ``A[i-1]<=B[i]`` 且 ``B[j-1]<=A[i]``
+2. ``A[i-1]<=B[j]`` 且 ``B[j-1]<=A[i]``
 那么中位数就是右边的最小值。
 
 如果 a+b 为偶数，满足：
 1. 左右长度相等，即 i+j == a-i + b-j
-2. ``A[i-1]<=B[i]`` 且 ``B[j-1]<=A[i]``
+2. ``A[i-1]<=B[j]`` 且 ``B[j-1]<=A[i]``
 那么中位数就是左右最小值的平均。
 
 ## 划分方法
@@ -82,75 +82,3 @@ B[0], B[1], ..., B[j-1]  |  B[j], B[j+1], ..., B[b-1]
 此时分为 j==0 和 j>0 两种情况。
 
 根据以上的思想，我们对数组 A 进行二分查找，确定 i 的位置。
-
-## 源代码
-
-```
-class Solution {
-    public double findMedianSortedArrays(int[] A, int[] B) {
-        int a = A.length;
-        int b = B.length;
-        if (a>b) return findMedianSortedArrays(B, A);
-
-        if (a==0) return median(B);
-        if (a==0 && b==1) return B[0];
-        if (a==1 && b==1) return (A[0]+B[0])/2.0;
-
-        if ( (a + b) % 2 == 1 ) { //odd
-            int lo = 0, hi = a;
-            while(lo<=hi) {
-                int i =  lo+(hi-lo)/2;
-                int j = (a+b-2*i-1)/2;
-
-                if (i>0 && A[i-1]>B[j]) hi = i-1;
-                else if (i==a) return B[j];
-                else if (j>0 && A[i]<B[j-1]) lo = i+1;
-                else if (i==0) {
-                    if (j==b) return A[0];
-                    else return Math.min(A[0], B[j]);
-                }
-                else {
-                    return Math.min(A[i], B[j]);
-                }
-            }
-        }
-        else { //even
-            int lo = 0, hi = a;
-            while(lo<=hi) {
-                int i =  lo+(hi-lo)/2;
-                int j = (a+b-2*i)/2;
-
-                if (i>0 && A[i-1]>B[j]) hi = i-1;
-                else if (i==a){
-                    if (j==0) return (A[a-1]+B[0])/2.0;
-                    else return (Math.max(A[a-1], B[j-1])+B[j])/2.0;
-                }
-                else if (j>0 && A[i]<B[j-1]) lo = i+1;
-                else if (i==0) {
-                    if (j==b) return (B[j-1]+A[0])/2.0;
-                    else return (B[j-1]+Math.min(A[0], B[j]))/2.0;
-                }
-                else {
-                    return (Math.max(A[i-1], B[j-1]) + Math.min(A[i], B[j]))/2.0;
-                }
-            }
-        }
-
-        return -1;
-    }
-
-    public double median(int[] A) {
-        if (A==null) { return -1; }
-        int a = A.length;
-        if (a==0) { return -1;}
-        if (a==1) { return A[0]; }
-
-        if ( a % 2 == 1 ) {
-            return A[a/2];
-        }
-        else {
-            return (A[a/2-1]+A[a/2])/2.0;
-        }
-    }
-}
-```

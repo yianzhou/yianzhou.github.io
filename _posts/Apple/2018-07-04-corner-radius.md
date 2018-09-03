@@ -11,7 +11,7 @@ view.layer.cornerRadius = 5
 
 根据[官方文档](https://developer.apple.com/documentation/quartzcore/calayer/1410818-cornerradius)的描述：
 
-> By default,  `cornerRadius` does **NOT** apply to the **image** in the layer’s contents property; it applies only to the **background color and border of the layer**.（对图片不起作用，只对背景颜色和图层边界起作用）  
+> By default,  `cornerRadius` does NOT apply to the image in the layer’s contents property; it applies only to the background color and border of the layer.（对图片不起作用，只对背景颜色和图层边界起作用）  
 > However, setting the `masksToBounds` property to true causes the content to be clipped to the rounded corners. 
 
 可见 `cornerRadius` 在类似 `UILabel` 这样的控件上不能实现我们需要的圆角效果，我们还需要：

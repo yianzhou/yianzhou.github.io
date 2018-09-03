@@ -21,7 +21,7 @@ EOCPerson* per = [Person new];
 per.firstName = @"Bob"; //setter
 print(per.firstName); //getter
 ```
-实际上编译器使用 `_属性名` 如 `_firstName` 的方式作为真正的实例变量，并生成了存取方法。使用 @systhesize 可以更改这个默认的名字，但不建议这么做。
+实际上编译器使用 `_属性名` 如 `_firstName` 的方式作为真正的实例变量，并生成了存取方法。使用 @synthesize 可以更改这个默认的名字，但不建议这么做。
 
 @dynamic 可以告诉编译器不要自动创建 `_属性名` 和存取方法，Core Data 框架中使用了这种声明。
 
@@ -58,9 +58,9 @@ NSObject 协议中有两个用于判断对象是否相等的关键方法：
 
 默认的 isEqual 比较的是内存地址，这对于我们来说没有什么意义。
 
-hash方法什么时候被调用? hash 方法在对象被添加至 NSSet 和设置为 NSDictionary 的 key 时会调用。NSSet 和 NSDictionary 在判断成员是否相等时，会首先判断 hash 值是否相等，hash 值不同的两个对象直接判断不相等；如果相等，再调用 `isEqual:`。
+hash 方法什么时候被调用? hash 方法在对象被添加至 NSSet 和设置为 NSDictionary 的 key 时会调用。NSSet 和 NSDictionary 在判断成员是否相等时，会首先判断 hash 值是否相等，hash 值不同的两个对象直接判断不相等；如果相等，再调用 `isEqual:`。
 
-默认的哈希方法直接返回了内存地址，所以总是不同的。如果只实现了 `isEqual:` 而不实现 `hash`，那么即使 object a is equals to object b，他们还是可以被放在 NSSet 里面，或者作为 NSDictionary 的 key，这不符合我们的定义。
+默认的哈希方法直接返回了内存地址，所以总是不同的。如果只实现了 `isEqual:` 而不实现 `hash`，那么即使我们定义了 object a is equals to object b，他们还是可以被放在 NSSet 里面，或者作为 NSDictionary 的 key，这不符合我们的定义。
 
 If two different objects produce the same hash value, the hash table seeks from the calculated index and places the new object in the first available spot. We call this a hash collision. As a hash table becomes more congested, the likelihood of collision increases, which leads to more time spent looking for a free space (hence why a hash function with a uniform distribution is so desirable).
 
@@ -133,7 +133,7 @@ To illustrate how forwarding can be useful, the following example shows the use 
 
 ![image]({{"/assets/images/Screen Shot 2018-08-02 at 14.54.37.png"}}){:width="600px"}
 
-A similar approach is employed by `CALayer`. This approach allows `CALayer` to be a **key value coding-compliant** container class, meaning that it can store a value against any key. `CALayer` uses this ability to allow the addition of custom animatable properties whereby the storage of the property values is handled directly by the base class, but the property definition can be added in a subclass.
+A similar approach is employed by `CALayer`. This approach allows `CALayer` to be a key value coding-compliant container class, meaning that it can store a value against any key. `CALayer` uses this ability to allow the addition of custom animatable properties whereby the storage of the property values is handled directly by the base class, but the property definition can be added in a subclass.
 
 # Method Swizzling
 

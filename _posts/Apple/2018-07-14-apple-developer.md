@@ -18,18 +18,21 @@ WWDC 视频：<https://developer.apple.com/videos/>
 [Image and Graphics Best Practices](https://developer.apple.com/videos/play/wwdc2018/219/) | 2018
 [Behind the Scenes of the Xcode Build Process](https://developer.apple.com/videos/play/wwdc2018/415/) | 2018
 [Automatic Strong Passwords and Security Code AutoFill](https://developer.apple.com/videos/play/wwdc2018/204/) | 2018
+[High Performance Auto Layout](https://developer.apple.com/videos/play/wwdc2018/220/) | 2018
 
 # iOS Library ⭐️⭐️⭐️⭐️⭐️
 
 [RxSwift](https://github.com/ReactiveX/RxSwift) | **Reactive** Programming in Swift
 [SDWebImage](https://github.com/rs/SDWebImage) | **Asynchronous image downloader** with cache support as a UIImageView category
+[AFNetworking](https://github.com/AFNetworking/AFNetworking) | A delightful networking framework for iOS, macOS, watchOS, and tvOS.
 [Alamofire](https://github.com/Alamofire/Alamofire#features) | Elegant **HTTP Networking** in Swift
 [Masonry](https://github.com/SnapKit/Masonry) | Harness the power of **AutoLayout** NSLayoutConstraints with a simplified, chainable and expressive syntax.
 [SnapKit](https://github.com/SnapKit/SnapKit) | A Swift **Autolayout** DSL for iOS & OS X
 [GPUImage](https://github.com/BradLarson/GPUImage) | An open source iOS framework for GPU-based **image and video processing**
 [IQKeyboardManager](https://github.com/hackiftekhar/IQKeyboardManager) | Prevent issues of **keyboard** sliding up and cover UITextField/UITextView
 [FLAnimatedImage](https://github.com/Flipboard/FLAnimatedImage) | Performant animated **GIF** engine for iOS by Flipboard
-[Charts](https://github.com/danielgindi/Charts) | Beautiful charts for iOS/tvOS/OSX! The Apple side of the cross-platform MPAndroidChart.
+[Charts](https://github.com/danielgindi/Charts) | Beautiful **charts** for iOS/tvOS/OSX! The Apple side of the cross-platform MPAndroidChart.
+[Texture/AsyncDisplayKit](https://github.com/TextureGroup/Texture) | Smooth asynchronous user interfaces for iOS apps.
 
 # iOS Resource
 

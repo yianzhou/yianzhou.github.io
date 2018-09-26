@@ -6,7 +6,6 @@ show_downloads: true
 
 # 链接
 
-- [👍 开源社区](/development/2018/07/18/open-source-community.html)
 - [🍎 Apple Developer Resource](/apple/2018/07/14/apple-developer.html)
 - [🔧 快速开始、配置和日常维护](/pages/setup)
 - [⛲️ Liquid reference](https://help.shopify.com/en/themes/liquid)

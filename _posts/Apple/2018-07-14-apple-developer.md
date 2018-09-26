@@ -7,6 +7,10 @@ WWDC 视频：<https://developer.apple.com/videos/>
 
 设计资源：<https://developer.apple.com/design/resources/>
 
+屏幕分辨率：<https://www.paintcodeapp.com/news/ultimate-guide-to-iphone-resolutions>
+
+Material Icons: <https://material.io/tools/icons/>
+
 # WWDC
 
 主题 | 年份

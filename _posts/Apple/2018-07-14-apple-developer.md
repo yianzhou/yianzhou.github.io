@@ -37,6 +37,7 @@ Material Icons: <https://material.io/tools/icons/>
 [FLAnimatedImage](https://github.com/Flipboard/FLAnimatedImage) | Performant animated **GIF** engine for iOS by Flipboard
 [Charts](https://github.com/danielgindi/Charts) | Beautiful **charts** for iOS/tvOS/OSX! The Apple side of the cross-platform MPAndroidChart.
 [Texture/AsyncDisplayKit](https://github.com/TextureGroup/Texture) | Smooth asynchronous user interfaces for iOS apps.
+[CocoaLumberjack/CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack) | A fast & simple, yet powerful & flexible logging framework for Mac and iOS.
 
 # iOS Resource
 

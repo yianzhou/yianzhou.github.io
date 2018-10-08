@@ -11,6 +11,14 @@ WWDC 视频：<https://developer.apple.com/videos/>
 
 Material Icons: <https://material.io/tools/icons/>
 
+
+# Swift
+
+[API Design Guidelines](https://swift.org/documentation/api-design-guidelines/) 如何写出清晰、美观的 Swift 风格的接口。Swift 3 之后，这门语言更接近自然语言了。（[参考](https://www.imooc.com/video/13311)）
+
+[apple/swift-evolution](https://github.com/apple/swift-evolution) Swift 的最新发展和用户提议
+
+
 # WWDC
 
 主题 | 年份
@@ -38,6 +46,7 @@ Material Icons: <https://material.io/tools/icons/>
 [Charts](https://github.com/danielgindi/Charts) | Beautiful **charts** for iOS/tvOS/OSX! The Apple side of the cross-platform MPAndroidChart.
 [Texture/AsyncDisplayKit](https://github.com/TextureGroup/Texture) | Smooth asynchronous user interfaces for iOS apps.
 [CocoaLumberjack/CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack) | A fast & simple, yet powerful & flexible logging framework for Mac and iOS.
+[PerfectlySoft/Perfect](https://github.com/PerfectlySoft/Perfect) | **Server-side Swift**.
 
 # iOS Resource
 

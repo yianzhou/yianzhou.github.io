@@ -1,5 +1,5 @@
 ---
-title:  "Effective Objective-C (5) 内存管理"
+title:  "Effective Objective-C (5) Memory Management"
 categories: [Apple]
 ---
 

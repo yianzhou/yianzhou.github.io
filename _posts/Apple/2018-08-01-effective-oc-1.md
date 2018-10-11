@@ -1,5 +1,5 @@
 ---
-title:  "Effective Objective-C (1) Get accustomed"
+title:  "Effective Objective-C (1) Get Accustomed"
 categories: [Apple]
 ---
 

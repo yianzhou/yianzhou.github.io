@@ -8,8 +8,6 @@ categories: [Apple]
 
 > AW.Effective.Objective-C.2.0
 
-# Chapter 3. Interface and API Design
-
 ## 15. Use Prefix Names to Avoid Namespace Clashes
 
 为类名添加前缀，与你的公司或应用名相关。

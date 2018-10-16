@@ -36,8 +36,9 @@ Another method to be aware of is ``debugDescription``, called when you invoke th
 不要把可变的 collection 作为属性公开！而应提供相关的方法。
 
 ## 19: Use Clear and Consistent Naming
-* Follow the naming that has become standard in Objective-C to create interfaces that fit in and feel right.
-* Ensure that method names are concise but precise, and make their use read left to right just like a sentence.
+Follow the naming that has become standard in Objective-C to create interfaces that fit in and feel right.
+
+Ensure that method names are concise but precise, and make their use read left to right just like a sentence.
 
 ## 20: Prefix Private Method Names
 When writing a class implementation, it is common to write methods that are used only internally. For such methods, I suggest that you prefix their names with something. This helps with debugging by clearly separating the public methods from the private ones.
@@ -50,7 +51,7 @@ For nonfatal errors, either provide a delegate method to handle errors or offer 
 ## 22. NSCopying
 Implement the ``NSCopying`` protocol if your object will need to be copied.
 
-A **deep copy** copies all the backing data. Copying by default for all the collection classes in Foundation is **shallow copy**, meaning that only the container is copied, not the data stored within the container.
+A **deep copy** copies all the backing data. Copying by default for all the collection classes in `Foundation` is **shallow copy**, meaning that only the container is copied, not the data stored within the container.
 
 **No** protocol defines deep copying, so it is left up to each class to define how such a copy is made. Also, you should never assume that an object conforming to NSCopying will be performing a deep copy.
 

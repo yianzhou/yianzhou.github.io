@@ -41,8 +41,8 @@ to be taken with memory management in those APIs, since ARC is available only to
 
 `+ (void)initialize`: is called on every class, once and only once, before the class is used.
 
-Keep `initialize` methods for setting up global state that cannot be done at compile time.
-
 The `load` method does not participate in overriding. The `initialize` method does participate in overriding, so it is usually best to check which class is being initialized.
+
+Keep `initialize` methods for setting up global state that cannot be done at compile time.
 
 ## 52: Remember that NSTimer Retains Its Target

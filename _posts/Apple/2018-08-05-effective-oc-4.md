@@ -9,7 +9,7 @@ categories: [Apple]
 > AW.Effective.Objective-C.2.0
 
 ## 23: Use Delegate and Data Source Protocols for Inter-object Communication
-Define a **protocol** with potentially optional methods to define the interface that your delegate should support.
+Define a protocol with potentially optional methods to define the interface that your delegate should support.
 
 - Use the Delegate pattern to provide an interface to your objects that need to tell other objects about pertinent events.
 - Use the Delegate pattern when an object needs to obtain data from another object. In this case, it is often referred to as a “data source.”

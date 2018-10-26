@@ -3,7 +3,7 @@ permalink: posts
 ---
 
 # Top
-[Apple Developer](/2018/07/14/apple-developer.html)
+[Apple Developer](/posts/2018/07/14/apple-developer.html)
 
 # Apple
 <ul>

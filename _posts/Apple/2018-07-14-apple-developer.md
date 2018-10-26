@@ -11,6 +11,7 @@ WWDC 视频：<https://developer.apple.com/videos/>
 
 Material Icons: <https://material.io/tools/icons/>
 
+CocoaPods 上的库，源代码可以在这里找到：<https://github.com/CocoaPods/Specs>
 
 # Swift
 
@@ -36,7 +37,7 @@ Material Icons: <https://material.io/tools/icons/>
 
 [RxSwift](https://github.com/ReactiveX/RxSwift) | **Reactive** Programming in Swift
 [SDWebImage](https://github.com/rs/SDWebImage) | **Asynchronous image downloader** with cache support as a UIImageView category
-[AFNetworking](https://github.com/AFNetworking/AFNetworking) | A delightful networking framework for iOS, macOS, watchOS, and tvOS.
+[AFNetworking](https://github.com/AFNetworking/AFNetworking) | A delightful **networking** framework for iOS, macOS, watchOS, and tvOS.
 [Alamofire](https://github.com/Alamofire/Alamofire#features) | Elegant **HTTP Networking** in Swift
 [Masonry](https://github.com/SnapKit/Masonry) | Harness the power of **AutoLayout** NSLayoutConstraints with a simplified, chainable and expressive syntax.
 [SnapKit](https://github.com/SnapKit/SnapKit) | A Swift **Autolayout** DSL for iOS & OS X
@@ -44,8 +45,8 @@ Material Icons: <https://material.io/tools/icons/>
 [IQKeyboardManager](https://github.com/hackiftekhar/IQKeyboardManager) | Prevent issues of **keyboard** sliding up and cover UITextField/UITextView
 [FLAnimatedImage](https://github.com/Flipboard/FLAnimatedImage) | Performant animated **GIF** engine for iOS by Flipboard
 [Charts](https://github.com/danielgindi/Charts) | Beautiful **charts** for iOS/tvOS/OSX! The Apple side of the cross-platform MPAndroidChart.
-[Texture/AsyncDisplayKit](https://github.com/TextureGroup/Texture) | Smooth asynchronous user interfaces for iOS apps.
-[CocoaLumberjack/CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack) | A fast & simple, yet powerful & flexible logging framework for Mac and iOS.
+[Texture/AsyncDisplayKit](https://github.com/TextureGroup/Texture) | Smooth **asynchronous user interfaces** for iOS apps.
+[CocoaLumberjack/CocoaLumberjack](https://github.com/CocoaLumberjack/CocoaLumberjack) | A fast & simple, yet powerful & flexible **logging** framework for Mac and iOS.
 [PerfectlySoft/Perfect](https://github.com/PerfectlySoft/Perfect) | **Server-side Swift**.
 
 # iOS Resource

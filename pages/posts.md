@@ -2,9 +2,6 @@
 permalink: posts
 ---
 
-# Top
-[Apple Developer](/posts/2018/07/14/apple-developer.html)
-
 # Apple
 <ul>
   {% for post in site.categories['Apple'] %}

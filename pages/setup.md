@@ -1,5 +1,10 @@
 # 快速开始
 
+遇到没有 /usr/bin 权限的问题：
+```
+sudo gem install -n /usr/local/bin bundler jekyll
+```
+
 快速开始：<https://jekyllrb.com/docs/quickstart/>
 
 ```
@@ -30,8 +35,3 @@ The github-pages gem is what's constraining you from update to latest Jekyll ver
 ```
 bundle update github-pages
 ``` 
-
-# 漂亮的 GitHub Pages 案例
-- [Microsoft Open Source](https://opensource.microsoft.com/)
-- [Facebook React](https://reactjs.org/)
-- [GitHub Government](https://government.github.com/)

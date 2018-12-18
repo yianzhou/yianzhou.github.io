@@ -1,6 +1,6 @@
 ---
 title:  "Effective Objective-C (1) Get Accustomed"
-categories: [Apple]
+categories: [Effective Objective-C]
 ---
 
 * Do not remove this line (it will not be displayed)

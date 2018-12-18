@@ -1,6 +1,6 @@
 ---
 title:  "Effective Objective-C (5) Memory Management"
-categories: [Apple]
+categories: [Effective Objective-C]
 ---
 
 * Do not remove this line (it will not be displayed)

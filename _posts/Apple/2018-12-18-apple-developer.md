@@ -17,7 +17,23 @@ CocoaPods 上的库，源代码可以在这里找到：<https://github.com/Cocoa
 
 # 技术文摘
 
+[Save and Get Image from Document Directory in Swift](https://medium.com/@ankitbansal806/save-and-get-image-from-document-directory-in-swift-5c1280ec17f5)
+
+[Lazy load](https://mikebuss.com/2014/06/22/lazy-initialization-swift/)
+
+[present 的转场](https://www.raywenderlich.com/359-ios-animation-tutorial-custom-view-controller-presentation-transitions)
+
+[保存 Gif 到 Camera Roll](https://stackoverflow.com/questions/26301031/save-generated-gif-to-camera-roll)
+
+[系统字体](https://developer.apple.com/design/human-interface-guidelines/ios/visual-design/typography/)
+
 [LaunchScreen.storyboard](https://medium.com/fugugames/making-a-launch-storyboard-61a97108e318)
+
+[UIStackView](https://spin.atomicobject.com/2016/06/22/uistackview-distribution/)
+
+[SSL pinning](https://infinum.co/the-capsized-eight/how-to-make-your-ios-apps-more-secure-with-ssl-pinning)
+
+[Parallel programming with Swift: Operations](https://medium.com/flawless-app-stories/parallel-programming-with-swift-operations-54cbefaf3cb0)
 
 # iOS 资源
 

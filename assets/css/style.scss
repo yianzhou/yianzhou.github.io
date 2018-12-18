@@ -64,10 +64,13 @@ header h1 {
     margin-top: 0;
 }
 
-body {color: #555555;}
+body {
+    color: #555555;
+    font-size: 12.5pt;
+}
 
 @media print, screen and (min-width: 960px) {
-.wrapper { width: 80%; }
-header { width: 20%; }
-section { width: 65%; }
+.wrapper { width: 90%; }
+header { width: 15%; }
+section { width: 75%; }
 }

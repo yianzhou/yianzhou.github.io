@@ -1,6 +1,6 @@
 ---
 title:  "Effective Objective-C (7) System Frameworks"
-categories: [Apple]
+categories: [Effective Objective-C]
 ---
 
 * Do not remove this line (it will not be displayed)

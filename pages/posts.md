@@ -28,3 +28,12 @@ permalink: posts
     </li>
   {% endfor %}
 </ul>
+
+# Reading
+<ul>
+  {% for post in site.categories['Reading'] %}
+    <li>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+    </li>
+  {% endfor %}
+</ul>

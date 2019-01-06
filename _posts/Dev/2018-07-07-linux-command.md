@@ -11,7 +11,7 @@ categories: [Development]
 
 `rm -r` to delete a directory
 
-`echo` is to move some data, usually text into a file
+`echo` -- write arguments to the standard output
 
 `cat` is to display the contents of a file
 

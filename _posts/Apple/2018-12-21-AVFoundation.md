@@ -1,5 +1,5 @@
 ---
-title:  "ARFoundation 初探"
+title:  "AVFoundation 初探"
 categories: [Apple]
 ---
 

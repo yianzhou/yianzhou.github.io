@@ -37,3 +37,12 @@ permalink: posts
     </li>
   {% endfor %}
 </ul>
+
+# Music
+<ul>
+  {% for post in site.categories['Music'] %}
+    <li>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+    </li>
+  {% endfor %}
+</ul>

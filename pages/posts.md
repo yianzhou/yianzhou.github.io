@@ -2,6 +2,8 @@
 permalink: posts
 ---
 
+[📱iPhone](apple/2018/12/18/iOS笔记.html) | [🖥 macOS](apple/2018/12/18/macOS效率.html)
+
 # Apple
 <ul>
   {% for post in site.categories['Apple'] %}
@@ -23,24 +25,6 @@ permalink: posts
 # Effective Objective-C
 <ul>
   {% for post in site.categories['Effective Objective-C'] %}
-    <li>
-      <a href="{{ post.url }}">{{ post.title }}</a>
-    </li>
-  {% endfor %}
-</ul>
-
-# Reading
-<ul>
-  {% for post in site.categories['Reading'] %}
-    <li>
-      <a href="{{ post.url }}">{{ post.title }}</a>
-    </li>
-  {% endfor %}
-</ul>
-
-# Music
-<ul>
-  {% for post in site.categories['Music'] %}
     <li>
       <a href="{{ post.url }}">{{ post.title }}</a>
     </li>

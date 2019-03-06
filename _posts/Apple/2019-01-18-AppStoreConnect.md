@@ -1,5 +1,5 @@
 ---
-title:  "App Store Connect"
+title:  "App Store Connect 的一些报表"
 categories: [Apple]
 ---
 

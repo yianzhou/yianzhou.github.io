@@ -13,3 +13,11 @@ show_downloads: true
 [Markdown](https://guides.github.com/features/mastering-markdown/) 适用于任何文字工作者，而不仅仅是程序员。通过 Markdown 你可以轻松地写出排版整齐美观的文本。你可以将 Markdown 文件加载到 GitHub Pages 上，你不需要任何关于服务器和数据库的知识，你甚至不需要学习 HTML！
 
 Markdown 美观、高效的工作方式，让写文字成为一种乐趣。Github Pages 支持 [Jekyll](https://jekyllrb.com/)，这种简洁的建站方式，让我可以将精力放在内容创作，而不是服务器维护上。这也是我决定将原本使用 [Wordpress](https://wordpress.org) 搭建的[博客](https://www.yianzhou.com)迁移至此的原因。本网站同时也是[开源](https://github.com/yianzhou/yianzhou.github.io)的，很惭愧，就做了一点[微小的工作](https://opensource.guide/how-to-contribute/)。
+
+# 维护
+
+[🔧 快速开始、配置和日常维护](/pages/setup)
+
+[⛲️ Liquid reference](https://help.shopify.com/en/themes/liquid)
+
+[🎡 当前使用的主题](https://github.com/pages-themes/minimal)

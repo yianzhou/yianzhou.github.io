@@ -2,9 +2,16 @@
 permalink: posts
 ---
 
-[📱iPhone](apple/2018/12/18/iOS笔记.html) | [🖥 macOS](apple/2018/12/18/macOS效率.html)
+# 苹果开发者
+<ul>
+  {% for post in site.categories['Stick'] %}
+    <li>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+    </li>
+  {% endfor %}
+</ul>
 
-# Apple
+# 2018
 <ul>
   {% for post in site.categories['Apple'] %}
     <li>

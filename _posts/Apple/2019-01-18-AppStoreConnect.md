@@ -3,6 +3,11 @@ title:  "App Store Connect 的一些报表"
 categories: [Apple]
 ---
 
+如何查看每日下载量？
+1. App Analytics - SALES - App Units
+2. Sales and Trends - SALES - Units
+两者数据几乎一样的。
+
 # App Analytics
 
 [About app analytics](https://help.apple.com/app-store-connect/#/itc623752a8d)

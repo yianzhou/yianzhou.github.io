@@ -22,7 +22,7 @@ obj->perform(param1, param2);
 ```
 使用消息结构的语言，运行时所执行的代码由运行环境所决定；使用函数调用的语言，由编译器决定。
 
-在 `NSString *str = @"Hello";` 中，`str` 是指向 NSString 的指针，存放在栈区，占用的空间在64位计算机上是8字节（1字节是8位），存储了实例的内存地址。实例本身存放在堆区。
+在 `NSString *str = @"Hello";` 中，`str` 是指向 NSString 的指针，存放在栈区(stack)，占用的空间在64位计算机上是8字节（1字节是8位），存储了实例的内存地址。实例本身存放在堆区(heap)。
 
 Objective-C 不需要像 C 一样使用 malloc 和 free 来分配或释放堆区内存，Objective-C Runtime 把这部分工作抽象为一套内存管理架构，即引用计数机制。
 

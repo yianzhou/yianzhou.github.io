@@ -3,7 +3,62 @@ title: "CocoaPods"
 categories: [Stick]
 ---
 
-CocoaPods 上的库，源代码可以在这里找到：<https://github.com/CocoaPods/Specs>
+# 如何发布仓库
+
+我们先看看 CocoaPods 在本地目录里的东西：`cd ~/.cocoapods/repos`，这里存放着 Pod 的仓库目录，其中的`master`文件夹是 CocoaPods 官方的仓库。如果你添加过其他的 repo，这里还会有其他文件夹。
+
+`cd ~/.cocoapods/repos/master`，通过`git remote -v`，发现`master`文件夹是一个 git 仓库，它的远端是：
+
+```
+origin	https://github.com/CocoaPods/Specs.git (fetch)
+origin	https://github.com/CocoaPods/Specs.git (push)
+```
+
+每个第三方库会有多个版本号，每个版本号是一个文件夹，其中有一个`*.podspec.json`。比如：
+
+```
+~/.cocoapods/repos/master/Specs/0/0/1/YYImage/1.0.4/YYImage.podspec.json
+```
+
+json 文件中包含了版本、源码仓库地址、subspecs 等信息。**注意，第三方库的源代码不会放在 Specs 文件夹里，这里只放描述信息。**
+
+想要在 Cocoapods 中发布仓库，就是需要在`~/.cocoapods/repos/master`中添加我们的仓库的描述信息，然后 push 到远端。不过不用我们通过 git 命令，直接用 pod 命令操作即可。
+
+# 创建私有仓库
+
+## 创建“描述文件”仓库
+
+首先创建一个类似于`~/.cocoapods/repos/master/Specs`这样的存放描述文件的 git 仓库。我创建在<https://github.com/yianzhou/PodSpecs>
+
+回到终端，将这个描述文件仓库添加到本地：
+
+```
+pod repo add MyRepo https://github.com/yianzhou/PodSpecs.git
+```
+
+到这个目录下：`cd ~/.cocoapods/repos/MyRepo`，会发现我们的描述文件 git 仓库，已经被 clone 到本地了。它跟`~/.cocoapods/repos/master`的作用是一样的。
+
+## 第二步：创建 SDK 代码库
+
+我直接用已经创建好的库：<https://github.com/yianzhou/hello>
+
+创建 `.podspec` 文件：`pod spec create BeSwype`，打开`BeSwype.podspec`文件并编辑好相关配置。
+
+这时我们的 `hello.git` 会有以下文件：
+
+```
+- BeSwype
+    - BeSwypeView.swift
+- BeSwype.podspec
+```
+
+验证仓库是否配置正确：`pod lib lint`，验证正确后，就可以把描述文件推到远端了。然后，打上版本号的 tag，注意这个 tag 是与`.podspec` 文件中的版本对应的。
+
+验证成功后，可以发布到我们的私有库描述文件中：`pod repo push MyRepo BeSwype.podspec --allow-warnings`；这时会再验证一次配置是否正确，成功的话，我们的 `~/.cocoapods/repos/MyRepo` 中也会增加了这个新的库了。
+
+`pod install`时，会拉取 Podflie 中 source 标记的版本库，到本地的 repos 文件夹中；然后在 repos 中搜索我们 `pod BeSwype` 的 `BeSwype.podspec` 文件。根据文件中描述的源码地址下载并整合到项目中。
+
+# 换源加速下载
 
 更新 Ruby
 `$ gem update --system` #这里请翻墙一下

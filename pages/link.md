@@ -14,3 +14,9 @@ permalink: link
 - [100offer](https://cn.100offer.com/)
 - [2018年互联网百强](http://www.miit.gov.cn/n1146290/n1146402/n1146455/c6279591/content.html)
 - [超级简历](https://www.wondercv.com/?locale=zh-CN)
+- [极客学院](https://www.jikexueyuan.com/)
+- [泊学 - 一个全栈工程师的自学网站](https://boxueio.com/)
+- [传智](http://www.itcast.cn/)
+- [Freely available programming books](https://github.com/EbookFoundation/free-programming-books)
+
+编程语言排行及趋势：[Tiboe Index](https://www.tiobe.com/tiobe-index/)

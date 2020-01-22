@@ -2,7 +2,7 @@
 permalink: posts
 ---
 
-# 苹果开发者
+# 置顶
 <ul>
   {% for post in site.categories['Stick'] %}
     <li>
@@ -11,7 +11,7 @@ permalink: posts
   {% endfor %}
 </ul>
 
-# 2018
+# Apple Developer
 <ul>
   {% for post in site.categories['Apple'] %}
     <li>

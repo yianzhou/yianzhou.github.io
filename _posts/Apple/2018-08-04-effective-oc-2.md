@@ -3,8 +3,8 @@ title: "Effective Objective-C (2) Runtime"
 categories: [Effective Objective-C]
 ---
 
-* Do not remove this line (it will not be displayed)
-{:toc}
+- Do not remove this line (it will not be displayed)
+  {:toc}
 
 > AW.Effective.Objective-C.2.0
 
@@ -176,3 +176,38 @@ id (*IMP)(id, SEL, ...)
 ```
 
 ## 14. Class Object
+
+每个 Objective-C 对象实例都是指向某块内存的指针。`id`类型是指向`objc_object`结构体的指针。
+
+```
+typedef struct objc_object *id;
+```
+
+`Class`类型是指向`objc_class`结构体的指针。
+
+```
+typedef struct objc_class *Class;
+```
+
+`objc_object`结构体有一个`isa`指针，指向`objc_class`结构体。
+
+```
+struct objc_object {
+    Class _Nonnull isa  OBJC_ISA_AVAILABILITY;
+};
+```
+
+`objc_class`结构体有两个特殊的指针，一个是`isa`，指向它的`metaclass`；一个是`super_class`，指向它的父类。
+
+```
+struct objc_class {
+    Class _Nonnull isa;
+    Class _Nullable super_class;
+};
+```
+
+`super_class`指针明确了继承关系；`isa`指针描述了实例所属的类；类对象所属的类型是另外一个类，称为`metaclass`，用来表述类对象本身的元数据，`static`方法就定义于此处。
+
+![image]({{"/assets/images/Screen Shot 2020-01-21 at 17.50.43.png"}})
+
+通过这样的关系，我们可以查出对象是否能响应某个`selector`，是否遵循某个协议，以及对象位于类继承体系的哪一部分。

@@ -206,7 +206,7 @@ struct objc_class {
 };
 ```
 
-`super_class`指针明确了继承关系；`isa`指针描述了实例所属的类；类对象所属的类型是另外一个类，称为`metaclass`，用来表述类对象本身的元数据，`static`方法就定义于此处。
+`super_class`指针明确了继承关系；`isa`指针描述了实例所属的类；类对象所属的类型是另外一个类，称为`metaclass`，用来表述类对象本身的元数据，`static`方法就定义于此处。每个类仅有一个“类对象”，每个“类对象”仅有一个与之相关的 metaclass。
 
 ![image]({{"/assets/images/Screen Shot 2020-01-21 at 17.50.43.png"}})
 

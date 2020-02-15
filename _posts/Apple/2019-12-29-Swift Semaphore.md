@@ -5,6 +5,14 @@ categories: [Apple]
 
 > 原文地址：<https://medium.com/swiftly-swift/a-quick-look-at-semaphores-6b7b85233ddb#.61uw6lq2d>
 
+How Semaphores Work, three steps:
+
+1. Whenever we would like to use one shared resource, we send a request to its semaphore;
+2. Once the semaphore gives us the green light we can assume that the resource is ours and we can use it;
+3. Once the resource is no longer necessary, we let the semaphore know by sending him a signal, allowing him to assign the resource to another thread.
+
+When this resource is only one and can be used only by one thread at any given time, you can think of these request/signal as the resource **lock/unlock**.
+
 信号量由两部分组成：
 
 - 计数器，让信号量知道有多少个线程能使用它的资源
@@ -20,7 +28,7 @@ categories: [Apple]
 - 如果有，那么信号量会把第一个线程拉出来，给它放行；
 - 如果没有，会增加它的计数器。
 
-当一个线程发送一个 `wait()` 资源请求给信号量时，线程会冻结直到信号量给线程放行。
+当一个线程发送一个 `wait()` 资源请求给信号量时，线程会冻结直到信号量给线程放行。（如果你在主线程这么做，整个 app 会冻结！）
 
 ```
 import Foundation
@@ -47,17 +55,6 @@ func asyncPrint(queue: DispatchQueue, symbol: String) {
 }
 
 asyncPrint(queue: higherPriority, symbol: "🚗")
-asyncPrint(queue: lowerPriority, symbol: "🚴‍♀️")
-```
-
-如果在错误的地方发出了信号量，会破坏线程安全！例如：
-
-```
-asyncPrint(queue: higherPriority, symbol: "🚗")
-higherPriority.async {
-    print("manually signal")
-    semaphore.signal()
-}
 asyncPrint(queue: lowerPriority, symbol: "🚴‍♀️")
 ```
 

@@ -88,3 +88,9 @@ source 'https://github.com/CocoaPods/Specs.git'
 在 Podfile 中加入以下
 
 `source 'https://git.coding.net/hging/Specs.git'`
+
+# 查看下载进度
+
+打开 Activity Monitor，选择 Network，筛选 git，然后可看到进程的网络情况。
+
+![image](/assets/images/Screen%20Shot%202020-03-02%20at%2014.52.56.png)

@@ -8,6 +8,8 @@ categories: [Effective Objective-C]
 
 # 6. Property
 
+You can even add instance variables to classes at runtime. 你甚至可以在运行时添加实例变量。This is known as the nonfragile Application Binary Interface (ABI). An ABI defines, among other things, the conventions for how code should be generated. The nonfragile ABI also means that instance variables can be defined in a class-continuation category or in the implementation.
+
 ```
 @interface EOCPerson: NSObject
 @property NSString *firstName;

@@ -3,6 +3,8 @@ title: "CocoaPods"
 categories: [Stick]
 ---
 
+[How to rebuild development pod changes?](https://stackoverflow.com/questions/50552752/how-to-rebuild-development-pod-changes)
+
 # What's CocoaPods
 
 A lot of ideas for CocoaPods came from similar projects (for example RubyGems, Bundler, npm and Gradle).

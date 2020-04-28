@@ -1,9 +1,52 @@
 ---
-title: "CocoaPods"
+title: 'CocoaPods'
 categories: [Stick]
 ---
 
-[How to rebuild development pod changes?](https://stackoverflow.com/questions/50552752/how-to-rebuild-development-pod-changes)
+# 问题：Development pods 的更改在 build 后没有生效
+
+[How to rebuild development pod changes?](https://stackoverflow.com/questions/50552752/how-to-rebuild-development-pod-changes)（Xcode11.4, pod 1.8.4 试过了，仍然没有解决）
+
+GitHub 上有[这个问题的讨论](https://github.com/CocoaPods/CocoaPods/issues/8073)：
+
+> Its because of build optimalisation in new Xcode - when it detects no change in input or output files specified for script, the script is not started.
+
+解决方法一：So the solution would be to have no input and out files at all, or during pod install add also content files of frameworks into the input files list.
+
+With New Build System, add to your Podfile, [参考](https://guides.cocoapods.org/syntax/podfile.html#install_bang)
+
+```
+install! 'cocoapods', :disable_input_output_paths => true
+```
+
+解决方法二：Use legacy build system
+
+解决方法三：I have a possible temporary solution. I added this Run script phase before Embed Pods Framework:
+`touch "${PODS_ROOT}/*SCRIPT_DIRECTORY*frameworks.sh"`.（路径直接复制\[CP\] Embed Pods Frameworks 里面的即可）
+It forces Xcode to run the script everytime.
+
+# 通过 CocoaPods 集成 Framework
+
+首先要有一个工程，其中的 TARGETS 有我们想打包出来的 Framework。在工程里正常 build 后，产物会在 /Users/zhouyian/Library/Developer/Xcode/DerivedData 目录下，也可以在 Project Navigator - Products 下面找到。
+
+在工程目录下运行命令：
+
+```
+xcodebuild -configuration "Release" -target "${FRAMEWORK_NAME}" -sdk iphoneos clean build
+```
+
+会将 Framework 打包到当前文件夹下。然后创建 .podspec 并声明 `s.ios.vendored_frameworks = 'path/to/framework'` 即可。
+
+# 动态库 vs 静态库
+
+Library is a compiled library file, usually in binary format. The other users can use it directly with a header file/files. 库是共享代码的方式。
+
+There are two types of libraries:
+
+- Static library：链接时，完整地拷贝至可执行文件中，在不同地方使用就有多份冗余拷贝。会使包体变大。在 iOS 中是`.a`形式。
+- Dynamic library：链接时不复制，程序运行时由系统动态加载到内存，可供多个程序共用。可以缩小包体，但启动时长会变大。在 iOS 中是`.dylib`形式。
+
+In iOS, Apple is using **Framework** to package the header files, source files, binary files and resources. Similarly, Framework can be divides into Static Framework and Dynamic Framework.
 
 # What's CocoaPods
 

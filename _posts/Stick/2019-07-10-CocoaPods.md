@@ -37,17 +37,6 @@ xcodebuild -configuration "Release" -target "${FRAMEWORK_NAME}" -sdk iphoneos cl
 
 会将 Framework 打包到当前文件夹下。然后创建 .podspec 并声明 `s.ios.vendored_frameworks = 'path/to/framework'` 即可。
 
-# 动态库 vs 静态库
-
-Library is a compiled library file, usually in binary format. The other users can use it directly with a header file/files. 库是共享代码的方式。
-
-There are two types of libraries:
-
-- Static library：链接时，完整地拷贝至可执行文件中，在不同地方使用就有多份冗余拷贝。会使包体变大。在 iOS 中是`.a`形式。
-- Dynamic library：链接时不复制，程序运行时由系统动态加载到内存，可供多个程序共用。可以缩小包体，但启动时长会变大。在 iOS 中是`.dylib`形式。
-
-In iOS, Apple is using **Framework** to package the header files, source files, binary files and resources. Similarly, Framework can be divides into Static Framework and Dynamic Framework.
-
 # What's CocoaPods
 
 A lot of ideas for CocoaPods came from similar projects (for example RubyGems, Bundler, npm and Gradle).

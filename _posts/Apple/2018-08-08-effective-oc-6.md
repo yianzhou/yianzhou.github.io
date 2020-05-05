@@ -1,24 +1,12 @@
 ---
-title: "Effective Objective-C (6) Block and GCD"
+title: 'Effective Objective-C (6) Block and GCD'
 categories: [Effective Objective-C]
 ---
 
 * Do not remove this line (it will not be displayed)
 {:toc}
 
-> AW.Effective.Objective-C.2.0
-
 ## 37: Blocks
-
-```
-void (^blockName)() = ^ {
-
-};
-
-int (^addBlock)(int a, int b) = ^(int a, int b) {
-
-};
-```
 
 Blocks are lexical closures for C, C++, and Objective-C. When it captures a variable of object type, a block implicitly retains it. It will be released when the block itself is released.
 
@@ -87,9 +75,9 @@ The key is to think about what objects a block may capture and therefore retain.
 
 ## 41: Prefer Dispatch Queues to Locks for Synchronization
 
-在 Objective-C 中，要实现同步机制，通常可以：
+Sometimes in Objective-C, you will come across code that you’re having trouble with because it’s being accessed from multiple threads. This situation usually calls for the application of some sort of synchronization through the use of locks.（需要使用锁来实现同步机制）Before GCD, there were two ways to achieve this:
 
-一、使用同步块
+一、built-in synchronization block
 
 ```
 - (void)synchronizedMethod {
@@ -99,7 +87,9 @@ The key is to think about what objects a block may capture and therefore retain.
 }
 ```
 
-二、使用`NSLock`或`NSRecursiveLock`
+This construct automatically creates a lock based on the given object and waits on that lock until it executes the code contained in the block. At the end of the code block, the lock is released. In the example, the object being synchronized against is self. Each synchronized block will execute serially across all such blocks.
+
+二、use the `NSLock` object directly
 
 ```
 _lock = [[NSLock alloc] init];
@@ -111,7 +101,9 @@ _lock = [[NSLock alloc] init];
 }
 ```
 
-这两种方法都很好，不过也有缺陷，有可能会遇到死锁，效率也不高。而且即使使用了同步块/锁，也不能保证 `get` 时的线程安全，因为在两次 `get` 中间可能有其他线程进行了 `set`。
+Recursive locks are also available through NSRecursiveLock, allowing for one thread to take out the same lock multiple times without causing a deadlock.
+
+这两种方法都很好，不过也有缺陷，有可能会遇到死锁，效率也不高。而且即使使用了同步块/锁，也不能保证 get 时的线程安全，因为在两次 get 中间可能有其他线程进行了 set。
 
 那么，更好的方案是使用 GCD，它能更简单、高效地为代码加锁。使用串行队列，将读取和写入操作都放在同一个队列里，即可保证数据同步。如此，全部加锁任务都交由 GCD 处理，而 GCD 是在相当深的底层实现的，安全且效率很高。
 

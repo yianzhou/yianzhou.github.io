@@ -8,7 +8,27 @@ categories: [Effective Objective-C]
 
 # 6. Property
 
-You can even add instance variables to classes at runtime. 你甚至可以在运行时添加实例变量。This is known as the nonfragile Application Binary Interface (ABI). An ABI defines, among other things, the conventions for how code should be generated. The nonfragile ABI also means that instance variables can be defined in a class-continuation category or in the implementation.
+You can declare instance variables in the public interface for a class as follows:
+
+```objc
+@interface EOCPerson : NSObject {
+@public
+    NSDate *_dateOfBirth;
+    NSString *_firstName;
+    NSString *_lastName;
+@private
+    NSString *_someInternalData;
+}
+@end
+```
+
+This will be familiar if you are coming from the worlds of Java or C++, where you can define the scope of instance variables. However, this technique is rarely used in modern Objective-C.
+
+The problem with the approach is that the layout of an object is defined at compile time. 对象的内存布局在编译期就已经确定了。 Whenever the `_firstName` variable is accessed, the compiler hardcodes the offset into the memory region where the object is stored.
+
+This works fine until you add another instance variable. Code that makes use of calculating the offset at compile time will break unless recompiled when the class definition changes. For example, code may exist in a library that uses an old class definition. If linked with code using the new class definition, there will be an incompatibility at runtime. To overcome this problem, languages have invented a variety of techniques. The approach Objective-C has taken is to make instance variables special variables held by **class objects** storing the offset. Then at runtime, the offset is looked up so that if the class definition changes, the offset stored is updated; whenever an access to the instance variable is made, the correct offset is used.
+
+You can even add instance variables to classes at runtime. This is known as the nonfragile Application Binary Interface (ABI). An ABI defines, among other things, the conventions for how code should be generated. The nonfragile ABI also means that instance variables can be defined in a class-continuation category or in the implementation. So you don’t have to have all your instance variables declared in the interface anymore, and you therefore don’t leak internal information about your implementation in the public interface.（[Swift ABI 的稳定](https://onevcat.com/2019/02/swift-abi/))
 
 ```
 @interface EOCPerson: NSObject
@@ -29,22 +49,45 @@ NSLog("%@", per.firstName); //getter
 
 @dynamic 可以告诉编译器不要自动创建实例变量 `_firstName` 和存取方法，Core Data 框架中使用了这种声明。
 
-属性的 attribute 会影响编译器所生成的存取方法。
+属性的 attribute 会影响编译器所生成的存取方法：
 
-- 第一类：原子性。如果没有声明 nonatomic，那么编译器默认使用同步锁，保证对该属性的操作是原子的（atomic）。
-- 第二类：读写权限。readwrite 或 readonly。
-- 第三类：内存管理。assign, strong, weak, unsafe_unretained, copy.
-- 第四类：方法名 getter, setter（少见）
+一、原子性。如果没有声明 nonatomic，那么编译器默认使用同步锁，保证对该属性的操作是原子的（atomic）。在 iOS 开发中，**所有属性都声明为 nonatomic**，这样做是因为在 iOS 中使用同步锁的开销较大，会带来严重的性能问题。因为一个 atomic 的属性并不能保证线程安全，要保证线程安全，还需采用更为深层的锁定机制。
 
-| 内存管理语义      | 解释                                                                   |
-| ----------------- | ---------------------------------------------------------------------- |
-| assign            | 直接复制，针对 scalar type，如`CGFloat`,`NSInteger`                    |
+Atomic accessors include locks to ensure atomicity. This means that if two threads are reading and writing the same property, the value of the property at any given point in time is valid. Without the locks, or nonatomic, the property value may be read on one thread while another thread is midway through writing to it. If this happens, the value that’s read could be invalid.
+
+If you’ve been developing for iOS at all, you’ll notice that all properties are declared nonatomic. The reason is that, historically, the locking introduces such an overhead on iOS that it becomes a performance problem. Usually, atomicity is not required anyway, since it does not ensure thread safety, which usually requires a deeper level of locking. For example, even with atomicity, a single thread might read a property multiple times immediately after one another and obtain different values if another thread is writing to it at the same time. Therefore, you will usually want to use nonatomic properties on iOS. But on Mac OS X, you don’t usually find that atomic property access is a performance bottleneck.
+
+二、读写权限（readwrite 或 readonly）
+
+三、内存管理
+
+| assign | 直接赋值，针对 scalar type，如`CGFloat`,`NSInteger` |
 | unsafe_unretained | 相当于 unowned，不持有新值，在目标对象销毁时属性值不会清空，所以不安全 |
-| strong            | 持有新值                                                               |
-| weak              | 不持有新值，在属性所指的对象被销毁时，属性也会置 nil                   |
-| copy              | 与 strong 类似，但不持有新值，而是一份新值的拷贝                       |
+| strong | 持有新值 |
+| weak | 不持有新值，在属性所指的对象被销毁时，属性也会置 nil |
+| copy | 与 strong 类似，但不持有新值，而是一份新值的拷贝 |
 
-在 iOS 开发中，**所有属性都声明为 nonatomic**，这样做是因为在 iOS 中使用同步锁的开销较大，会带来严重的性能问题。因为一个 atomic 的属性并不能保证线程安全，例如一个线程在连续多次读取某属性值的过程中有别的线程在同时修改该值，即使将这个属性声明为 atomic，也还是会读到不同的属性值。要保证线程安全，还需采用更为深层的锁定机制。
+什么时候要用到 copy 呢？所有有 mutable 版本的属性类型，如 NSString, NSArray, NSDictionary 等等，他们都有可变的类型 NSMutableString, NSMutableArray, NSMutableDictionary。这些类型在属性赋值时，右边的值有可能是它们的可变版本。这样就会出现属性值被意外改变的可能。所以它们都应该用 copy。
+
+```
+@interface DemoClass : NSObject
+@property (nonatomic, copy) NSString *strCopy;
+@property (nonatomic, strong) NSString *strStrong;
+@end
+
+DemoClass *demo = [[DemoClass alloc] init];
+NSMutableString *hello = [NSMutableString stringWithFormat:@"Hello"];
+
+demo.strCopy = hello;
+demo.strStrong = hello;
+
+[hello appendString:@" world!"];
+
+// strCopy - Hello
+// strStrong - Hello world!
+```
+
+四、方法名 getter, setter（少用）
 
 # 7. Instance Variables
 
@@ -66,10 +109,6 @@ NSObject 协议中有两个用于判断对象是否相等的关键方法：
 hash 方法什么时候被调用? hash 方法在对象被添加至 NSSet 和设置为 NSDictionary 的 key 时会调用。NSSet 和 NSDictionary 在判断成员是否相等时，会首先判断 hash 值是否相等，hash 值不同的两个对象直接判断不相等；如果相等，再调用 `isEqual:`。
 
 默认的哈希方法直接返回了内存地址，所以总是不同的。如果只实现了 `isEqual:` 而不实现 `hash`，那么即使我们定义了 object a is equals to object b，他们还是可以被放在 NSSet 里面，或者作为 NSDictionary 的 key，这不符合我们的定义。
-
-If two different objects produce the same hash value, the hash table seeks from the calculated index and places the new object in the first available spot. We call this a **hash collision**. As a hash table becomes more congested, the likelihood of collision increases, which leads to more time spent looking for a free space (hence why a hash function with a uniform distribution is so desirable).
-
-设计 hash 算法时，可以多做试验，在减少碰撞频度与降低运算复杂程度之间取舍。
 
 # 9. Class Cluster
 
@@ -167,6 +206,31 @@ Being able to add logging functionality by method swizzling can be a very useful
 
 Method Swizzling can be used to great advantage, as it can be used to change functionality in classes for which you don't have the source code, without having to subclass and override methods.
 
+```swift
+    func swizzle(_ originalSelector: Selector, _ swizzledSelector: Selector) {
+        guard let originalMethod = class_getInstanceMethod(self, originalSelector),
+            let swizzledMethod = class_getInstanceMethod(self, swizzledSelector) else {
+            return
+        }
+
+        let didAddMethod = class_addMethod(self, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
+        if didAddMethod {
+            class_replaceMethod(self, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
+        } else {
+            method_exchangeImplementations(originalMethod, swizzledMethod)
+        }
+    }
+
+    func doSwizzle() {
+        swizzle(#selector(viewWillAppear(_:)), #selector(newViewWillAppear(_:)))
+    }
+
+    @objc func newViewWillAppear(_ animated: Bool) {
+        self.newViewWillAppear(animated)
+        logBehaviorPath()
+    }
+```
+
 A class's method list contains a list of selector names to implementation mappings, telling the dynamic messaging system where to find the implementation of a given method.
 
 The implementations are stored as function pointers called **IMPs** and having the following prototype:
@@ -183,18 +247,14 @@ id (*IMP)(id, SEL, ...)
 typedef struct objc_object *id;
 ```
 
-`Class`类型是指向`objc_class`结构体的指针。
-
-```
-typedef struct objc_class *Class;
-```
-
-`objc_object`结构体有一个`isa`指针，指向`objc_class`结构体。
+`objc_object`结构体有一个`isa`指针，`Class`类型是指向`objc_class`结构体的指针。
 
 ```
 struct objc_object {
     Class _Nonnull isa  OBJC_ISA_AVAILABILITY;
 };
+
+typedef struct objc_class *Class;
 ```
 
 `objc_class`结构体有两个特殊的指针，一个是`isa`，指向它的`metaclass`；一个是`super_class`，指向它的父类。

@@ -6,8 +6,6 @@ categories: [Effective Objective-C]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
-> AW.Effective.Objective-C.2.0
-
 ## 23: Use Delegate and Data Source Protocols for Inter-object Communication
 
 Define a protocol with potentially optional methods to define the interface that your delegate should support.

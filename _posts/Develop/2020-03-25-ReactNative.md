@@ -3,9 +3,73 @@ title: 'React Native'
 categories: [Development]
 ---
 
-# Get Started
+* Do not remove this line (it will not be displayed)
+{:toc}
 
-搭建环境。
+# 搭建环境
+
+## 1. 使用 Homebrew 来安装 Node 和 Watchman。
+
+> Homebrew 是 macOS 的包管理工具，相当于 ubuntu、Debian 的 apt-get，Redhat、Centos 的 yum。
+
+> Node.js 是一种 javascript 的运行环境，能够使得 javascript 脱离浏览器运行。
+
+> Watchman 是由 Facebook 提供的监视文件系统变更的工具。
+
+`brew install node`
+
+`brew install watchman`
+
+## 2. 安装命令行工具
+
+`npm install -g react-native-cli`
+
+> -g 参数表示全局安装；不使用-g，会安装到当前文件夹的/node_modules 下
+
+## 3. 创建新项目
+
+通过创建新项目，可以看看 RN 目录的组织结构，为我们的工程提供参考。
+
+`react-native init HelloWorld`
+
+运行这个命令，包括了安装/node_modules，创建 iOS 和 Android 工程。
+
+## 4. 运行
+
+可以通过命令行跑起来，也可以直接用 Xcode 跑。
+
+```
+cd HelloWorld
+react-native run-ios
+```
+
+在模拟器中用 ⌘-R 就可以刷新页面，⌘-D 调起开发选项。
+在真机上摇晃手机就可以调起开发选项，然后可以 Enable Live Reload。
+
+集成了 RN 之后，应用内会出现[红屏错误和黄屏警告](https://reactnative.cn/docs/debugging/#%E8%87%AA%E5%8A%A8%E5%88%B7%E6%96%B0)。
+
+在开发者菜单中选择"Debug JS Remotely"选项，即可以开始在 Chrome 中调试 JavaScript 代码。Chrome 中并不能直接看到 App 的用户界面，而只能提供 console 的输出，以及断点调试。使用 Chrome 调试目前无法观测到 RN 中的网络请求，可以使用第三方的 react-native-debugger 来进行观测。
+
+## 5. 客户端与服务端
+
+我们的 App 相当于客户端，RN 启动的服务相当于服务端，通过这样的客户端-服务端架构实现热更新。
+
+启动 RN 服务：
+
+```
+cd HelloWorld
+npm start
+```
+
+第 4 点中的通过命令行/Xcode 运行，实际上包含了启动 RN 服务这一步。
+
+如果启动服务失败，可能是端口被占用。查看端口占用情况：
+
+`lsof -i TCP:8081`
+
+> lsof 是 list open file 命令，可以查看到当前打开文件，在 linux 中所有事物都是以文件形式存在，包括网络连接及硬件设备。-i 参数表示网络链接，TCP 表示 TCP 连接，:8081 是 RN 默认的端口号。
+
+找到占用 8081 端口的进程的 PID，通过`kill PID`命令杀掉对应进程、重新启动即可。
 
 # Basics
 

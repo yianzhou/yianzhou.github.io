@@ -5,19 +5,19 @@ categories: [Apple]
 
 # SDWebImage
 
-1. UIKit 的 category
+## UIKit 的 category
 
 保证每个对象有且仅有一个 ImageLoadOperation
 
 这部分所关心的：传入图片 URL，获取图片回调
 
-2. 中心管理类：SDWebImageManager
+## 中心管理类：SDWebImageManager
 
 （API 设计范例）可以自定义 Manager，也可以用默认的。
 
 收集任务，封装 SDWebImageCombinedOperation（cacheOperation+loaderOperation），交给具体的类去工作。
 
-3. SDImageCache (interface)
+## SDImageCache (interface)
 
 内存缓存（哈希表，NSCache）
 
@@ -25,17 +25,17 @@ categories: [Apple]
 
 可以自定义 CachesManager，也可以用默认的 SDImageCachesManager
 
-4. SDImageLoader (interface)
+## SDImageLoader (interface)
 
 SDWebImageDownloader，负责下载。
 
-5. SDImageCoder (interface)
+## SDImageCoder (interface)
 
 负责图片的解码（过程式解码，即边下载、边解码、边渲染）；
 
 支持多种图片格式：JPG、PNG、GIF、WEBP……
 
-6. SDImageTransformer (interface)
+## SDImageTransformer (interface)
 
 图片的变形等
 

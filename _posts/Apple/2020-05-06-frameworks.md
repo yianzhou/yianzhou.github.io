@@ -5,6 +5,8 @@ categories: [Apple]
 
 # SDWebImage
 
+![image](/assets/images/SDWebImageHighLevelDiagram.jpeg)
+
 ## UIKit 的 category
 
 保证每个对象有且仅有一个 ImageLoadOperation

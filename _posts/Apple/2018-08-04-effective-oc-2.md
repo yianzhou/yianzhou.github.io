@@ -59,17 +59,45 @@ If you’ve been developing for iOS at all, you’ll notice that all properties 
 
 二、读写权限（readwrite 或 readonly）
 
-三、内存管理
+三、内存管理（ARC）
 
-| assign | 直接赋值，针对 scalar type，如`CGFloat`,`NSInteger` |
-| unsafe_unretained | 相当于 unowned，不持有新值，在目标对象销毁时属性值不会清空，所以不安全 |
-| strong | 持有新值 |
-| weak | 不持有新值，在属性所指的对象被销毁时，属性也会置 nil |
-| copy | 与 strong 类似，但不持有新值，而是一份新值的拷贝 |
+| assign | The setter is a simple assign operation used for scalar types, such as `CGFloat` or `NSInteger`. |
+| unsafe_unretained | This has the same semantics as assign but is used where the type is an object type to indicate a nonowning relationship (unretained) that is not nilled out (unsafe) when the target is destroyed, unlike weak. |
+| strong | This designates that the property defines an owning relationship. When a new value is set, it is first retained, the old value is released, and then the value is set. |
+| weak | This designates that the property defines a nonowning relationship. When a new value is set, it is not retained; nor is the old value released. This is similar to what assign does, but the value is also nilled out when the object pointed to by the property at any time is destroyed. |
+| copy | This designates an owning relationship similar to strong; however, instead of retaining the value, it is copied. This is often used when the type is NSString* to preserve encapsulation, since the value passed into the setter might be an instance of the subclass NSMutableString. If it’s this mutable variant, the value could be mutated after the property is set, without the object’s knowing. So an immutable copy is taken to ensure that the string cannot change from underneath the object. Any object that may be mutable should take a copy. |
 
-什么时候要用到 copy 呢？所有有 mutable 版本的属性类型，如 NSString, NSArray, NSDictionary 等等，他们都有可变的类型 NSMutableString, NSMutableArray, NSMutableDictionary。这些类型在属性赋值时，右边的值有可能是它们的可变版本。这样就会出现属性值被意外改变的可能。所以它们都应该用 copy。
+常见类型的内存管理语义：
 
+```objc
+@property(nonatomic, strong) NSObject *obj;
+@property(nonatomic, strong) NSNumber *num;
+
+@property(nonatomic, copy) NSString* str;
+@property(nonatomic, copy) NSArray* arr;
+@property(nonatomic, copy) NSDictionary* dic;
+@property(nonatomic, copy) NSSet* set;
+
+@property(nonatomic, assign) CGFloat floatNum;
+@property(nonatomic, assign) CGPoint point;
+@property(nonatomic, assign) NSInteger integer;
 ```
+
+`copy` 的背后实现：
+
+```objc
+@property(nonatomic, copy) NSMutableArray* mArray;
+
+-(void)setMArray:(NSArray *)mArray {
+    _mArray = [mArray copy];
+}
+```
+
+什么时候要用到 copy 呢？所有有 mutable 版本的属性类型，如 NSString, NSArray, NSDictionary, NSSet 等等，他们都有可变的类型 NSMutableString, NSMutableArray, NSMutableDictionary, NSMutableSet。这些类型在属性赋值时，右边的值有可能是它们的可变版本。这样就会出现属性值被意外改变的可能。所以它们都应该用 copy。
+
+Sending `copy` to a mutable class returns an immutable copy of the object. But, sending `copy` to an immutable counterpart is equivalent to sending it a `retain` message.
+
+```objc
 @interface DemoClass : NSObject
 @property (nonatomic, copy) NSString *strCopy;
 @property (nonatomic, strong) NSString *strStrong;
@@ -86,6 +114,12 @@ demo.strStrong = hello;
 // strCopy - Hello
 // strStrong - Hello world!
 ```
+
+在 category 中添加 property 要用到 `objc_setAssociatedObject`，其中 `objc_AssociationPolicy` 常用的有三种：
+
+- OBJC_ASSOCIATION_ASSIGN
+- OBJC_ASSOCIATION_COPY_NONATOMIC
+- OBJC_ASSOCIATION_RETAIN_NONATOMIC
 
 四、方法名 getter, setter（少用）
 
@@ -136,11 +170,13 @@ since they can easily introduce hard-to-find bugs.
 
 Calling a function in C uses "static binding", which means that the function being called is known at compile time. **Dynamic binding** is the mechanism by which methods in Objective-C are invoked. The method to call when a message is sent to an object in Objective-C is resolved at runtime.
 
-Objective-C 中，我们写的所有方法最终都是 C 的形式，类似于：
+Every method of an Objective-C object can be thought of as a simple C function, whose prototype is of the following form:
 
-```
+```c
 <return_type> Class_selector(id self, SEL _cmd, parameters)
 ```
+
+> Note that the prototype is strangely similar to the `objc_msgSend` function itself. This is no coincidence. It makes jumping to the method simpler and can make good use of tail-call optimizations. Tail-call optimization occurs when the last thing a function does is call another function. Instead of pushing a new stack frame, the compiler can emit code to jump to the next function. This can be done only if the final thing a function does is call another function and does not need to use the return value for anything. Using this optimization is crucial for `objc_msgSend` because without it, the stack trace would show `objc_msgSend` right before every Objective-C method. Also, stack overflow would occur prematurely.
 
 但调用哪个方法是完全运行时决定的，甚至可以在运行时改变。
 
@@ -165,8 +201,6 @@ The `objc_msgSend` function calls the correct method, depending on the type of t
 - If no matching method is found, **message forwarding** kicks in.
 
 `objc_msgSend` caches the result in a fast map, one for each class, so that future message to the same class and selector combination are executed quickly.
-
-**Tail-call** optimization (尾调用优化) occurs when the last thing a function does is call another function.
 
 # 12. Message Forwarding
 

@@ -8,6 +8,8 @@ categories: [Effective Objective-C]
 
 # 6. Property
 
+@property 的本质是什么？@property = ivar + getter + setter;
+
 You can declare instance variables in the public interface for a class as follows:
 
 ```objc
@@ -78,41 +80,14 @@ If you’ve been developing for iOS at all, you’ll notice that all properties 
 @property(nonatomic, copy) NSDictionary* dic;
 @property(nonatomic, copy) NSSet* set;
 
+@property(nonatomic, copy) NSMutableString* str;
+@property(nonatomic, copy) NSMutableArray* arr;
+@property(nonatomic, copy) NSMutableDictionary* dic;
+@property(nonatomic, copy) NSMutableSet* set;
+
 @property(nonatomic, assign) CGFloat floatNum;
 @property(nonatomic, assign) CGPoint point;
 @property(nonatomic, assign) NSInteger integer;
-```
-
-`copy` 的背后实现：
-
-```objc
-@property(nonatomic, copy) NSMutableArray* mArray;
-
--(void)setMArray:(NSArray *)mArray {
-    _mArray = [mArray copy];
-}
-```
-
-什么时候要用到 copy 呢？所有有 mutable 版本的属性类型，如 NSString, NSArray, NSDictionary, NSSet 等等，他们都有可变的类型 NSMutableString, NSMutableArray, NSMutableDictionary, NSMutableSet。这些类型在属性赋值时，右边的值有可能是它们的可变版本。这样就会出现属性值被意外改变的可能。所以它们都应该用 copy。
-
-Sending `copy` to a mutable class returns an immutable copy of the object. But, sending `copy` to an immutable counterpart is equivalent to sending it a `retain` message.
-
-```objc
-@interface DemoClass : NSObject
-@property (nonatomic, copy) NSString *strCopy;
-@property (nonatomic, strong) NSString *strStrong;
-@end
-
-DemoClass *demo = [[DemoClass alloc] init];
-NSMutableString *hello = [NSMutableString stringWithFormat:@"Hello"];
-
-demo.strCopy = hello;
-demo.strStrong = hello;
-
-[hello appendString:@" world!"];
-
-// strCopy - Hello
-// strStrong - Hello world!
 ```
 
 在 category 中添加 property 要用到 `objc_setAssociatedObject`，其中 `objc_AssociationPolicy` 常用的有三种：

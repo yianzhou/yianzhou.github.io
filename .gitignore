@@ -21,3 +21,5 @@ _site
 
 # I choose to ignore draft
 _drafts
+
+.DS_store

@@ -25,6 +25,17 @@ install! 'cocoapods', :disable_input_output_paths => true
 `touch "${PODS_ROOT}/*SCRIPT_DIRECTORY*frameworks.sh"`.（路径直接复制\[CP\] Embed Pods Frameworks 里面的即可）
 It forces Xcode to run the script everytime.
 
+# 问题：pod 连接慢、安装/更新失败等
+
+删除主库并重新拉取：
+
+```
+pod repo remove master
+pod setup
+cd ~/.cocoapods/repos
+git clone --depth=1 https://github.com/CocoaPods/Specs.git master
+```
+
 # 通过 CocoaPods 集成 Framework
 
 首先要有一个工程，其中的 TARGETS 有我们想打包出来的 Framework。在工程里正常 build 后，产物会在 /Users/zhouyian/Library/Developer/Xcode/DerivedData 目录下，也可以在 Project Navigator - Products 下面找到。

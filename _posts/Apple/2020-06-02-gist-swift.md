@@ -1,5 +1,5 @@
 ---
-title: 'Swift 代码'
+title: 'Gist(swift)'
 categories: [Apple]
 ---
 
@@ -40,7 +40,7 @@ private var viewDidAppearTimestamp: Double = 0
 
 override func viewDidLoad() {
     super.viewDidLoad()
-                
+
     NotificationCenter.default.addObserver(self, selector: #selector(appBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
     NotificationCenter.default.addObserver(self, selector: #selector(appResignActive(_:)), name: UIApplication.willResignActiveNotification, object: nil)
 }
@@ -49,7 +49,7 @@ override func viewDidAppear(_ animated: Bool) {
     super.viewDidAppear(animated)
     viewDidAppearTimestamp = CFAbsoluteTimeGetCurrent()
 }
-    
+
 override func viewWillDisappear(_ animated: Bool) {
     super.viewWillDisappear(animated)
     let stayTime = Int(CFAbsoluteTimeGetCurrent() - viewDidAppearTimestamp)
@@ -59,9 +59,19 @@ override func viewWillDisappear(_ animated: Bool) {
 @objc func appBecomeActive(_ notification: Any) {
     viewDidAppearTimestamp = CFAbsoluteTimeGetCurrent()
 }
-    
+
 @objc func appResignActive(_ notification: Any) {
     let stayTime = Int(CFAbsoluteTimeGetCurrent() - viewDidAppearTimestamp)
     log(stayTime)
 }
+```
+
+圆角 cornerRadius
+
+```swift
+let maskPath = UIBezierPath(roundedRect: playView.bounds, byRoundingCorners: [UIRectCorner.topLeft, UIRectCorner.topRight], cornerRadii: CGSize(width: 8, height: 8))
+let maskLayer = CAShapeLayer()
+maskLayer.frame = playView.bounds
+maskLayer.path = maskPath.cgPath
+playView.layer.mask = maskLayer
 ```

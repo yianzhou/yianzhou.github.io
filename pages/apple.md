@@ -1,5 +1,5 @@
 ---
-permalink: posts
+permalink: apple
 ---
 
 # 置顶
@@ -11,18 +11,9 @@ permalink: posts
   {% endfor %}
 </ul>
 
-# Apple Developer
+# 苹果开发
 <ul>
   {% for post in site.categories['Apple'] %}
-    <li>
-      <a href="{{ post.url }}">{{ post.title }}</a>
-    </li>
-  {% endfor %}
-</ul>
-
-# 开发
-<ul>
-  {% for post in site.categories['Development'] %}
     <li>
       <a href="{{ post.url }}">{{ post.title }}</a>
     </li>
@@ -32,15 +23,6 @@ permalink: posts
 # Effective Objective-C
 <ul>
   {% for post in site.categories['Effective Objective-C'] %}
-    <li>
-      <a href="{{ post.url }}">{{ post.title }}</a>
-    </li>
-  {% endfor %}
-</ul>
-
-# Others
-<ul>
-  {% for post in site.categories['Others'] %}
     <li>
       <a href="{{ post.url }}">{{ post.title }}</a>
     </li>

@@ -4,6 +4,7 @@ permalink: link
 
 工具类：
 
+- [阿里云域名检测工具](https://zijian.aliyun.com/)
 - [SOOGIF，找动图做动图](https://www.soogif.com/)
 - [Json 格式化](https://jsonlint.com/)
 - [Base64 编解码](https://tool.oschina.net/encrypt?type=3)

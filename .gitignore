@@ -23,3 +23,6 @@ _site
 _drafts
 
 .DS_store
+
+.bundle/
+vendor/bundle/ruby/

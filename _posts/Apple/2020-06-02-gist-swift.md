@@ -102,23 +102,39 @@ override func viewWillDisappear(_ animated: Bool) {
 }
 ```
 
-# UILabel 字间距
+# UILabel, NSAttributedString
 
 ```swift
+// 字间距
 let tryText = "TRY FOR FREE!!!"
 let tryTextMark = "!!!"
 let substringRange = tryText.range(of: tryTextMark)!
 let nsRange = NSRange(substringRange, in: tryText)
 let attrStr = NSMutableAttributedString(string: tryText)
-let style = NSMutableParagraphStyle()
-style.alignment = .center
 attrStr.addAttribute(NSAttributedString.Key.kern, value: -5, range: nsRange)
 tryLabel.attributedText = attrStr
 tryLabel.font = UIFont.systemFont(ofSize: 40 * kAppScale, weight: .heavy)
 tryLabel.textColor = UIColor.white
-tryLabel.numberOfLines = 1
-tryLabel.adjustsFontSizeToFitWidth = true
-tryLabel.textAlignment = .center
+
+let line1 = "Your Meditation Program\n"
+let line2 = "Listen to meditation audio for weight-loss"
+let attrString = NSMutableAttributedString(string: line1 + line2)
+
+// 字体及颜色
+attrString.addAttribute(.font, value: UIFont.systemFont(ofSize: 24 * kAppScale375, weight: .heavy), range: NSRange(location: 0, length: line1.count))
+attrString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: 0, length: line1.count))
+attrString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14 * kAppScale375, weight: .bold), range: NSRange(location: line1.count, length: line2.count))
+attrString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: line1.count, length: line2.count))
+
+// 斜体
+attrString.addAttribute(NSAttributedString.Key.obliqueness, value: 0.2, range: NSRange(location: line1.count, length: line2.count))
+
+// 行间距
+let style = NSMutableParagraphStyle()
+style.lineSpacing = 10.0
+attrString.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: line1.count + line2.count))
+
+self.listenLabel.attributedText = attrString
 ```
 
 # 时间 Date

@@ -6,6 +6,10 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
+# Media Player
+
+[Becoming a Now Playable App](https://developer.apple.com/documentation/mediaplayer/becoming_a_now_playable_app)
+
 # CAGradientLayer
 
 ```swift

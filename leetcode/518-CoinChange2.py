@@ -23,7 +23,7 @@ class Solution2:
 # 选 coins[i] 或不选：dp[i][j] = dp[i-1][j - coins[i]] + dp[i-1][j]
 # 和 0-1 背包问题最大的不同是，此题中每种硬币可以选[0, +∞)种！
 # Your runtime beats 14.82 % of python3 submissions.
-class Solution:
+class Solution3:
     def change(self, amount: int, coins: [int]) -> int:
         if amount == 0: return 1
         if len(coins) == 0: return 0
@@ -40,6 +40,18 @@ class Solution:
                 else:
                     dp[i][j] = dp[i-1][j]
         return dp[N-1][amount]
+
+# 在所有 Python3 提交中击败了 74.21% 的用户
+class Solution:
+    def change(self, amount: int, coins: [int]) -> int:
+        N = len(coins)
+        dp = [0 for i in range(amount+1)]
+        dp[0] = 1
+        for c in coins:
+            for i in range(c, amount+1):
+                dp[i] += dp[i-c]
+        return dp[amount]
+                
 
 print(Solution().change(5, [2, 5]))
 print(Solution().change(5, [1, 2, 5]))

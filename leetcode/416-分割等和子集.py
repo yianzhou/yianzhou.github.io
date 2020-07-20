@@ -2,7 +2,7 @@
 # https://leetcode-cn.com/problems/partition-equal-subset-sum/
 # 是否可以将数组分割成两个子集，使得两个子集的元素和相等。
 
-class Solution:
+class Solution2:
     def canPartition(self, nums: [int]) -> bool:
         S = sum(nums)
         if S % 2 != 0: return False
@@ -53,9 +53,23 @@ class Solution:
 # print(Solution().canPartition([1,5,11,5]))
 # print(Solution().canPartition([2,2,3,5]))
 
-print(Solution().canPartition2([1,2,5]))
-print(Solution().canPartition2([1,5,11,5]))
-print(Solution().canPartition2([2,2,3,5]))
-print(Solution().canPartition2([1,2,3,4,5,6,7]))
+class Solution:
+    def canPartition(self, nums: [int]) -> bool:
+        S = sum(nums)
+        if S % 2 != 0: return False
+        S = S // 2
+        N = len(nums)
+        dp = [False for i in range(S+1)]
+        dp[0] = True
+        for num in nums:
+            for i in range(S, num-1, -1):
+                dp[i] = dp[i] or dp[i-num]
+        return dp[S]
 
+print(Solution().canPartition([1,2,5]))
+print(Solution().canPartition([1,5,11,5]))
+print(Solution().canPartition([2,2,3,5]))
+print(Solution().canPartition([1,2,3,4,5,6,7]))
+print(Solution().canPartition([1,2,3,4]))
+print(Solution().canPartition([23,13,11,7,6,5,5])) # True
 # print(sum([1,2,3,4,5,6,7]))

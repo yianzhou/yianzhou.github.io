@@ -159,3 +159,57 @@ func ms(from count: Int) -> (String, String) {
     return (minuteStr, secondStr)
 }
 ```
+
+设置 UIDatePicker 时间为晚上 8 点：
+
+```swift
+picker.datePickerMode = .time
+let calendar = Calendar.current
+var components = DateComponents()
+components.hour = 20
+components.minute = 0
+picker.setDate(calendar.date(from: components)!, animated: false)
+```
+
+[ISO 8601](https://www.iso.org/iso-8601-date-and-time-format.html)：是国际标准化组织的日期和时间的表示方法。
+
+[RFC 3339](https://tools.ietf.org/html/rfc3339): This document defines a date and time format for use in Internet protocols that is a profile of the ISO 8601 standard for representation of dates and times using the Gregorian calendar.
+
+日期格式：<https://nsdateformatter.com/>
+
+Date 对象使用 +0 时区
+
+```swift
+let now = Date()
+print(now) // 2020-07-16 07:12:02 +0000
+```
+
+Date 转 String
+
+```swift
+let dateFormatter = DateFormatter()
+dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+dateFormatter.locale = Locale.current
+let dateString = dateFormatter.string(from: now)
+print(dateString) // 2020-07-16 15:15:17
+```
+
+根据用户的时区将 Date 转换为 Calendar
+
+```swift
+var calendar = Calendar.current
+calendar.timeZone = TimeZone.current
+let dateComponents = calendar.dateComponents([.year, .month, .day], from: now)
+print(dateComponents) // year: 2020 month: 7 day: 16 isLeapMonth: false 
+```
+
+初始化一个特定日期
+
+```swift
+// 初始化一个日期
+let dateFormatter = DateFormatter()
+dateFormatter.dateFormat = "yyyy-MM-dd'T'HH:mm:ssZ"
+if let date617 = dateFormatter.date(from: "2020-06-17T23:59:59+0000") {
+    print(date617)
+}
+```

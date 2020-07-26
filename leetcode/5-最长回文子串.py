@@ -1,8 +1,6 @@
 # https://leetcode.com/problems/longest-palindromic-substring/
 # 5. Longest Palindromic Substring
 
-# 解法：中心扩展
-# 其他解法：动态规划、Manacher's Algorithm（专门解决 Palindrome 的线性算法）
 class Solution:
     start = 0
     end = 0
@@ -18,7 +16,7 @@ class Solution:
             j += 1
         i += 1
         j -= 1
-        if (self.end-self.start) < (j-i):
+        if (self.end - self.start) < (j-i):
             self.start = i
             self.end = j
 

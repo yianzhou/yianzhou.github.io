@@ -213,3 +213,16 @@ if let date617 = dateFormatter.date(from: "2020-06-17T23:59:59+0000") {
     print(date617)
 }
 ```
+
+# UIAlertController
+
+```swift
+let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
+let cancel = UIAlertAction(title: "", style: .cancel) { (action) in
+}
+let action = UIAlertAction(title: "", style: .default) { (action) in
+}
+alert.addAction(cancel)
+alert.addAction(action)
+self.parentViewController?.present(alert, animated: true, completion: nil)
+```

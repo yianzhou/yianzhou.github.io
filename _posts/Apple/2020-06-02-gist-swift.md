@@ -220,9 +220,33 @@ if let date617 = dateFormatter.date(from: "2020-06-17T23:59:59+0000") {
 let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
 let cancel = UIAlertAction(title: "", style: .cancel) { (action) in
 }
-let action = UIAlertAction(title: "", style: .default) { (action) in
+let ok = UIAlertAction(title: "", style: .default) { (action) in
 }
 alert.addAction(cancel)
-alert.addAction(action)
+alert.addAction(ok)
+alert.preferredAction = ok
 self.parentViewController?.present(alert, animated: true, completion: nil)
+```
+
+# Notification
+
+```swift
+/// 是否询问过通知权限
+var notDetermined = false
+UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+    if settings.authorizationStatus == .notDetermined {
+        notDetermined = true
+    }
+}
+UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
+    if notDetermined && granted {
+        // 首次询问并同意了
+    } else if notDetermined && !granted {
+        // 首次询问并拒绝了
+    } else if !notDetermined && granted {
+        // 用户之前已同意过了
+    } else {
+        // 用户之前已拒绝过了
+    }
+}
 ```

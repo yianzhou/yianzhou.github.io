@@ -1,5 +1,5 @@
 ---
-title:  "CentOS 7 配置"
+title: "CentOS 7 配置"
 categories: [Development]
 ---
 
@@ -10,6 +10,7 @@ categories: [Development]
 [How To Configure SSH Key-Based Authentication on a Linux Server](https://www.digitalocean.com/community/tutorials/how-to-configure-ssh-key-based-authentication-on-a-linux-server)
 
 记得改权限否则无法 ssh 连上去！
+
 ```
 chmod 700 .ssh
 chmod 600 .ssh/authorized_keys
@@ -17,7 +18,7 @@ chmod 600 .ssh/authorized_keys
 
 [Additional Recommended Steps for New CentOS 7 Servers](https://www.digitalocean.com/community/tutorials/additional-recommended-steps-for-new-centos-7-servers)
 
-选择服务器架构：LAMP、LEMP等
+选择服务器架构：LAMP、LEMP 等
 
 [How To Install Linux, Apache, MySQL, PHP (LAMP) stack On CentOS 7](https://www.digitalocean.com/community/tutorials/how-to-install-linux-apache-mysql-php-lamp-stack-on-centos-7)
 
@@ -30,6 +31,7 @@ chmod 600 .ssh/authorized_keys
 [PHP 7 on CentOS via Yum](https://webtatic.com/packages/php70/)
 
 安装完之后可以选择移除这个仓库：
+
 ```
 $ cd /etc/yum.repos.d
 $ yum remove rpmforge-release

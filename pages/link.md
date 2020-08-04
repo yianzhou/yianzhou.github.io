@@ -8,7 +8,6 @@ permalink: link
 - [SOOGIF，找动图做动图](https://www.soogif.com/)
 - [Json 格式化](https://jsonlint.com/)
 - [Base64 编解码](https://tool.oschina.net/encrypt?type=3)
-- [PlantUML](http://plantuml.com/zh/)
 
 课程类：
 

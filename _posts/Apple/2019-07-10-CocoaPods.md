@@ -1,6 +1,6 @@
 ---
 title: "CocoaPods"
-categories: [Stick]
+categories: [Apple]
 ---
 
 # 问题：Development pods 的更改在 build 后没有生效

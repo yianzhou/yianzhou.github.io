@@ -3,10 +3,14 @@ title:  "App Store Connect"
 categories: [Apple]
 ---
 
-如何查看每日下载量？
-1. App Analytics - SALES - App Units
-2. Sales and Trends - SALES - Units
-两者数据几乎一样的。
+[生成营销活动链接](https://analytics.itunes.apple.com/#/campaigngenerator)
+
+这里可以搜索应用和制作链接：<https://linkmaker.itunes.apple.com/en-us>
+
+查询 APP 信息的接口：
+
+- <https://itunes.apple.com/search?term=应用名&entity=software>
+- <https://itunes.apple.com/lookup?id=应用ID>
 
 # App Analytics
 

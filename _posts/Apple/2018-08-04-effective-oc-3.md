@@ -1,5 +1,5 @@
 ---
-title: 'Effective Objective-C (3) Interface and API'
+title: "Effective Objective-C (3) Interface and API"
 categories: [Effective Objective-C]
 ---
 
@@ -57,6 +57,27 @@ For nonfatal errors, either provide a delegate method to handle errors or offer 
 
 Implement the `NSCopying` protocol if your object will need to be copied.
 
-A **deep copy** copies all the backing data. Copying by default for all the collection classes in `Foundation` is **shallow copy**, meaning that only the container is copied, not the data stored within the container.
+![img](/assets/images/234150_BaPq_1774273.png)
 
-**No** protocol defines deep copying, so it is left up to each class to define how such a copy is made. Also, you should never assume that an object conforming to NSCopying will be performing a deep copy.
+只有源对象和副本对象都不可变时，才是浅复制，其他都是深复制。
+
+深复制（深拷贝、内容拷贝、deep copy）：产生了新对象，存放在一块新的内存空间，与原来的对象互不影响。
+
+1. 源对象和副本对象是不同的两个对象；
+2. 源对象引用计数不变，副本对象计数为 1（因为是新产生的）。
+3. 集合的深复制只复制容器本身，集合内的元素还是原来的元素（指向同一块内存）。
+
+```objc
+Demo *demo1 = [[Demo alloc]init];
+Demo *demo2 = [[Demo alloc]init];
+NSArray *arr = @[demo1, demo2];
+NSMutableArray *mutableArr = [arr mutableCopy];
+NSLog(@"%p, %p", arr, mutableArr); // 集合深拷贝
+NSLog(@"%p, %p", [arr objectAtIndex:0], [mutableArr objectAtIndex:0]); // 集合中的对象还是指向同一块内存
+```
+
+浅复制（浅拷贝、指针拷贝、shallow copy）：没有产生新对象，仍然指向同一块内存空间。
+
+1. 源对象和副本对象是同一对象；
+
+2. 源对象引用计数 +1，相当于做一次 retain 操作。

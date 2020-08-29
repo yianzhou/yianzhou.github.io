@@ -1,44 +1,52 @@
-// 商品
-class Item {
+class Meta {
+  // base class
   double price;
   String name;
-  Item(this.price, this.name); // 构造函数语法糖
+  Meta(this.name, this.price);
+}
+
+abstract class PrintHelper {
+  void printInfo() => print(this);
+}
+
+class Item extends Meta {
+  Item(name, price) : super(name, price);
+
+  Item operator +(Item item) => Item(name + item.name, price + item.price);
 }
 
 // 价格
-class ShoppingCart {
-  String name;
+class ShoppingCart extends Meta with PrintHelper {
   DateTime date;
   String code;
   List<Item> bookings;
 
-  double price() {
-    double sum = 0.0;
-    for (var i in bookings) {
-      sum += i.price;
-    }
-    return sum;
-  }
+  double get price =>
+      bookings.reduce((value, element) => value + element).price;
 
-  ShoppingCart(this.name, this.code) : date = DateTime.now(); // 构造函数语法糖
+  ShoppingCart({name}) : this.withCode(name: name, code: null);
 
-  String getInfo() {
-    return '购物⻋信息:' +
-        '\n-----------------------------' +
-        '\n用户名: ' +
-        name +
-        '\n优惠码: ' +
-        code +
-        '\n总价: ' +
-        price().toString() +
-        '\n日期: ' +
-        date.toString() +
-        '\n-----------------------------';
-  }
+  ShoppingCart.withCode({name, this.code})
+      : date = DateTime.now(),
+        super(name, 0);
+
+  String toString() => '''
+    购物⻋信息:
+    -----------------------------
+    用户名: $name
+    优惠码: ${code ?? "无"}
+    总价: $price
+    日期: $date
+    -----------------------------
+  ''';
 }
 
 void main() {
-  ShoppingCart sc = ShoppingCart('张三', '123456');
-  sc.bookings = [Item('苹果', 10.0), Item('梨', 20.0)];
-  print(sc.getInfo());
+  ShoppingCart.withCode(name: '张三', code: '123456')
+    ..bookings = [Item('苹果', 10.0), Item('梨', 20.0)]
+    ..printInfo();
+
+  ShoppingCart(name: '李四')
+    ..bookings = [Item('香蕉', 15.0), Item('⻄瓜', 40.0)]
+    ..printInfo();
 }

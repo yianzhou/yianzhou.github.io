@@ -4,20 +4,38 @@ show_downloads: true
 
 ![image](/assets/images/1440_380.jpg)
 
-# 欢迎
+# 快速开始
 
-欢迎来到我的主页。这是一个由 [GitHub Pages](https://pages.github.com/) 构建的网站。
+遇到没有 /usr/bin 权限的问题：
 
-[GitHub](https://github.com/) 是领先的开源社区。GitHub Pages 可以用来创建个人/组织或项目的网站，还可以[使用定制的域名](https://help.github.com/articles/using-a-custom-domain-with-github-pages/)，而这一切，是完全免费的。
+```
+sudo gem install -n /usr/local/bin bundler jekyll
+```
 
-[Markdown](https://guides.github.com/features/mastering-markdown/) 适用于任何文字工作者，而不仅仅是程序员。通过 Markdown 你可以轻松地写出排版整齐美观的文本。你可以将 Markdown 文件加载到 GitHub Pages 上。
+快速开始：<https://jekyllrb.com/docs/quickstart/>
 
-Github Pages 支持 [Jekyll](https://jekyllrb.com/)，这种简洁的建站方式，让你可以将精力放在内容创作，而不是服务器维护上。这也是我决定将原本使用 Wordpress 搭建的[博客](https://www.yianzhou.com)迁移至此的原因。本网站同时也是[开源](https://opensource.guide/how-to-contribute/)的。
+```
+# Build the site on the preview server
+bundle exec jekyll serve
 
-# 维护
+# preview drafts
+bundle exec jekyll serve --drafts
+```
 
-[🔧 快速开始、配置和日常维护](/pages/setup)
+通过 <http://localhost:4000> 在本地测试
 
-[⛲️ Liquid reference](https://help.shopify.com/en/themes/liquid)
+目录结构请看[这里](https://jekyllrb.com/docs/structure/)
 
-[🎡 当前使用的主题](https://github.com/pages-themes/minimal)
+如果想看当前主题的文件:
+
+```
+bundle show jekyll-theme-minimal
+```
+
+The github-pages gem is what's constraining you from update to latest Jekyll version. Use this instead:
+
+```
+bundle update github-pages
+```
+
+<!-- ![img](assets/images/png-iOSDev-by-StuQ.png) -->

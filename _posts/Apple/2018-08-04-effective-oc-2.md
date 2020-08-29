@@ -1,5 +1,5 @@
 ---
-title: 'Effective Objective-C (2) Objects, Messaging, and the Runtime'
+title: "Effective Objective-C (2) Objects, Messaging, and the Runtime"
 categories: [Effective Objective-C]
 ---
 
@@ -53,7 +53,7 @@ NSLog("%@", per.firstName); //getter
 
 属性的 attribute 会影响编译器所生成的存取方法：
 
-一、原子性。如果没有声明 nonatomic，那么编译器默认使用同步锁，保证对该属性的操作是原子的（atomic）。在 iOS 开发中，**所有属性都声明为 nonatomic**，这样做是因为在 iOS 中使用同步锁的开销较大，会带来严重的性能问题。因为一个 atomic 的属性并不能保证线程安全，要保证线程安全，还需采用更为深层的锁定机制。
+一、原子性。如果没有声明 nonatomic，那么编译器默认使用同步锁，保证对该属性的操作是原子的（atomic）。在 iOS 开发中，**所有属性都声明为 nonatomic**，这样做是因为在 iOS 中使用同步锁的开销较大，会带来严重的性能问题。而且一个 atomic 的属性并不能保证线程安全，要保证线程安全，还需采用更为深层的锁定机制。
 
 Atomic accessors include locks to ensure atomicity. This means that if two threads are reading and writing the same property, the value of the property at any given point in time is valid. Without the locks, or nonatomic, the property value may be read on one thread while another thread is midway through writing to it. If this happens, the value that’s read could be invalid.
 
@@ -67,27 +67,31 @@ If you’ve been developing for iOS at all, you’ll notice that all properties 
 | unsafe_unretained | This has the same semantics as assign but is used where the type is an object type to indicate a nonowning relationship (unretained) that is not nilled out (unsafe) when the target is destroyed, unlike weak. |
 | strong | This designates that the property defines an owning relationship. When a new value is set, it is first retained, the old value is released, and then the value is set. |
 | weak | This designates that the property defines a nonowning relationship. When a new value is set, it is not retained; nor is the old value released. This is similar to what assign does, but the value is also nilled out when the object pointed to by the property at any time is destroyed. |
-| copy | This designates an owning relationship similar to strong; however, instead of retaining the value, it is copied. This is often used when the type is NSString* to preserve encapsulation, since the value passed into the setter might be an instance of the subclass NSMutableString. If it’s this mutable variant, the value could be mutated after the property is set, without the object’s knowing. So an immutable copy is taken to ensure that the string cannot change from underneath the object. Any object that may be mutable should take a copy. |
+| copy | This designates an owning relationship similar to strong; however, instead of retaining the value, it is copied. This is often used when the type is NSString\* to preserve encapsulation, since the value passed into the setter might be an instance of the subclass NSMutableString. If it’s this mutable variant, the value could be mutated after the property is set, without the object’s knowing. So an immutable copy is taken to ensure that the string cannot change from underneath the object. Any object that may be mutable should take a copy. |
 
 常见类型的内存管理语义：
 
 ```objc
+// 非指针类型用 assign
+@property(nonatomic, assign) CGFloat floatNum;
+@property(nonatomic, assign) CGPoint point;
+@property(nonatomic, assign) NSInteger integer;
+
+// 指针类型用 strong
 @property(nonatomic, strong) NSObject *obj;
 @property(nonatomic, strong) NSNumber *num;
 
+// 有可变子类的要用 copy，以防不可知的修改
 @property(nonatomic, copy) NSString* str;
 @property(nonatomic, copy) NSArray* arr;
 @property(nonatomic, copy) NSDictionary* dic;
 @property(nonatomic, copy) NSSet* set;
 
-@property(nonatomic, copy) NSMutableString* str;
-@property(nonatomic, copy) NSMutableArray* arr;
-@property(nonatomic, copy) NSMutableDictionary* dic;
-@property(nonatomic, copy) NSMutableSet* set;
-
-@property(nonatomic, assign) CGFloat floatNum;
-@property(nonatomic, assign) CGPoint point;
-@property(nonatomic, assign) NSInteger integer;
+// 可变类型不能用 copy，会崩溃！
+@property(nonatomic, strong) NSMutableString* str;
+@property(nonatomic, strong) NSMutableArray* arr;
+@property(nonatomic, strong) NSMutableDictionary* dic;
+@property(nonatomic, strong) NSMutableSet* set;
 ```
 
 在 category 中添加 property 要用到 `objc_setAssociatedObject`，其中 `objc_AssociationPolicy` 常用的有三种：
@@ -100,7 +104,11 @@ If you’ve been developing for iOS at all, you’ll notice that all properties 
 
 # 7. Instance Variables
 
-属性是成员变量的供外部访问的接口。在对象内部读取数据时，应直接读取实例变量。
+A good compromise is to write instance variables using the setter and to read using direct access. Doing so has the benefit of fast reading and not losing the control of writing via properties.
+
+Within initializers and dealloc, always read and write data directly through instance variables, because subclasses could override the setter.
+
+You will need to read data through properties when that data is being lazily initialized.
 
 # 8. Object Equality
 
@@ -111,13 +119,13 @@ NSObject 协议中有两个用于判断对象是否相等的关键方法：
 - (NSUInteger)hash;
 ```
 
-如果两个对象相等，其 hash 值必须相同；但两个 hash 值相同的对象不一定相等。
+The default implementations of these methods from the NSObject class itself work such that two objects are equal if and only if their pointer values are exactly the same.
 
-默认的 `isEqual` 比较的是内存地址，这对于我们来说没有什么意义。
+哈希值在对象被加入哈希表时会用到（例如添加至 NSSet、设置为 NSDictionary 的 key 时）。在判断元素是否相等时，会首先判断 hash 值是否相等，hash 值不同的两个对象直接判断不相等；如果相等，再调用 `isEqual:`。
 
-hash 方法什么时候被调用? hash 方法在对象被添加至 NSSet 和设置为 NSDictionary 的 key 时会调用。NSSet 和 NSDictionary 在判断成员是否相等时，会首先判断 hash 值是否相等，hash 值不同的两个对象直接判断不相等；如果相等，再调用 `isEqual:`。
+默认的哈希方法直接返回了内存地址，所以总是不同的。如果只实现了 `isEqual:` 而不实现 `hash`，那么即使我们定义了 object a is equals to object b，他们还是可以被放在一个集合里面，这不符合我们的定义。
 
-默认的哈希方法直接返回了内存地址，所以总是不同的。如果只实现了 `isEqual:` 而不实现 `hash`，那么即使我们定义了 object a is equals to object b，他们还是可以被放在 NSSet 里面，或者作为 NSDictionary 的 key，这不符合我们的定义。
+哈希值是用作计算元素在哈希表中的位置的。如果两个对象相等，其 hash 值必须相同；但两个 hash 值相同的对象不一定相等。两个不同的元素哈希值相同，这种情况称为哈希冲突。
 
 # 9. Class Cluster
 
@@ -148,10 +156,10 @@ Calling a function in C uses "static binding", which means that the function bei
 Every method of an Objective-C object can be thought of as a simple C function, whose prototype is of the following form:
 
 ```c
-<return_type> Class_selector(id self, SEL _cmd, parameters)
+<return_type> Class_selector(id self, SEL _cmd, parameters);
 ```
 
-> Note that the prototype is strangely similar to the `objc_msgSend` function itself. This is no coincidence. It makes jumping to the method simpler and can make good use of tail-call optimizations. Tail-call optimization occurs when the last thing a function does is call another function. Instead of pushing a new stack frame, the compiler can emit code to jump to the next function. This can be done only if the final thing a function does is call another function and does not need to use the return value for anything. Using this optimization is crucial for `objc_msgSend` because without it, the stack trace would show `objc_msgSend` right before every Objective-C method. Also, stack overflow would occur prematurely.
+Note that the prototype is strangely similar to the `objc_msgSend` function itself. This is no coincidence. It makes jumping to the method simpler and can make good use of tail-call optimizations. Tail-call optimization occurs when the last thing a function does is call another function. Instead of pushing a new stack frame, the compiler can emit code to jump to the next function. This can be done only if the final thing a function does is call another function and does not need to use the return value for anything. Using this optimization is crucial for `objc_msgSend` because without it, the stack trace would show `objc_msgSend` right before every Objective-C method. Also, stack overflow would occur prematurely.
 
 但调用哪个方法是完全运行时决定的，甚至可以在运行时改变。
 
@@ -167,7 +175,7 @@ id returnValue = [receiver selector:params];
 id returnValue = objc_msgSend(receiver, @selector(messageName:), params);
 ```
 
-The **selector** combined with the parameters is known as the message. A **selector** is the name that refers to a method. The term **selector** is often used interchangeably with the term **method**.
+The selector combined with the parameters is known as the message. A selector is the name that refers to a method. The term **selector** is often used interchangeably with the term **method**.
 
 The `objc_msgSend` function calls the correct method, depending on the type of the receiver and the selector. In order to do this, the function:
 
@@ -183,11 +191,34 @@ The `objc_msgSend` function calls the correct method, depending on the type of t
 
 开发者在编写自己的类时，可于转发过程中设置挂钩，用于执行预定的逻辑。
 
-1. Dynamic Method Resolution 动态方法解析：首先，调用 `+(BOOL)resolveInstanceMethod:(SEL)selector`。表示这个类是否能新增一个实例方法处理这个 selector。这个方法在实现与 Core Data 有关的 @dynamic 属性时经常被用到。
+1\. Dynamic Method Resolution 动态方法解析：首先，调用 `+(BOOL)resolveInstanceMethod:(SEL)selector`。表示这个类是否能新增一个实例方法处理这个 selector。这个方法在实现与 Core Data 有关的 @dynamic 属性时经常被用到。
 
-2. Replacement Receiver 替补接收者：第二次尝试处理一个未知的 selector，是看有没有替补的消息接受者，方法是 `-(id)forwardingTargetForSelector:(SEL)selector` 一个对象可能在内部拥有多个对象，在这个方法中返回实际处理消息的对象，在外部看来好像它自己处理这个消息一样。
+```objc
++ (BOOL) resolveInstanceMethod:(SEL)aSEL
+{
+    if (aSEL == @selector(resolveThisMethodDynamically))
+    {
+          class_addMethod([self class], aSEL, (IMP) dynamicMethodIMP, "v@:");
+          return YES;
+    }
+    return [super resolveInstanceMethod:aSel];
+}
+```
 
-3. Full forward mechanism：如果以上都不能处理消息，最后一个方法就是通过创建一个 `NSInvocation` 对象，包装着未被处理的消息，然后调用 `-(void)forwardInvocation:(NSInvocation*)invocation`。并向上转发，如果继承关系里的所有父类都没有处理，那么最后，NSObject 的 `doesNotRecognizeSelector:` 方法会抛出一个异常。
+2\. Replacement Receiver 替补接收者：第二次尝试处理一个未知的 selector，是看有没有替补的消息接受者，方法是 `-(id)forwardingTargetForSelector:(SEL)selector` 一个对象可能在内部拥有多个对象，在这个方法中返回实际处理消息的对象，在外部看来好像它自己处理这个消息一样。
+
+3\. Full forward mechanism：如果以上都不能处理消息，最后一个方法就是通过创建一个 `NSInvocation` 对象，包装着未被处理的消息，然后调用 `-(void)forwardInvocation:(NSInvocation*)invocation`。并向上转发，如果继承关系里的所有父类都没有处理，那么最后，NSObject 的 `doesNotRecognizeSelector:` 方法会抛出一个异常。
+
+```objc
+- (void)forwardInvocation:(NSInvocation *)invocation
+{
+    SEL aSelector = [invocation selector];
+    if ([friend respondsToSelector:aSelector])
+        [invocation invokeWithTarget:friend];
+    else
+        [super forwardInvocation:invocation];
+}
+```
 
 注意，消息转发是需要开销的，而且越往后的步骤开销越大。
 
@@ -215,30 +246,44 @@ Being able to add logging functionality by method swizzling can be a very useful
 
 Method Swizzling can be used to great advantage, as it can be used to change functionality in classes for which you don't have the source code, without having to subclass and override methods.
 
-```swift
-    func swizzle(_ originalSelector: Selector, _ swizzledSelector: Selector) {
-        guard let originalMethod = class_getInstanceMethod(self, originalSelector),
-            let swizzledMethod = class_getInstanceMethod(self, swizzledSelector) else {
-            return
-        }
+```objc
+@interface Demo (Yell) // category 中实现
 
-        let didAddMethod = class_addMethod(self, originalSelector, method_getImplementation(swizzledMethod), method_getTypeEncoding(swizzledMethod))
-        if didAddMethod {
-            class_replaceMethod(self, swizzledSelector, method_getImplementation(originalMethod), method_getTypeEncoding(originalMethod))
+#import "objc/Runtime.h"
+
+@implementation Demo (Yell)
+
+// 2. 交换方法应在+load方法
++(void)load{
+    // 3. 交换方法应该放到 dispatch_once 中执行
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        Method originalMethod = class_getInstanceMethod([self class], @selector(hello));
+        Method swizzledMethod = class_getInstanceMethod([self class], @selector(yell_hello));
+        // 1. 避免交换父类方法（父类实现了，子类没实现）
+        BOOL didAddMethod = class_addMethod([self class],
+                                            @selector(hello),
+                                            method_getImplementation(swizzledMethod),
+                                            method_getTypeEncoding(swizzledMethod));
+        if (didAddMethod) {
+            class_replaceMethod([self class],
+                                @selector(yell_hello),
+                                method_getImplementation(originalMethod),
+                                method_getTypeEncoding(originalMethod));
         } else {
-            method_exchangeImplementations(originalMethod, swizzledMethod)
+            method_exchangeImplementations(originalMethod, swizzledMethod);
         }
-    }
+    });
+}
 
-    func doSwizzle() {
-        swizzle(#selector(viewWillAppear(_:)), #selector(newViewWillAppear(_:)))
-    }
-
-    @objc func newViewWillAppear(_ animated: Bool) {
-        self.newViewWillAppear(animated)
-        logBehaviorPath()
-    }
+// 4. 交换的分类方法应该添加自定义前缀，避免冲突
+-(void)yell_hello {
+    // 5. 交换的分类方法应调用原实现
+    [self yell_hello];
+    NSLog(@"Yell hello!");
+}
 ```
+
 
 A class's method list contains a list of selector names to implementation mappings, telling the dynamic messaging system where to find the implementation of a given method.
 

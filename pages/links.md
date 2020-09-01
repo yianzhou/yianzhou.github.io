@@ -1,5 +1,5 @@
 ---
-permalink: link
+permalink: links
 ---
 
 工具类：

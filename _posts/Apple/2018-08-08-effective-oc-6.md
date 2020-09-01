@@ -1,5 +1,5 @@
 ---
-title: 'Effective Objective-C (6) Block and GCD'
+title: "Effective Objective-C (6) Block and GCD"
 categories: [Effective Objective-C]
 ---
 
@@ -12,50 +12,11 @@ Blocks are lexical closures for C, C++, and Objective-C. When it captures a vari
 
 默认情况下，块捕获的变量，是不能在块中修改的，不过可以在声明中加入`__block`修饰符，就可以修改了。
 
-It is important to remember that `self` is an object and is therefore retained when it is captured by the block. This situation can often lead to retain
-cycles being introduced if the block is itself retained by the same object to which `self` refers.
+It is important to remember that `self` is an object and is therefore retained when it is captured by the block. This situation can often lead to retain cycles being introduced if the block is itself retained by the same object to which `self` refers.
 
-### 全局块、栈块、堆块
-
-When blocks are defined, the region of memory they occupy is allocated on the **stack**. This means that the block is valid only within the scope in which it is defined. For example, the following code is **dangerous**:
-
-```
-void (^block)();
-if ( /* some condition */ ) {
-    block = ^{
-        NSLog(@"Block A");
-    };
-} else {
-    block = ^{
-        NSLog(@"Block B");
-    };
-}
-block();
-```
-
-So each block is guaranteed to be valid only within its respective if-statement section. To solve this problem, blocks can be copied from the stack to the heap by sending the block the `copy` message.
-
-```
-void (^block)();
-if ( /* some condition */ ) {
-    block = [^{
-        NSLog(@"Block A");
-    } copy];
-} else {
-    block = [^{
-        NSLog(@"Block B");
-    } copy];
-}
-block();
-```
+When blocks are defined, the region of memory they occupy is allocated on the **stack**. Blocks can be copied from the stack to the heap by sending the block the `copy` message.
 
 Global blocks are another category, along with stack and heap blocks. Blocks that don’t capture any state, such as variables from the enclosing scope, do not need any state to run. The entire region of memory these blocks use is known in full at compile time. These blocks can be declared as global.
-
-```
-void (^hello)(void) = ^ {
-    NSLog(@"hello, world!");
-};
-```
 
 ## 38: Create typedefs for Common Block Types
 
@@ -103,7 +64,7 @@ _lock = [[NSLock alloc] init];
 
 Recursive locks are also available through NSRecursiveLock, allowing for one thread to take out the same lock multiple times without causing a deadlock.
 
-这两种方法都很好，不过也有缺陷，有可能会遇到死锁，效率也不高。而且即使使用了同步块/锁，也不能保证 get 时的线程安全，因为在两次 get 中间可能有其他线程进行了 set。
+As an aside, you should be aware that although this goes some way to ensuring thread safety, it does not ensure absolute thread safety of the object. Rather, access to the property is atomic. You are guaranteed to get valid results when using the property, but if you call the getter multiple times from the same thread, you may not necessarily get the same result each time. Other threads may have written to the property between accesses.
 
 那么，更好的方案是使用 GCD，它能更简单、高效地为代码加锁。使用串行队列，将读取和写入操作都放在同一个队列里，即可保证数据同步。如此，全部加锁任务都交由 GCD 处理，而 GCD 是在相当深的底层实现的，安全且效率很高。
 

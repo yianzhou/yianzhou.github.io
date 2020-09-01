@@ -27,13 +27,29 @@ It forces Xcode to run the script everytime.
 
 # 问题：pod 连接慢、安装/更新失败等
 
-删除主库并重新拉取：
+```
+[!] Failed to connect to GitHub to update the CocoaPods/Specs specs repo - Please check if you are offline, or that GitHub is down
+```
+
+主要解决方法：更新 Ruby、CocoaPods、openssl 版本。
+
+```zsh
+brew install ruby
+ruby --version
+export PATH=/usr/local/Cellar/ruby/2.7.1_2/bin:$PATH
+which openssl
+brew upgrade openssl
+export PATH="/usr/local/opt/openssl/bin:$PATH"
+brew link openssl --force
+```
+
+删除主库并重新添加：
 
 ```
 pod repo remove master
 pod setup
 cd ~/.cocoapods/repos
-git clone --depth=1 https://github.com/CocoaPods/Specs.git master
+pod repo add master https://github.com/CocoaPods/Specs.git
 ```
 
 # 通过 CocoaPods 集成 Framework

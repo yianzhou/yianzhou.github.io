@@ -6,6 +6,8 @@ categories: [Development]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
+[Describe how to listen for page updates in TabBar and TabBarView when using DefaultTabController](https://github.com/flutter/flutter/issues/53155#issuecomment-639178606)
+
 延时执行：
 
 ```dart

@@ -26,3 +26,5 @@ _drafts
 
 .bundle/
 vendor/bundle/ruby/
+
+.vscode

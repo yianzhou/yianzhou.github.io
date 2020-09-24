@@ -1,5 +1,5 @@
 ---
-title: '第三方库代码学习'
+title: "第三方库代码学习"
 categories: [Apple]
 ---
 
@@ -48,3 +48,7 @@ SDWebImageDownloader，负责下载。
 核心 Serialization：AFURLRequestSerialization（请求参数序列化），AFURLResponseSerialization（验证返回数据和反序列化）
 
 辅助：Security（网络通信安全策略模块）、Reachability（网络状态监听模块）、UIKit category（对 iOS 系统 UI 控件的扩展）
+
+# ijkplayer
+
+视频播放的两个步骤：解码（使用 FFmpeg）、渲染（使用 OpenGL ES）

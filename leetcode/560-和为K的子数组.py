@@ -22,17 +22,17 @@ class Solution:
 # f(j) - k = f(i-1)
 # 因为 j > i，当计算 f(j) 时，f(i-1) 是被计算过的，所以我们可以把结果存下来，快速访问！
 class Solution2:
-    def subarraySum(self, nums: [int], k: int) -> int:
-        pre = 0
-        dic = {}
+    def subarraySum(self, nums: List[int], k: int) -> int:
+        N = len(nums)
+        preSum = 0
         res = 0
-        for i in range(len(nums)):
-            pre += nums[i]
-            if pre == k: # f(0...j) == k
-                res += 1
-            if pre - k in dic: # 存在 i, f(i...j) == k, i < j
-                res += dic[pre-k]
-            dic[pre] = dic.get(pre, 0) + 1
+        dic = {}
+        dic[0] = 1 # 代表 preSum[i] - k = 0 这种情况
+        for i in range(N):
+            preSum += nums[i]
+            if preSum - k in dic:
+                res += dic[preSum - k]
+            dic[preSum] = dic.get(preSum, 0) + 1
         return res
 
 print(Solution2().subarraySum([28,54,7,-70,22,65,-6], 100)) 

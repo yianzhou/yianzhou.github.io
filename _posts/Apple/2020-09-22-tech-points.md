@@ -1,0 +1,15 @@
+---
+title: "技术点"
+categories: [Apple]
+---
+
+摘抄自 iOS 进阶课程提炼技术点：
+
+- 熟悉 Runtime 及 RunLoop 底层原理及源码分析
+- 熟悉 KVC、KVO 使用及其底层原理
+- 熟悉多线程原理和 Thread、GCD、Operation 高级使用及源码分析，基于 GCD 自定义 Operation
+- 熟悉网络层的使用（JavaScript 通信、URLProtocol、Socket 等），能够封装网络框架
+- 熟悉项目单元测试（Unit Test、UI Test、异步测试、性能测试、OCMock 依赖注入等）
+- 熟悉项目持续集成、自动化构建
+- 熟悉项目性能优化（内存、卡顿、冷启动、网络、包体大小等优化）
+- 熟悉常用的设计模式及项目架构，熟练掌握组件化开发

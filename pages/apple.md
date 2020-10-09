@@ -6,7 +6,7 @@ permalink: apple
 
 工作常用代码：[Swift Gists](2020/06/02/gist-swift.html)，[OC Gists](2020/06/02/gist-oc.html)，[UIView](2020/05/22/UIView.html)，[UIFont](2020/07/10/UIFont.html)
 
-底层原理：[Runtime](2020/03/28/Runtime.html)，[RunLoop](2020/03/29/RunLoop.html)，[Block](2020/04/22/Block.html)，[Swift 底层](2019/06/24/Swift.html)，[iOS 进阶](2020/08/07/iOS.html)
+底层原理：[Runtime](2020/03/28/Runtime.html)，[RunLoop](2020/03/29/RunLoop.html)，[Block](2020/04/22/Block.html)，[Swift 底层](2019/06/24/Swift.html)，[iOS 进阶](advanced)
 
 多线程：[信号量](2019/12/29/Semaphore.html)
 
@@ -24,9 +24,11 @@ permalink: apple
 
 [简历](2020/09/22/tech-points.html)
 
-[WWDC](2018/11/28/WWDC-视频汇总.html)，[App Extension](2019/02/21/App-Extension.html)
+[iOS 重要更新](ios-update-notes)，[WWDC](2018/11/28/WWDC-视频汇总.html)，[App Extension](2019/02/21/App-Extension.html)
 
 [App Store 相关](2019/01/18/AppStoreConnect.html)
+
+[代码签名](signing)
 
 # Effective Objective-C
 <ul>

@@ -129,15 +129,46 @@ The default implementations of these methods from the NSObject class itself work
 
 # 9. Class Cluster
 
-Use class cluster pattern to hide implementation detail.
+A class cluster is a great way to hide implementation detail behind an abstract base class.
 
-UIButton 使用了工厂模式，可以隐藏 Abstract base class 背后的实现细节：
+An example from UIKit is UIButton. To create a button, you call the following class method:
 
 ```
 + (UIButton*)buttonWithType:(UIButtonType)type;
 ```
 
-在系统的框架中这种模式经常出现，称为 class cluster。
+This **Factory pattern** is one way of creating a class cluster.
+
+Unfortunately, Objective-C gives no language feature for designating that the base class is abstract. In some cases, there is no init family method defined in the interface, which indicates that perhaps instances should not be created directly.
+
+The type of the object returned will depend on the button type passed in. However, all classes inherit from the same base class, UIButton. The point of doing this is that the consumer of the UIButton class does not care about the type of the button being created and the implementation detail behind how that button draws itself. All it needs to know is how to create a button; set attributes, such as the title; and add targets for touch actions.
+
+Class Cluster pattern provides the flexibility of multiple subclasses while keeping a clean interface by hiding them away behind an abstract base class.
+
+There are many class clusters in the system frameworks. Most of the collection classes are class clusters, such as NSArray, and its mutable counterpart, NSMutableArray.
+
+```objc
+    // __NSArrayI
+    NSArray *arr1 = @[@0, @1];
+    NSArray *arr2 = [NSArray arrayWithObjects:@0, @1, nil];
+    NSArray *arr3 = [NSArray arrayWithArray:arr1];
+    NSArray *arr4 = [[NSArray alloc]initWithObjects:@0, @1, nil];
+    NSArray *arr5 = [NSArray arrayWithObjects:@0, nil];
+    
+    // __NSArray0，仅初始化，不含有任何元素的数组
+    NSArray *arr6 = [NSArray array];
+    
+    // __NSSingleObjectArrayI 只有一个元素的数组
+    NSArray *arr7 = @[@0];
+    NSArray *arr8 = [[NSArray alloc]initWithObjects:@1, nil];
+    NSArray *arr9 = [[NSArray alloc]initWithArray:arr7];
+    
+    // __NSPlaceholderArray 占位数组
+    NSArray *arr10 = [NSArray alloc];
+    
+    // __NSArrayM 可变数组
+    NSMutableArray *arr11 = [[NSMutableArray alloc]initWithArray:arr1];
+```
 
 # 10: Associated Objects
 
@@ -259,7 +290,7 @@ Method Swizzling can be used to great advantage, as it can be used to change fun
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         Method originalMethod = class_getInstanceMethod([self class], @selector(hello));
-        Method swizzledMethod = class_getInstanceMethod([self class], @selector(yell_hello));
+        Method swizzledMethod = class_getInstanceMethod([self class], @selector(yellHello));
         // 1. 避免交换父类方法（父类实现了，子类没实现）
         BOOL didAddMethod = class_addMethod([self class],
                                             @selector(hello),
@@ -267,7 +298,7 @@ Method Swizzling can be used to great advantage, as it can be used to change fun
                                             method_getTypeEncoding(swizzledMethod));
         if (didAddMethod) {
             class_replaceMethod([self class],
-                                @selector(yell_hello),
+                                @selector(yellHello),
                                 method_getImplementation(originalMethod),
                                 method_getTypeEncoding(originalMethod));
         } else {
@@ -277,13 +308,12 @@ Method Swizzling can be used to great advantage, as it can be used to change fun
 }
 
 // 4. 交换的分类方法应该添加自定义前缀，避免冲突
--(void)yell_hello {
+-(void)yellHello {
     // 5. 交换的分类方法应调用原实现
-    [self yell_hello];
+    [self yellHello];
     NSLog(@"Yell hello!");
 }
 ```
-
 
 A class's method list contains a list of selector names to implementation mappings, telling the dynamic messaging system where to find the implementation of a given method.
 

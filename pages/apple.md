@@ -18,7 +18,7 @@ permalink: apple
 
 音视频：[AVFoundation](2018/12/21/AVFoundation.html)，[音视频基础知识](2018/12/21/AV.html)
 
-[CocoaPods](2019/07/10/CocoaPods.html)，[第三方库](2020/05/06/frameworks.html)
+[CocoaPods](2019/07/10/CocoaPods.html)，[第三方库](2020/05/06/frameworks.html)，[SDWebImage](SDWebImage)
 
 [数据库](2019/01/07/Core-Data.html)
 

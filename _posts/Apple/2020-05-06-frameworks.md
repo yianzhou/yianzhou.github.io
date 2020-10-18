@@ -50,44 +50,6 @@ categories: [Apple]
 [TimLiu-iOS](https://github.com/Tim9Liu9/TimLiu-iOS) | iOS 开发常用三方库、插件、知名博客等等
 [awesome-ios](https://github.com/vsouza/awesome-ios) | A curated list of awesome iOS ecosystem, including Objective-C and Swift Projects
 
-# SDWebImage
-
-![image](/assets/images/SDWebImageHighLevelDiagram.jpeg)
-
-## UIKit 的 category
-
-保证每个对象有且仅有一个 ImageLoadOperation
-
-这部分所关心的：传入图片 URL，获取图片回调
-
-## 中心管理类：SDWebImageManager
-
-（API 设计范例）可以自定义 Manager，也可以用默认的。
-
-收集任务，封装 SDWebImageCombinedOperation（cacheOperation+loaderOperation），交给具体的类去工作。
-
-## SDImageCache (interface)
-
-内存缓存（哈希表，NSCache）
-
-磁盘缓存（NSFileManager/SQLite）
-
-可以自定义 CachesManager，也可以用默认的 SDImageCachesManager
-
-## SDImageLoader (interface)
-
-SDWebImageDownloader，负责下载。
-
-## SDImageCoder (interface)
-
-负责图片的解码（过程式解码，即边下载、边解码、边渲染）；
-
-支持多种图片格式：JPG、PNG、GIF、WEBP……
-
-## SDImageTransformer (interface)
-
-图片的变形等
-
 # AFNetworking
 
 核心 NSURLSession（网络通信模块）- AFURLSessionManager（封装 NSURLSession）- AFHTTPSessionManager（继承自 AFURLSessionManager，实现了 HTTP 请求相关的配置）
@@ -101,7 +63,7 @@ SDWebImageDownloader，负责下载。
 视频播放的两个步骤：解码（使用 FFmpeg）、渲染（使用 OpenGL ES）
 
 # J2ObjC 的应用举例
- 
+
 主要的业务逻辑、常量、数据对象等都可以复用。
 
 不能重用的主要是必须交由原生代码/库去实现的，比如网络请求、本地存储等，用 Java Abstract Class 表示，在 Android/iOS 分别给予具体实现。

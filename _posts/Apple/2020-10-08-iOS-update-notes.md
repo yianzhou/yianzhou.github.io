@@ -1,7 +1,6 @@
 ---
 title: "iOS 重要更新"
 categories: [Apple]
-permalink: apple/ios-update-notes
 ---
 
 # iOS 14
@@ -52,6 +51,8 @@ iOS 11.2 新增 Apple Pay Cash，可通过 Apple Pay 在亲朋好友间付款、
 iOS 11.3 加入了 iPhone 电池健康（Beta 版）；将北京和上海交通卡添加到“钱包”并使用 Apple Pay 搭乘公共交通；
 
 # iOS 10, iOS 9, iOS 8
+
+iOS 9.0 and macOS 10.11 and later use App Transport Security (ATS) for all HTTP connections made with URLSession. ATS requires that HTTP connections use HTTPS (RFC 2818).
 
 # iOS 7
 

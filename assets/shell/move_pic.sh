@@ -5,9 +5,9 @@ if [ $# -lt 1 ]; then
 fi
 
 path=$1
-filename=$(basename -- ${path})
+filename=$(basename "$path")
 extension="${filename##*.}"
 uuid=$(uuidgen)
-cp -n $path "/Users/zhouyian/Documents/Workspace/yianzhou.github.io/assets/images/$uuid.$extension" # -n: do not overwrite
+cp -n "$path" "/Users/zhouyian/Documents/Workspace/yianzhou.github.io/assets/images/$uuid.$extension" # -n: do not overwrite
 echo "![img](/assets/images/$uuid.$extension)"
 echo "![img](/assets/images/$uuid.$extension)" | pbcopy

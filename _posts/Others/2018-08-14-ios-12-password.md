@@ -1,6 +1,6 @@
 ---
 title:  "iOS 12 密码管理"
-categories: [Others]
+categories: [2019]
 ---
 
 * Do not remove this line (it will not be displayed)
@@ -11,6 +11,7 @@ categories: [Others]
 # 自动填充密码
 
 How it works? AutoFill will:
+
 - Infer login scenario
 - Check eligibility based on associated domains
 - Find user name and password fields
@@ -24,6 +25,7 @@ Deprecated: `SecAddSharedWebCredential()`
 # 自动强密码
 
 AutoFill will:
+
 - Infer the view controller type
 - Check eligibility based on associated domains
 - Detect relevant sign up form elements Suggest a user name

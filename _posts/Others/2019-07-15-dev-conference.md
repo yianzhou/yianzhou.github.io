@@ -1,6 +1,6 @@
 ---
-title: "2019 年开发者大会"
-categories: [Others]
+title: "开发者大会"
+categories: [2019]
 ---
 
 # WWDC

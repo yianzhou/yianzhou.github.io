@@ -200,7 +200,7 @@ print(dateString) // 2020-07-16 15:15:17
 var calendar = Calendar.current
 calendar.timeZone = TimeZone.current
 let dateComponents = calendar.dateComponents([.year, .month, .day], from: now)
-print(dateComponents) // year: 2020 month: 7 day: 16 isLeapMonth: false 
+print(dateComponents) // year: 2020 month: 7 day: 16 isLeapMonth: false
 ```
 
 初始化一个特定日期

@@ -3,6 +3,7 @@ title: "Effective Objective-C (3) Interface and API"
 categories: [Effective Objective-C]
 ---
 
+<!-- prettier-ignore -->
 * Do not remove this line (it will not be displayed)
 {:toc}
 

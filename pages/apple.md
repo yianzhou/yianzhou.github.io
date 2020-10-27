@@ -2,15 +2,11 @@
 permalink: apple
 ---
 
-[macOS]({% post_url apple/2018-12-18-macOS %})
-
-[开发及调试]({% post_url apple/2020-08-07-dev %})
-
-工作常用代码：[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIView]({% post_url apple/2020-05-22-UIView %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})
+[开发及调试]({% post_url apple/2020-08-07-dev %})，[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIView]({% post_url apple/2020-05-22-UIView %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})
 
 底层原理：[Runtime]({% post_url apple/2020-03-28-Runtime %})，[RunLoop]({% post_url apple/2020-03-29-RunLoop %})，[Block]({% post_url apple/2020-04-22-Block %})，[Swift 底层]({% post_url apple/2019-06-24-Swift %})，[iOS 进阶]({% post_url apple/2020-08-07-advanced %})
 
-多线程：[信号量]({% post_url apple/2019-12-29-semaphore %})
+[进程与线程]({% post_url apple/2020-10-23-processes-and-threads %})，[信号量]({% post_url apple/2019-12-29-semaphore %})
 
 [编译过程]({% post_url apple/2020-04-28-compile %})
 
@@ -20,7 +16,7 @@ permalink: apple
 
 音视频：[AVFoundation]({% post_url apple/2018-12-21-AVFoundation %})，[音视频基础知识]({% post_url apple/2018-12-21-audio-video %})
 
-[CocoaPods]({% post_url apple/2019-07-10-CocoaPods %})，[第三方库]({% post_url apple/2020-05-06-frameworks %})，[SDWebImage]({% post_url apple/2020-10-14-SDWebImage %}), [Alamofire]({% post_url apple/2020-10-19-Alamofire %})
+[CocoaPods]({% post_url apple/2019-07-10-CocoaPods %})，[第三方库]({% post_url apple/2020-05-06-frameworks %})，[SDWebImage]({% post_url apple/2020-10-14-SDWebImage %})，[Alamofire]({% post_url apple/2020-10-19-Alamofire %})
 
 [简历]({% post_url apple/2020-09-22-resume %})
 
@@ -29,6 +25,8 @@ permalink: apple
 [App Store 相关]({% post_url apple/2019-01-18-appstore-connect %})
 
 [代码签名]({% post_url apple/2020-10-10-signing %})
+
+[macOS]({% post_url apple/2018-12-18-macOS %})
 
 # Effective Objective-C
 

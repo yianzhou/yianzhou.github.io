@@ -1355,3 +1355,18 @@ class ViewController: UIViewController {
     }
 }
 ```
+
+# SDAnimatedImage
+
+5.0 版本开始，抛弃了 FLAnimatedImage，由框架自行实现。SDAnimatedImage 继承自 UIImage，与 SDAnimatedImageView 配合使用展示动图。
+
+SDAnimatedImageView, by default, will decode and cache the image frames with a buffer (where the buffer size is calculated based on current memory status), when the buffer is out of limit size, the older image frame will be purged to free up memory. This allows you to keep a balance in both CPU & memory.
+
+# SDWebImagePrefetcher
+
+使用：
+
+```swift
+let prefetchURLs = [URL]()
+SDWebImagePrefetcher.shared.prefetchURLs(prefetchURLs)
+```

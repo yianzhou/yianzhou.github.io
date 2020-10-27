@@ -1,0 +1,14 @@
+{
+	"Post URL": {
+		"prefix": "post",
+		"body": [
+			"{% post_url $1 %}"
+		],
+		"description": ""
+	},
+	"Table of contents": {
+		"prefix": "toc",
+		"body": "<!-- prettier-ignore -->\n* Do not remove this line (it will not be displayed)\n{:toc}\n",
+		"description": ""
+	}
+}

@@ -1,0 +1,82 @@
+---
+title: "Auto Layout"
+categories: [Apple]
+---
+
+<!-- prettier-ignore -->
+* Do not remove this line (it will not be displayed)
+{:toc}
+
+参考资料：[WWDC 2018 - High Performance Auto Layout](https://developer.apple.com/videos/play/wwdc2018/220/)
+
+# Render Loop
+
+The Render Loop is the process that runs potentially at 120 times every second. That makes sure that all the content is ready to go for each frame.
+
+举例，我们设置了一个 UILabel 的字体之后，会发生什么？First every view that needs it will receive `updateConstraints()`. And that runs from the leaf most views up to the view hierarchy towards the window. Next, every view receives `layoutSubViews()`. This runs the opposite direction starting from the window going down towards the leaves. Last, every view gets `draw(_:)` if it needs it also from the window towards the leaves.
+
+![img](/assets/images/936C2B28-091F-46AB-8A45-2B12F004E739.png)
+
+The Render Loop consists of three phases -- Update Constraints, Layout, and Display. They all have the exact same purpose and they have exact parallel sets of methods. 这三组方法的目的和效果是一样的，根据苹果工程师的说法，你觉得用哪组舒服就用哪组。
+
+| Update Constraints          | Layout           | Display           |
+| --------------------------- | ---------------- | ----------------- |
+| updateConstraints()         | layoutSubViews() | draw(\_:)         |
+| setNeedsUpdateConstraints() | setNeedsLayout() | setNeedsDisplay() |
+| updateConstraintsIfNeeded() | layoutIfNeeded() |                   |
+
+You should not call `layoutSubviews()` directly. If you want to force a layout update, call the `setNeedsLayout()` method instead to do so. This method makes a note of the request and returns immediately. Because this method does not force an immediate update, but instead waits for the next update cycle, you can use it to invalidate the layout of multiple views before any of those views are updated. This behavior allows you to consolidate all of your layout updates to one update cycle, which is usually better for performance. If you want to update the layout of your views immediately, call the `layoutIfNeeded()` method. If no layout updates are pending, this method exits without modifying the layout or calling any layout-related callbacks.
+
+# Auto Layout
+
+1997 年 Auto Layout 用到的布局算法 Cassowary 被发明了出来；
+
+iOS 6 时，苹果引入了 Auto Layout；
+
+iOS 9 在 Auto Layout 基础上推出了模仿前端 Flexbox 布局思路的 UIStackView；
+
+苹果公司在 WWDC 2018 的 "WWDC 220 Session High Performance Auto Layout" 中介绍说：iOS 12 将大幅提高 Auto Layout 性能，使滑动达到满帧。
+
+使用 Auto Layout 和手写布局的区别，就是多了自动布局引擎（统一管理布局的创建、更新和销毁），以及约束的计算。
+
+iOS 12 之前，Auto Layout 并没有用上 Cassowary 高效修改更新的特性。iOS 12 的 Auto Layout 更多地利用了 Cassowary 算法的界面更新策略，使其真正完成了高效的界面线性策略计算。可以放心使用了。
+
+Auto Layout 拥有一套 Layout Engine，由它来主导页面的布局。App 启动后，主线程的 Run Loop 会一直处于监听状态，当约束发生变化后会触发 Deffered Layout Pass（延迟布局传递），在里面做容错处理（约束丢失等情况）并把 view 标识为 dirty 状态，然后 Run Loop 再次进入监听阶段。当下一次刷新屏幕动作来临（或者是调用 layoutIfNeeded）时，Layout Engine 会从上到下调用 layoutSubviews()，通过 Cassowary 算法计算各个子视图的位置，算出来后将子视图的 frame 从 Layout Engine 拷贝出来，接下来的过程就跟手写 frame 是一样的了。
+
+# 抗拉伸、抗压缩
+
+Content Hugging Priority: 抗拉伸优先级，值越大，越不容易被拉伸（越优先环抱自己）
+
+Content Compression Resistance Priority：抗压缩优先级，值越大，越不容易被压缩。
+
+```c
+|UIImageView|UILabel|UILabel|
+```
+
+两个 Label 都是根据内容自适应动态宽度；当两个 Label 的长度加起来不足屏幕宽度时，Auto Layout 不知道优先拉伸哪一个，此时 Content Hugging Priority 起作用；当两个 Label 的长度加起来超过了屏幕宽度时，Auto Layout 不知道先压缩哪个，此时 Content Compression Resistance Priority 起作用。
+
+# clipsToBounds
+
+By default, when a subview’s visible area extends outside of the bounds of its superview, no clipping of the subview's content occurs. Use the `clipsToBounds` property to change that behavior.
+
+# frame and bounds
+
+The geometry of each view is defined by its frame and bounds properties. The frame property defines the origin and dimensions of the view in the coordinate system of its superview. The bounds property defines the internal dimensions of the view as it sees them and is used almost exclusively in custom drawing code.
+
+# autoresizingMask
+
+`autoresizingMask` is an integer bit mask that determines how the receiver resizes itself when its superview’s bounds change.
+
+When a view’s bounds change, that view automatically resizes its subviews according to each subview’s autoresizing mask. You specify the value of this mask by combining the constants described in UIView.AutoresizingMask using the C bitwise OR operator. Combining these constants lets you specify which dimensions of the view should grow or shrink relative to the superview. The default value of this property is none, which indicates that the view should not be resized at all.
+
+When more than one option along the same axis is set, the default behavior is to distribute the size difference proportionally among the flexible portions. The larger the flexible portion, relative to the other flexible portions, the more it is likely to grow. For example, suppose this property includes the flexibleWidth and flexibleRightMargin constants but does not include the flexibleLeftMargin constant, thus indicating that the width of the view’s left margin is fixed but that the view’s width and right margin may change. Thus, the view appears anchored to the left side of its superview while both the view width and the gap to the right of the view increase.
+
+If the autoresizing behaviors do not offer the precise layout that you need for your views, you can use a custom container view and override its layoutSubviews() method to position your subviews more precisely.
+
+`translatesAutoresizingMaskIntoConstraints` is a Boolean value that determines whether the view’s autoresizing mask is translated into Auto Layout constraints.
+
+If this property’s value is true, the system creates a set of constraints that duplicate the behavior specified by the view’s autoresizing mask. This also lets you modify the view’s size and location using the view’s frame, bounds, or center properties, allowing you to create a static, frame-based layout within Auto Layout.
+
+Note that the autoresizing mask constraints fully specify the view’s size and position; therefore, you cannot add additional constraints to modify this size or position without introducing conflicts. If you want to use Auto Layout to dynamically calculate the size and position of your view, you must set this property to false, and then provide a non ambiguous, nonconflicting set of constraints for the view.
+
+By default, the property is set to true for any view you programmatically create. If you add views in Interface Builder, the system automatically sets this property to false.

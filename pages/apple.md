@@ -10,9 +10,9 @@ permalink: apple
 
 [编译过程]({% post_url apple/2020-04-28-compile %})
 
-[性能优化]({% post_url apple/2020-07-04-performance %})（启动速度、卡顿、崩溃、包体大小、内存优化）
+[性能优化]({% post_url apple/2020-07-04-performance %})（启动速度、卡顿、崩溃、包体大小、内存优化），[启动时长优化]({% post_url apple/2020-10-27-app-launch %})
 
-[动画]({% post_url apple/2018-07-28-animation %})，[图形渲染]({% post_url apple/2020-04-22-graphics %})（离屏渲染、圆角），[Metal]({% post_url apple/2019-01-10-Metal %})，[ARKit]({% post_url apple/2018-12-20-ARKit %})
+[Auto Layout]({% post_url apple/2020-10-27-auto-layout %})，[动画]({% post_url apple/2018-07-28-animation %})，[图形渲染]({% post_url apple/2020-04-22-graphics %})（离屏渲染、圆角），[Metal]({% post_url apple/2019-01-10-Metal %})，[ARKit]({% post_url apple/2018-12-20-ARKit %})
 
 音视频：[AVFoundation]({% post_url apple/2018-12-21-AVFoundation %})，[音视频基础知识]({% post_url apple/2018-12-21-audio-video %})
 

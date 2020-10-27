@@ -4,10 +4,11 @@ if [ $# -lt 1 ]; then
     exit 1
 fi
 
+BASEDIR=$(dirname "$0")
 path=$1
 filename=$(basename "$path")
 extension="${filename##*.}"
 uuid=$(uuidgen)
-cp -n "$path" "/Users/zhouyian/Documents/Workspace/yianzhou.github.io/assets/images/$uuid.$extension" # -n: do not overwrite
+cp -n "$path" $BASEDIR/../images/$uuid.$extension # -n: do not overwrite
 echo "![img](/assets/images/$uuid.$extension)"
 echo "![img](/assets/images/$uuid.$extension)" | pbcopy

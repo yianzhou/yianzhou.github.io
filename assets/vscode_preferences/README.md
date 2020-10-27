@@ -1,1 +1,1 @@
-copy to "~/Library/Application Support/Code/User"
+copy to "$HOME/Library/Application Support/Code/User"

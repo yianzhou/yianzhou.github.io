@@ -2,7 +2,7 @@
 permalink: apple
 ---
 
-[开发及调试]({% post_url apple/2020-08-07-dev %})，[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIView]({% post_url apple/2020-05-22-UIView %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})
+[开发及调试]({% post_url apple/2020-08-07-dev %})，[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})
 
 底层原理：[Runtime]({% post_url apple/2020-03-28-Runtime %})，[RunLoop]({% post_url apple/2020-03-29-RunLoop %})，[Block]({% post_url apple/2020-04-22-Block %})，[Swift 底层]({% post_url apple/2019-06-24-Swift %})，[iOS 进阶]({% post_url apple/2020-08-07-advanced %})
 
@@ -12,7 +12,7 @@ permalink: apple
 
 [性能优化]({% post_url apple/2020-07-04-performance %})（启动速度、卡顿、崩溃、包体大小、内存优化），[启动时长优化]({% post_url apple/2020-10-27-app-launch %})
 
-[Auto Layout]({% post_url apple/2020-10-27-auto-layout %})，[动画]({% post_url apple/2018-07-28-animation %})，[图形渲染]({% post_url apple/2020-04-22-graphics %})（离屏渲染、圆角），[Metal]({% post_url apple/2019-01-10-Metal %})，[ARKit]({% post_url apple/2018-12-20-ARKit %})
+[UIView]({% post_url apple/2020-10-27-uiview %})，[动画]({% post_url apple/2018-07-28-animation %})，[图形渲染]({% post_url apple/2020-04-22-graphics %})（离屏渲染、圆角），[Metal]({% post_url apple/2019-01-10-Metal %})，[ARKit]({% post_url apple/2018-12-20-ARKit %})
 
 音视频：[AVFoundation]({% post_url apple/2018-12-21-AVFoundation %})，[音视频基础知识]({% post_url apple/2018-12-21-audio-video %})
 

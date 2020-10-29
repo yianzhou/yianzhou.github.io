@@ -7,6 +7,14 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
+# GCD
+
+[WWDC 2017 - Modernizing Grand Central Dispatch Usage](https://developer.apple.com/videos/play/wwdc2017/706)
+
+FIFO 队列。串行队列一个接一个执行；并行队列，按 FIFO 原则出列，可以并发执行，返回顺序无法预计。
+
+需注意，避免因为并发而创建过多的线程，会占用大量内存和资源。
+
 # IPC 跨进程通信
 
 1\. AirDrop

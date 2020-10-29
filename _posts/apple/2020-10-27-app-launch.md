@@ -7,6 +7,16 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
+# WWDC
+
+[WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
+
+[WWDC 2017 - App Startup Time: Past, Present, and Future](https://developer.apple.com/videos/play/wwdc2017/413)
+
+[WWDC 2016 - Optimizing App Startup Time](https://developer.apple.com/videos/play/wwdc2016/406/)
+
+[WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
+
 # 冷启动的各个阶段
 
 ## main() 函数执行前
@@ -35,6 +45,6 @@ main() 函数执行后的阶段，指的是从 main() 函数执行开始，到 a
 
 # 检查、监控方法耗时情况
 
-一、Instruments 的分析工具 "App Launch"、"Time Profiler"，参考 [WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)，Time Profiler 定时抓取主线程上的方法调用堆栈，计算一段时间里各个方法的耗时。
+一、Instruments 的分析工具 "App Launch"、"Time Profiler"，Time Profiler 定时抓取主线程上的方法调用堆栈，计算一段时间里各个方法的耗时。
 
 二、对 objc_msgSend 方法进行 hook 来掌握所有方法的执行耗时。利用开源库 [fishhook](https://github.com/facebook/fishhook) 和汇编实现。可参考戴铭的开源项目 [GCDFetchFeed](https://github.com/ming1016/GCDFetchFeed)，在需要检测耗时的地方调用 [SMCallTrace start]，结束时调用 stop 和 save 就可以打印出方法的调用层级和耗时了。

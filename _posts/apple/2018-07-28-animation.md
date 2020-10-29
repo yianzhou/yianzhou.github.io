@@ -137,25 +137,25 @@ import UIKit
 class MyViewController: UIViewController {
 
     private let shipLayer = CALayer()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         /* 我们创建一个宇宙飞船，它会沿着我们指定的路径运动 */
         shipLayer.frame = CGRect(x: 0, y: 0, width: 64, height: 64)
         shipLayer.position = CGPoint(x: 0, y: 150) // start point
         shipLayer.contents = UIImage(named: "train")!.cgImage
         self.view.layer.addSublayer(shipLayer)
-        
+
         demo()
     }
-    
+
     func demo() {
         // create path
         let path = UIBezierPath()
         path.move(to: CGPoint(x: 0, y: 150))
         path.addCurve(to: CGPoint(x: 300, y: 150), controlPoint1: CGPoint(x: 75, y: 0), controlPoint2: CGPoint(x: 225, y: 300))
-        
+
         // draw the path using CAShapeLayer 实际可以不用画出来，这里是为了方便验证
         let pathLayer = CAShapeLayer()
         pathLayer.path = path.cgPath
@@ -163,7 +163,7 @@ class MyViewController: UIViewController {
         pathLayer.strokeColor = UIColor.red.cgColor
         pathLayer.lineWidth = 3.0
         self.view.layer.addSublayer(pathLayer)
-        
+
         // create the key frame animation
         let animation = CAKeyframeAnimation(keyPath: "position") // the key path of the property that you want to animate on the layer.
         animation.duration = 5.0
@@ -174,12 +174,12 @@ class MyViewController: UIViewController {
         // set timing function 设置时间函数让动画效果更接近真实，当时用 UIView 动画时，默认就是 EaseInEaseOut 效果，但当我们自己创建显式动画时，需要自己设置
         // 如果內置的时间函数不能满足要求，还可以自己定义贝塞尔曲线，或者利用关键帧实现完全自定义的时间函数
         animation.timingFunction = CAMediaTimingFunction(name: CAMediaTimingFunctionName.easeInEaseOut)
-        
+
         // Determines if the receiver’s presentation is frozen or removed once its active duration has completed.
         animation.fillMode = CAMediaTimingFillMode.forwards
         // Determines if the animation is removed from the target layer’s animations upon completion.
         animation.isRemovedOnCompletion = false
-        
+
         shipLayer.add(animation, forKey: nil)
         shipLayer.position = CGPoint(x: 300, y: 150) // end point
     }
@@ -190,11 +190,11 @@ class MyViewController: UIViewController {
         // An array of objects that specify the keyframe values to use for the animation.
         tintAnimation.values = [UIColor.red.cgColor,
                                 UIColor.green.cgColor,
-                                UIColor.blue.cgColor] 
+                                UIColor.blue.cgColor]
         // An optional array of NSNumber objects that define the time at which to apply a given keyframe segment.
-        tintAnimation.keyTimes = [0.0, 0.9, 1.0] 
+        tintAnimation.keyTimes = [0.0, 0.9, 1.0]
         shipLayer.add(tintAnimation, forKey: nil)
-        
+
         /*
          @keyTimes: If the calculationMode is set to linear or cubic or discrete, the first value in the array must be 0.0 and the last value must be 1.0.
          */
@@ -229,26 +229,26 @@ Property animations only work on animatable **properties** of a layer, so if you
 import UIKit
 
 class MyViewController: UIViewController {
-    
+
     private var imageView: UIImageView!
     private var imageNames = ["aut.jpg", "decep.jpg"]
     private var imageIndex = 0
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
         imageView = UIImageView(frame: CGRect(origin: CGPoint.zero, size: CGSize(width: 400, height: 400)))
         imageView.image = UIImage(named: imageNames[0])
         imageIndex = 0
         self.view.addSubview(imageView)
-        
+
         let button = UIButton(type: .system)
         button.frame = CGRect(origin: CGPoint(x: 100, y: 400), size: CGSize(width: 100, height: 30))
         button.setTitle("Transform", for: .normal)
         button.addTarget(self, action: #selector(transformByCA), for: .touchUpInside)
         self.view.addSubview(button)
     }
-    
+
     @objc func transformByCA() {
         imageIndex = imageIndex > 0 ? 0 : 1
         let transition = CATransition()
@@ -256,7 +256,7 @@ class MyViewController: UIViewController {
         self.imageView.layer.add(transition, forKey: nil)
         self.imageView.image = UIImage(named: imageNames[imageIndex])
     }
-    
+
     @objc func transformByUIKit() {
         imageIndex = imageIndex > 0 ? 0 : 1
         UIView.transition(with: self.imageView, duration: 0.5, options: .transitionCrossDissolve, animations: {
@@ -287,16 +287,6 @@ iOS 4+，使用代码块的方式，实际还是对 CATransaction 的封装。
 
 iOS 10+，使用 `UIViewPropertyAnimator`，实现出了很多以前要用显式动画才能做到的特性，比如时间曲线等。
 
-# 其它
+# Lottie
 
-## Open GL in iOS
-
-Open GL ES 全称 Open Graphics Library for Embedded Systems，是 [Open GL](https://www.opengl.org/) 的子集。Open GL 是跨编程语言、跨平台、行业领域中最为广泛接纳的 2D/3D 图形 API。
-
-根据苹果文档的描述，[Open GL ES 已经正式弃用了](https://developer.apple.com/library/archive/documentation/3DDrawing/Conceptual/OpenGLES_ProgrammingGuide/Introduction/Introduction.html#//apple_ref/doc/uid/TP40008793?changes=_3)，相关的如 [GLKit](https://developer.apple.com/documentation/glkit)、Core Animation 里面的 [CAEAGLLayer](https://developer.apple.com/documentation/quartzcore/caeagllayer) 也都被弃用了。
-
-[Metal](https://developer.apple.com/metal/) 才是未来的方向。
-
-## 媒体播放
-
-[AVPlayerLayer](https://developer.apple.com/documentation/avfoundation/avplayerlayer) 是 CALayer 的子类，但它属于 AVFoundation 框架。它是高级接口 [AVPlayerView](https://developer.apple.com/documentation/avkit/avplayerview) 和 [AVPlayerViewController](https://developer.apple.com/documentation/avkit/avplayerviewcontroller) 的底层实现。单纯的 AVPlayerLayer 不提供播放控制，而高级接口提供了这些控制。
+动画设计师使用 After Effects，安装插件 Bodymovin，制作动画并输出 JSON。

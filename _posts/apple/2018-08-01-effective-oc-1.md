@@ -25,7 +25,34 @@ Objective-C 不需要像 C 一样使用 malloc 和 free 来分配或释放堆区
 
 ## 2. Forward Declaring
 
-尽量在类的头文件中使用向前声明来提及别的类，降低类之间的耦合。
+To compile anything that imports EOCPerson.h, you don’t need to know the full details about what an EOCEmployer is. All you need to know is that a class called EOCEmployer exists.
+
+```objc
+#import <Foundation/Foundation.h>
+@class EOCEmployer;
+  
+@interface EOCPerson : NSObject
+@property (nonatomic, copy) NSString *firstName;
+@property (nonatomic, copy) NSString *lastName;
+@property (nonatomic, strong) EOCEmployer *employer;
+
+@end
+```
+
+The implementation file for EOCPerson would then need to import the header file of EOCEmployer, as it would need to know the full interface details of the class in order to use it.
+
+```objc
+#import "EOCPerson.h" #import "EOCEmployer.h"
+@implementation EOCPerson
+
+@end
+```
+
+Deferring the import to where it is required enables you to limit the scope of what a consumer of your class needs to import. In the example, if EOCEmployer.h were imported in EOCPerson.h, anything importing EOCPerson.h would also import all of EOCEmployer.h. If the chain of importing continues, you could end up importing a lot more than you bargained for, which will certainly increase compile time.
+
+Using forward declaration also alleviates the problem of both classes referring to each other.
+
+When writing an import into a header file, always ask yourself whether it’s really necessary. If the import can be forward declared, prefer that. If the import is for something used in a property, instance variable, or protocol conformance and can be moved to the class-continuation category (see Item 27), prefer that. Doing so will keep compile time as low as possible and reduce interdependency. 加快编译速度、外部使用者依赖尽可能少的头文件
 
 ## 3. Literal Syntax
 

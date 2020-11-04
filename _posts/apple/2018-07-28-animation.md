@@ -270,6 +270,12 @@ class MyViewController: UIViewController {
 
 `timeOffset` 可以让你手动控制动画进程，通过设置 speed 为 0，可以禁用动画的自动播放，然后使用 `timeOffset` 来回显示动画序列。这可以使得运用手势来手动控制动画变得很简单。
 
+## 坐标系
+
+<https://developer.apple.com/documentation/uikit/uibezierpath/1624358-bezierpathwitharccenter>
+
+![image](https://docs-assets.developer.apple.com/published/741002b545/radians_circle_4de280d3-557c-4d69-8f12-efed200dbbd3.jpg)
+
 # UIView
 
 UIView 可以实现动画的属性包括：

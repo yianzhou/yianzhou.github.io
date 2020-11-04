@@ -9,8 +9,6 @@ categories: [Effective Objective-C]
 
 # 6. Property
 
-@property 的本质是什么？@property = ivar + getter + setter;
-
 You can declare instance variables in the public interface for a class as follows:
 
 ```objc
@@ -27,25 +25,27 @@ You can declare instance variables in the public interface for a class as follow
 
 This will be familiar if you are coming from the worlds of Java or C++, where you can define the scope of instance variables. However, this technique is rarely used in modern Objective-C.
 
-The problem with the approach is that the layout of an object is defined at compile time. 对象的内存布局在编译期就已经确定了。 Whenever the `_firstName` variable is accessed, the compiler hardcodes the offset into the memory region where the object is stored.
+The problem with the approach is that the layout of an object is defined at compile time. 对象的内存布局在编译期就已经确定了 Whenever the `_firstName` variable is accessed, the compiler hardcodes the offset into the memory region where the object is stored.
 
-This works fine until you add another instance variable. Code that makes use of calculating the offset at compile time will break unless recompiled when the class definition changes. For example, code may exist in a library that uses an old class definition. If linked with code using the new class definition, there will be an incompatibility at runtime. To overcome this problem, languages have invented a variety of techniques. The approach Objective-C has taken is to make instance variables special variables held by **class objects** storing the offset. Then at runtime, the offset is looked up so that if the class definition changes, the offset stored is updated; whenever an access to the instance variable is made, the correct offset is used.
+This works fine until you add another instance variable. Code that makes use of calculating the offset at compile time will break unless recompiled when the class definition changes. For example, code may exist in a library that uses an old class definition. If linked with code using the new class definition, there will be an incompatibility at runtime. To overcome this problem, languages have invented a variety of techniques. The approach Objective-C has taken is to make instance variables special variables held by class objects storing the offset. Then at runtime, the offset is looked up so that if the class definition changes, the offset stored is updated; whenever an access to the instance variable is made, the correct offset is used.
 
 You can even add instance variables to classes at runtime. This is known as the nonfragile Application Binary Interface (ABI). An ABI defines, among other things, the conventions for how code should be generated. The nonfragile ABI also means that instance variables can be defined in a class-continuation category or in the implementation. So you don’t have to have all your instance variables declared in the interface anymore, and you therefore don’t leak internal information about your implementation in the public interface.（[Swift ABI 的稳定](https://onevcat.com/2019/02/swift-abi/))
 
-```
-@interface EOCPerson: NSObject
-@property NSString *firstName;
-@property NSString *lastName;
+```objc
+@interface Person : NSObject
+@property (nonatomic, copy, readonly) NSString *firstName;
+@property (nonatomic, copy, readonly) NSString *lastName;
 @end
 ```
 
 属性是 Objective-C 的特性，让编译器自动生成与属性相关的存取方法。使用“点语法”等同于调用了存取方法。
 
-```
-EOCPerson* per = [[Person alloc] init];
-per.firstName = @"Bob"; //setter
-NSLog("%@", per.firstName); //getter
+@property 的本质是什么？@property = ivar + getter + setter;
+
+```objc
+Person* person = [[Person alloc] init];
+person.firstName = @"Bob";
+NSLog("%@", person.firstName);
 ```
 
 实际上编译器使用 `_属性名` 如 `_firstName` 作为真正的实例变量，并生成了存取方法。使用 @synthesize 可以更改这个默认的名字，但不建议这么做。
@@ -61,6 +61,12 @@ Atomic accessors include locks to ensure atomicity. This means that if two threa
 If you’ve been developing for iOS at all, you’ll notice that all properties are declared nonatomic. The reason is that, historically, the locking introduces such an overhead on iOS that it becomes a performance problem. Usually, atomicity is not required anyway, since it does not ensure thread safety, which usually requires a deeper level of locking. For example, even with atomicity, a single thread might read a property multiple times immediately after one another and obtain different values if another thread is writing to it at the same time. Therefore, you will usually want to use nonatomic properties on iOS. But on Mac OS X, you don’t usually find that atomic property access is a performance bottleneck.
 
 二、读写权限（readwrite 或 readonly）
+
+`@property (nonatomic, copy, readonly) NSString *firstName;`
+
+readonly 的属性有办法修改吗？有，[Key-Value Coding](https://developer.apple.com/library/archive/documentation/Cocoa/Conceptual/KeyValueCoding/index.html)
+
+`[person setValue:@"Yian" forKey:"firstName"];`
 
 三、内存管理（ARC）
 
@@ -95,7 +101,7 @@ If you’ve been developing for iOS at all, you’ll notice that all properties 
 @property(nonatomic, strong) NSMutableSet* set;
 ```
 
-在 category 中添加 property 要用到 `objc_setAssociatedObject`，其中 `objc_AssociationPolicy` 常用的有三种：
+添加关联对象 `objc_setAssociatedObject`，其中 `objc_AssociationPolicy` 常用的有三种：
 
 - OBJC_ASSOCIATION_ASSIGN
 - OBJC_ASSOCIATION_COPY_NONATOMIC
@@ -115,18 +121,18 @@ You will need to read data through properties when that data is being lazily ini
 
 NSObject 协议中有两个用于判断对象是否相等的关键方法：
 
-```
+```objc
 - (BOOL)isEqual:(id)object;
 - (NSUInteger)hash;
 ```
 
 The default implementations of these methods from the NSObject class itself work such that two objects are equal if and only if their pointer values are exactly the same.
 
-哈希值在对象被加入哈希表时会用到（例如添加至 NSSet、设置为 NSDictionary 的 key 时）。在判断元素是否相等时，会首先判断 hash 值是否相等，hash 值不同的两个对象直接判断不相等；如果相等，再调用 `isEqual:`。
+哈希值是用作计算元素在哈希表中的位置的。如果两个对象相等，其 hash 值必须相同；但两个 hash 值相同的对象不一定相等。两个不同的元素哈希值相同，这种情况称为哈希冲突。
+
+哈希值在对象被加入哈希表时会用到（例如添加至 NSSet、设置为 NSDictionary 的 key 时）。在判断元素是否相等时，会首先判断 hash 值是否相等，hash 值不同的两个对象直接判断不相等；如果相等，再调用 `isEqual:`
 
 默认的哈希方法直接返回了内存地址，所以总是不同的。如果只实现了 `isEqual:` 而不实现 `hash`，那么即使我们定义了 object a is equals to object b，他们还是可以被放在一个集合里面，这不符合我们的定义。
-
-哈希值是用作计算元素在哈希表中的位置的。如果两个对象相等，其 hash 值必须相同；但两个 hash 值相同的对象不一定相等。两个不同的元素哈希值相同，这种情况称为哈希冲突。
 
 # 9. Class Cluster
 
@@ -134,7 +140,7 @@ A class cluster is a great way to hide implementation detail behind an abstract 
 
 An example from UIKit is UIButton. To create a button, you call the following class method:
 
-```
+```objc
 + (UIButton*)buttonWithType:(UIButtonType)type;
 ```
 
@@ -155,25 +161,25 @@ There are many class clusters in the system frameworks. Most of the collection c
     NSArray *arr3 = [NSArray arrayWithArray:arr1];
     NSArray *arr4 = [[NSArray alloc]initWithObjects:@0, @1, nil];
     NSArray *arr5 = [NSArray arrayWithObjects:@0, nil];
-    
+
     // __NSArray0，仅初始化，不含有任何元素的数组
     NSArray *arr6 = [NSArray array];
-    
+
     // __NSSingleObjectArrayI 只有一个元素的数组
     NSArray *arr7 = @[@0];
     NSArray *arr8 = [[NSArray alloc]initWithObjects:@1, nil];
     NSArray *arr9 = [[NSArray alloc]initWithArray:arr7];
-    
+
     // __NSPlaceholderArray 占位数组
     NSArray *arr10 = [NSArray alloc];
-    
+
     // __NSArrayM 可变数组
     NSMutableArray *arr11 = [[NSMutableArray alloc]initWithArray:arr1];
 ```
 
 # 10: Associated Objects
 
-```
+```c
 id objc_getAssociatedObject(id object, void *key);
 void objc_removeAssociatedObjects(id object);
 ```
@@ -183,39 +189,71 @@ since they can easily introduce hard-to-find bugs.
 
 # 11: objc_msgSend
 
-Calling a function in C uses "static binding", which means that the function being called is known at compile time. **Dynamic binding** is the mechanism by which methods in Objective-C are invoked. The method to call when a message is sent to an object in Objective-C is resolved at runtime.
-
-Every method of an Objective-C object can be thought of as a simple C function, whose prototype is of the following form:
+Since Objective-C is a superset of C, it’s a good idea to start by understanding that calling a function in C uses what is known as static binding, which means that the function being called is known at compile time. For example, consider the following code:
 
 ```c
-<return_type> Class_selector(id self, SEL _cmd, parameters);
+#import <stdio.h>
+void printHello() {
+   printf("Hello, world!\n");
+}
+void printGoodbye() {
+    printf("Goodbye, world!\n");
+}
+void doTheThing(int type) {
+    if (type == 0) {
+        printHello();
+    } else {
+        printGoodbye();
+    }
+    return 0;
+}
 ```
 
-Note that the prototype is strangely similar to the `objc_msgSend` function itself. This is no coincidence. It makes jumping to the method simpler and can make good use of tail-call optimizations. Tail-call optimization occurs when the last thing a function does is call another function. Instead of pushing a new stack frame, the compiler can emit code to jump to the next function. This can be done only if the final thing a function does is call another function and does not need to use the return value for anything. Using this optimization is crucial for `objc_msgSend` because without it, the stack trace would show `objc_msgSend` right before every Objective-C method. Also, stack overflow would occur prematurely.
+Ignoring inlining, when this is compiled, printHello and printGoodbye are known, and the compiler emits instructions to directly call the functions. The addresses of the functions are effectively hardcoded into the instructions. Consider now if that had been written like this:
 
-但调用哪个方法是完全运行时决定的，甚至可以在运行时改变。
-
-对函数的调用：
-
+```c
+#import <stdio.h>
+void printHello() {
+   printf("Hello, world!\n");
+}
+void printGoodbye() {
+    printf("Goodbye, world!\n");
+}
+void doTheThing(int type) {
+    void (*fnc)();
+    if (type == 0) {
+        fnc = printHello;
+    } else {
+        fnc = printGoodbye;
+    }
+    fnc();
+    return 0;
+}
 ```
-id returnValue = [receiver selector:params];
-```
 
-实际上是向对象发送消息：
+Here, dynamic binding is used, since the function being called is unknown until runtime. The difference in the instructions the compiler emits will be that in the first example, a function call is made inside both the if and the else statements. In the second example, only a single function call is made but at the cost of having to read the address of which function to call rather than being hardcoded.
 
-```
-id returnValue = objc_msgSend(receiver, @selector(messageName:), params);
-```
+**Dynamic binding** is the mechanism by which methods in Objective-C are invoked when a message is passed to an object. All methods are plain old C functions under the hood, but which one is invoked for a given message is decided entirely at runtime and can even change throughout the course of an app running, making Objective-C truly dynamic. 调用哪个方法是运行时决定的，甚至可以在运行时改变
 
-The selector combined with the parameters is known as the message. A selector is the name that refers to a method. The term **selector** is often used interchangeably with the term **method**.
+A message being called on an object looks like this:
 
-The `objc_msgSend` function calls the correct method, depending on the type of the receiver and the selector. In order to do this, the function:
+`id returnValue = [someObject messageName:parameter];`
 
-- looks through the list of methods implemented by the receiver's class and, if it finds a method that matches the selector name, jumps to its implementation.
-- If not, the function traverse up the inheritance hierarchy to find the method to jump to.
-- If no matching method is found, **message forwarding** kicks in.
+In this example, someObject is referred to as the receiver, and messageName is the selector. The selector combined with the parameters is known as the message. When it sees this message, the compiler turns it into a standard C function call to the function at the heart of messaging, objc_msgSend, which has the following prototype:
 
-`objc_msgSend` caches the result in a fast map, one for each class, so that future message to the same class and selector combination are executed quickly.
+`void objc_msgSend(id self, SEL cmd, ...)`
+
+This is a variadic 变长参数 function that takes two or more parameters. The first parameter is the receiver, the second parameter is the selector (SEL is the type of a selector), and the remaining parameters are the message parameters in the order they appear. A selector is the name that refers to a method. The term selector is often used interchangeably with the term method. The preceding example message will be converted to the following:
+
+`id returnValue = objc_msgSend(receiver, @selector(messageName:), params);`
+
+The objc_msgSend function calls the correct method, depending on the type of the receiver and the selector. In order to do this, the function looks through the list of methods implemented by the receiver’s class and, if it finds a method that matches the selector name, jumps to its implementation. If not, the function traverses up the inheritance hierarchy to find the method to jump to. If no matching method is found, message forwarding kicks in.
+
+objc_msgSend caches the result in a fast map, one for each class, so that future messages to the same class and selector combination are executed quickly. Even this fast path is slower than for a statically bound function call but not by very much once the selector is cached; in reality, message dispatch is not the bottleneck in an application.
+
+The preceding stands only for certain messages. Additional functions are exposed by the Objective-C runtime to handle certain edge cases: `objc_msgSend_stret`、`objc_msgSend_fpret`、`objc_msgSendSuper`.
+
+Every method of an Objective-C object can be thought of as a simple C function, whose prototype is similar to the `objc_msgSend` function itself. This is no coincidence. It makes jumping to the method simpler and can make good use of tail-call optimizations. Tail-call optimization occurs when the last thing a function does is call another function. Instead of pushing a new stack frame, the compiler can emit code to jump to the next function. This can be done only if the final thing a function does is call another function and does not need to use the return value for anything. Using this optimization is crucial for `objc_msgSend` because without it, the stack trace would show `objc_msgSend` right before every Objective-C method. Also, stack overflow would occur prematurely.
 
 # 12. Message Forwarding
 

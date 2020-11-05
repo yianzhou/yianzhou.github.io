@@ -257,80 +257,140 @@ Every method of an Objective-C object can be thought of as a simple C function, 
 
 # 12. Message Forwarding
 
-如果消息接受者没有实现所调用方法，一直到它的继承关系中最顶层的父类也没有实现这个方法，那么消息转发就发生了。
+A class can understand only messages that it has been programmed to understand, through implementing methods. But it’s not a compile-time error to send a message to a class that it doesn’t understand, since methods can be added to classes at runtime so the compiler has no way of knowing whether a method implementation is going to exist. When it receives a method that it doesn’t understand, an object goes through message forwarding.
 
-开发者在编写自己的类时，可于转发过程中设置挂钩，用于执行预定的逻辑。
+当消息接受者无法响应一个 selector，消息转发就发生了。
 
-1\. Dynamic Method Resolution 动态方法解析：首先，调用 `+(BOOL)resolveInstanceMethod:(SEL)selector`。表示这个类是否能新增一个实例方法处理这个 selector。这个方法在实现与 Core Data 有关的 @dynamic 属性时经常被用到。
+## resolveInstanceMethod
 
-```objc
-+ (BOOL) resolveInstanceMethod:(SEL)aSEL
-{
-    if (aSEL == @selector(resolveThisMethodDynamically))
-    {
-          class_addMethod([self class], aSEL, (IMP) dynamicMethodIMP, "v@:");
-          return YES;
-    }
-    return [super resolveInstanceMethod:aSel];
-}
-```
+The first method that’s called when a message is passed to an object that it doesn’t understand is a class method on the object’s class:
 
-2\. Replacement Receiver 替补接收者：第二次尝试处理一个未知的 selector，是看有没有替补的消息接受者，方法是 `-(id)forwardingTargetForSelector:(SEL)selector` 一个对象可能在内部拥有多个对象，在这个方法中返回实际处理消息的对象，在外部看来好像它自己处理这个消息一样。
+`+ (BOOL)resolveInstanceMethod:(SEL)selector`
 
-3\. Full forward mechanism：如果以上都不能处理消息，最后一个方法就是通过创建一个 `NSInvocation` 对象，包装着未被处理的消息，然后调用 `-(void)forwardInvocation:(NSInvocation*)invocation`。并向上转发，如果继承关系里的所有父类都没有处理，那么最后，NSObject 的 `doesNotRecognizeSelector:` 方法会抛出一个异常。
+Using this approach requires the implementation of the method to already be available, ready to plug in to the class dynamically. This method is often used to implement @dynamic properties such as occurs in CoreData for accessing properties of NSManagedObjects.
 
-```objc
-- (void)forwardInvocation:(NSInvocation *)invocation
-{
-    SEL aSelector = [invocation selector];
-    if ([friend respondsToSelector:aSelector])
-        [invocation invokeWithTarget:friend];
-    else
-        [super forwardInvocation:invocation];
-}
-```
+## forwardingTargetForSelector
+
+第二次尝试处理一个未知的 selector，是看有没有替补的消息接受者。
+
+ `-(id)forwardingTargetForSelector:(SEL)selector`
+
+使用此方法，可以提供多重继承的某些好处。一个对象可能在内部拥有多个对象，在这个方法中返回实际处理消息的对象，在外部看来好像它自己处理这个消息一样。
+
+## forwardInvocation
+
+如果以上都不能处理消息，最后一个方法就是通过创建一个 `NSInvocation` 对象，包装着未被处理的消息，然后调用
+
+`-(void)forwardInvocation:(NSInvocation*)invocation`
+
+并向上转发，如果继承关系里的所有父类都没有处理，那么最后，NSObject 的 `doesNotRecognizeSelector:` 方法会抛出一个异常。
 
 注意，消息转发是需要开销的，而且越往后的步骤开销越大。
 
-To illustrate how forwarding can be useful, the following example shows the use of dynamic method resolution to provide @dynamic properties. Consider an object that allows you to store any object in it, much like a dictionary, but provide access through properties.（可以通过点语法访问）
+## 例子
 
-使用 @dynamic 声明属性：
+Consider an object that allows you to store any object in it, much like a dictionary, but provides access through properties.
 
-![image]({{"/assets/images/Screen Shot 2018-08-02 at 14.54.03.png"}}){:width="600px"}
+```objc
+#import <Foundation/Foundation.h>
+@interface EOCAutoDictionary : NSObject
+@property (nonatomic, strong) NSString *string;
+@property (nonatomic, strong) NSNumber *number;
+@property (nonatomic, strong) NSDate *date;
+@property (nonatomic, strong) id opaqueObject;
+@end
+```
 
-动态生成 getter 和 setter：
+Internally, the values for each property will be held in a dictionary, declaring the properties as @dynamic such that instance variables and accessors are not automatically created for them:
 
-![image]({{"/assets/images/Screen Shot 2018-08-02 at 14.54.08.png"}}){:width="600px"}
+```objc
+#import "EOCAutoDictionary.h"
+#import <objc/runtime.h>
+@interface EOCAutoDictionary ()
+@property (nonatomic, strong) NSMutableDictionary *backingStore;
+@end
 
-可以通过点语法访问：
+@implementation EOCAutoDictionary
+@dynamic string, number, date, opaqueObject;
+- (id)init {
+    if ((self = [super init])) {
+        _backingStore = [NSMutableDictionary new];
+    }
+    return self;
+}
 
-![image]({{"/assets/images/Screen Shot 2018-08-02 at 14.54.37.png"}}){:width="600px"}
++ (BOOL)resolveInstanceMethod:(SEL)selector {
+    NSString *selectorString = NSStringFromSelector(selector);
+    if ([selectorString hasPrefix:@"set"]) {
+        // "v@:@" is the type encoding of the implementation.
+        // type encoding is made up from characters representing the return type, followed by the parameters that the function takes.
+        class_addMethod(self, selector, (IMP)autoDictionarySetter, "v@:@");
+    } else {
+        class_addMethod(self, selector, (IMP)autoDictionaryGetter, "@@:");
+    }
+    return YES;
+}
 
-A similar approach is employed by `CALayer`. This approach allows `CALayer` to be a key value coding-compliant container class, meaning that it can store a value against any key. `CALayer` uses this ability to allow the addition of custom animatable properties whereby the storage of the property values is handled directly by the base class, but the property definition can be added in a subclass.
+id autoDictionaryGetter(id self, SEL _cmd) {
+    // Get the backing store from the object
+    EOCAutoDictionary *typedSelf = (EOCAutoDictionary*)self;
+    NSMutableDictionary *backingStore = typedSelf.backingStore;
+    // The key is simply the selector name
+    NSString *key = NSStringFromSelector(_cmd);
+    // Return the value
+    return [backingStore objectForKey:key];
+}
+
+void autoDictionarySetter(id self, SEL _cmd, id value) {
+    // Get the backing store from the object
+    EOCAutoDictionary *typedSelf = (EOCAutoDictionary*)self;
+    NSMutableDictionary *backingStore = typedSelf.backingStore;
+    /** The selector will be for example, "setOpaqueObject:".
+    * We need to remove the "set", ":" and lowercase the first * letter of the remainder.
+    */
+    NSString *selectorString = NSStringFromSelector(_cmd);
+    NSMutableString *key = [selectorString mutableCopy];
+    // Remove the ':' at the end
+    [key deleteCharactersInRange:NSMakeRange(key.length - 1, 1)]; // Remove the 'set' prefix
+    [key deleteCharactersInRange:NSMakeRange(0, 3)];
+    // Lowercase the first character
+    NSString *lowercaseFirstChar = [[key substringToIndex:1] lowercaseString];
+    [key replaceCharactersInRange:NSMakeRange(0, 1) withString:lowercaseFirstChar];
+    if (value) {
+        [backingStore setObject:value forKey:key];
+    } else {
+        [backingStore removeObjectForKey:key];
+    }
+}
+@end
+```
+
+A similar approach is employed by CALayer, part of the CoreAnimation framework on iOS. This approach allows CALayer to be a key-value-coding-compliant container class, meaning that it can store a value against any key. CALayer uses this ability to allow the addition of custom animatable properties whereby the storage of the property values is handled directly by the base class, but the property definition can be added in a subclass.
 
 # 13. Method Swizzling
 
 方法交换会对类的所有实例都生效。
+
+A class’s method list contains a list of **selector names to implementation mappings**, telling the dynamic messaging system where to find the implementation of a given method. The implementations are stored as function pointers called IMPs and have the following prototype:
+
+`id (*IMP)(id, SEL, ...)`
 
 Being able to add logging functionality by method swizzling can be a very useful **debugging** feature. It can be used to debug opaque methods.
 
 Method Swizzling can be used to great advantage, as it can be used to change functionality in classes for which you don't have the source code, without having to subclass and override methods.
 
 ```objc
-@interface Demo (Yell) // category 中实现
-
 #import "objc/Runtime.h"
+@implementation Demo (Yell) // category 中实现
 
-@implementation Demo (Yell)
-
-// 2. 交换方法应在+load方法
+// 1. 交换方法应在+load方法
 +(void)load{
-    // 3. 交换方法应该放到 dispatch_once 中执行
+    // 2. 交换方法应该放到 dispatch_once 中执行
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         Method originalMethod = class_getInstanceMethod([self class], @selector(hello));
         Method swizzledMethod = class_getInstanceMethod([self class], @selector(yellHello));
-        // 1. 避免交换父类方法（父类实现了，子类没实现）
+        // 3. 首先尝试添加方法实现（针对父类实现了，子类没实现的情况）
         BOOL didAddMethod = class_addMethod([self class],
                                             @selector(hello),
                                             method_getImplementation(swizzledMethod),
@@ -346,33 +406,25 @@ Method Swizzling can be used to great advantage, as it can be used to change fun
     });
 }
 
-// 4. 交换的分类方法应该添加自定义前缀，避免冲突
+// 4. 交换的方法应该添加前缀，避免命名冲突
 -(void)yellHello {
-    // 5. 交换的分类方法应调用原实现
+    // 5. 根据需要，交换的分类方法可以调用原实现
     [self yellHello];
     NSLog(@"Yell hello!");
 }
-```
-
-A class's method list contains a list of selector names to implementation mappings, telling the dynamic messaging system where to find the implementation of a given method.
-
-The implementations are stored as function pointers called **IMPs** and having the following prototype:
-
-```
-id (*IMP)(id, SEL, ...)
 ```
 
 # 14. Class Object
 
 每个 Objective-C 对象实例都是指向某块内存的指针。`id`类型是指向`objc_object`结构体的指针。
 
-```
+```c
 typedef struct objc_object *id;
 ```
 
 `objc_object`结构体有一个`isa`指针，`Class`类型是指向`objc_class`结构体的指针。
 
-```
+```c
 struct objc_object {
     Class _Nonnull isa  OBJC_ISA_AVAILABILITY;
 };
@@ -382,7 +434,7 @@ typedef struct objc_class *Class;
 
 `objc_class`结构体有两个特殊的指针，一个是`isa`，指向它的`metaclass`；一个是`super_class`，指向它的父类。
 
-```
+```c
 struct objc_class {
     Class _Nonnull isa;
     Class _Nullable super_class;

@@ -58,15 +58,20 @@ For nonfatal errors, either provide a delegate method to handle errors or offer 
 
 Implement the `NSCopying` protocol if your object will need to be copied.
 
-![img](/assets/images/234150_BaPq_1774273.png)
+浅复制（浅拷贝、指针拷贝、shallow copy）：没有产生新对象，仍然指向同一块内存空间。
 
-只有源对象和副本对象都不可变时，才是浅复制，其他都是深复制。
+1. 源对象和副本对象是同一对象；
+2. 源对象引用计数 +1，相当于做一次 retain 操作。
 
 深复制（深拷贝、内容拷贝、deep copy）：产生了新对象，存放在一块新的内存空间，与原来的对象互不影响。
 
 1. 源对象和副本对象是不同的两个对象；
 2. 源对象引用计数不变，副本对象计数为 1（因为是新产生的）。
 3. 集合的深复制只复制容器本身，集合内的元素还是原来的元素（指向同一块内存）。
+
+![img](/assets/images/234150_BaPq_1774273.png)
+
+只有源对象和副本对象都不可变时，才是浅复制，其他都是深复制。
 
 ```objc
 Demo *demo1 = [[Demo alloc]init];
@@ -76,9 +81,3 @@ NSMutableArray *mutableArr = [arr mutableCopy];
 NSLog(@"%p, %p", arr, mutableArr); // 集合深拷贝
 NSLog(@"%p, %p", [arr objectAtIndex:0], [mutableArr objectAtIndex:0]); // 集合中的对象还是指向同一块内存
 ```
-
-浅复制（浅拷贝、指针拷贝、shallow copy）：没有产生新对象，仍然指向同一块内存空间。
-
-1. 源对象和副本对象是同一对象；
-
-2. 源对象引用计数 +1，相当于做一次 retain 操作。

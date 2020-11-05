@@ -7,6 +7,8 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
+[periphery](https://github.com/peripheryapp/periphery) - A tool to identify unused code in Swift projects.
+
 # AFNetworking
 
 核心 NSURLSession（网络通信模块）- AFURLSessionManager（封装 NSURLSession）- AFHTTPSessionManager（继承自 AFURLSessionManager，实现了 HTTP 请求相关的配置）

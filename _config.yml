@@ -1,15 +1,6 @@
-theme: jekyll-theme-minimal
 title: hahaha
-description: Feel free to bookmark this to keep an eye on my updates
-defaults:
-  -
-    scope:
-      path: "" # an empty string here means all files in the project
-      type: "posts, pages, posts, drafts"
-    values:
-      layout: "default"
-github:
-  zip_url: https://codeload.github.com/yianzhou/yianzhou.github.io/zip/master
-  tar_url: https://codeload.github.com/yianzhou/yianzhou.github.io/tar.gz/master
-# google_analytics: UA-122096793-1
-show_downloads: "true"
+author:
+  name: yianzhou
+  email: yianzhou2@gmail.com
+description: ""
+theme: minima

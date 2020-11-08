@@ -1,4 +1,5 @@
 ---
+title: Dev
 permalink: dev
 ---
 

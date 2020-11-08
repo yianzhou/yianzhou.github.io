@@ -1,7 +1,6 @@
 ---
 title: "SDWebImage"
 categories: [Apple]
-permalink: apple/SDWebImage
 ---
 
 <!-- prettier-ignore -->

@@ -49,17 +49,26 @@ Handler blocks have the benefit of being associated with an object directly rath
 
 When designing an API that uses handler blocks, consider passing a queue as a parameter, to designate the queue on which the block should be enqueued.
 
+Another consideration when writing handler-based APIs stems from the fact that some code is required to run on a certain thread. For instance, any UI work in both Cocoa and Cocoa Touch must happen on the main thread. Therefore, it is sometimes prudent to allow the consumer of a handler-based API to decide on which queue the handler is run. One such API is NSNotificationCenter. If no queue is given, the default behavior is invoked, and the block is run on the thread that posted the notification.
+
+```objc
+- (id<NSObject>)addObserverForName:(NSNotificationName)name
+                            object:(id)obj
+                             queue:(NSOperationQueue *)queue
+                        usingBlock:(void (^)(NSNotification *note))block;
+```
+
 # 40: Avoid Retain Cycles Introduced by Blocks
 
 The key is to think about what objects a block may capture and therefore retain. If any of these can be an object that retains the block, either directly or indirectly, you will need to think about how to break the retain cycle at the correct moment.
 
 # 41: Prefer Dispatch Queues to Locks for Synchronization
 
-Sometimes in Objective-C, you will come across code that you’re having trouble with because it’s being accessed from multiple threads. This situation usually calls for the application of some sort of synchronization through the use of locks.（需要使用锁来实现同步机制）Before GCD, there were two ways to achieve this:
+Sometimes in Objective-C, you will come across code that you’re having trouble with because it’s being accessed from multiple threads. This situation usually calls for the application of some sort of synchronization through the use of locks. Before GCD, there were two ways to achieve this:
 
 一、built-in synchronization block
 
-```
+```objc
 - (void)synchronizedMethod {
     @synchronized(self) {
         // 对 self 使用同步锁
@@ -67,11 +76,13 @@ Sometimes in Objective-C, you will come across code that you’re having trouble
 }
 ```
 
-This construct automatically creates a lock based on the given object and waits on that lock until it executes the code contained in the block. At the end of the code block, the lock is released. In the example, the object being synchronized against is self. Each synchronized block will execute serially across all such blocks.
+This construct automatically creates a lock based on the given object and waits on that lock until it executes the code contained in the block. At the end of the code block, the lock is released. In the example, the object being synchronized against is self. This construct is often a good choice, as it ensures that each instance of the object can run its own synchronizedMethod independently. However, overuse of @synchronized(self) can lead to inefficient code, as each synchronized block will execute serially across all such blocks. If you overuse synchronization against self, you can end up with code waiting unnecessarily on a lock held by unrelated code.
+
+这段话我的理解是，对 self 加锁之后，假设这个对象被很多人持有，分别在不同的线程调用对象的 synchronizedMethod 方法，那么因为锁的存在这些方法会顺序执行，不会互相干扰。
 
 二、use the `NSLock` object directly
 
-```
+```objc
 _lock = [[NSLock alloc] init];
 
 - (void)synchronizedMethod {
@@ -81,17 +92,15 @@ _lock = [[NSLock alloc] init];
 }
 ```
 
-Recursive locks are also available through NSRecursiveLock, allowing for one thread to take out the same lock multiple times without causing a deadlock.
+Recursive locks are also available through `NSRecursiveLock`, allowing for one thread to take out the same lock multiple times without causing a deadlock.
 
-As an aside, you should be aware that although this goes some way to ensuring thread safety, it does not ensure absolute thread safety of the object. Rather, access to the property is atomic. You are guaranteed to get valid results when using the property, but if you call the getter multiple times from the same thread, you may not necessarily get the same result each time. Other threads may have written to the property between accesses.
+Both of these approaches are fine but come with their own drawbacks. For example, synchronization blocks can suffer from deadlock under extreme circumstances and are not necessarily efficient. Direct use of locks can be troublesome when it comes to deadlocks.
 
 那么，更好的方案是使用 GCD，它能更简单、高效地为代码加锁。使用串行队列，将读取和写入操作都放在同一个队列里，即可保证数据同步。如此，全部加锁任务都交由 GCD 处理，而 GCD 是在相当深的底层实现的，安全且效率很高。
 
-```
+```swift
 let myQueue = DispatchQueue(label: "com.hello.myQueue")
-
 var myString = "Hello"
-
 func getSomeString() -> String {
     var str = ""
     myQueue.sync {
@@ -99,7 +108,6 @@ func getSomeString() -> String {
     }
     return str
 }
-
 func setSomeString(_ string: String) {
     myQueue.sync {
         myString = string
@@ -109,7 +117,7 @@ func setSomeString(_ string: String) {
 
 `set`方法不需要返回值，所以不一定要是同步的，也可以异步执行：
 
-```
+```swift
 func setSomeString(_ string: String) {
     myQueue.async {
         myString = string
@@ -121,11 +129,9 @@ func setSomeString(_ string: String) {
 
 多个`get`方法可以并发执行，但`get`和`set`方法不能并发执行，利用这个特点，还可以写出更快的代码。
 
-```
+```swift
 let concurrentQueue = DispatchQueue.global()
-
 var conString = "Hello"
-
 func getConString() -> String {
     var str = ""
     concurrentQueue.sync {
@@ -133,7 +139,6 @@ func getConString() -> String {
     }
     return str
 }
-
 func setConString(_ string: String) {
     let workItem = DispatchWorkItem(qos: .default, flags: .barrier) {
         conString = string
@@ -148,19 +153,41 @@ func setConString(_ string: String) {
 
 # 43: GCD and Operation Queues
 
-In fact, from iOS 4 and Mac OS X 10.6 onward, operation queues use GCD under the hood.
+The first difference to note is that GCD is a pure C API, whereas operation queues are Objective-C objects.
 
-The first difference to note is that GCD is a pure C API, whereas operation queues are Objective-C objects. In GCD, the task that is queued is a block, which is a fairly lightweight data structure. Operations, on the other hand, are Objective-C objects and are therefore more heavyweight. That
-said, GCD is not always the approach of choice. Sometimes, this overhead is minimal, and the benefits of using full objects far outweigh the downsides. These queues can also do much more complex things
-that would require additional code on top of GCD.
+In GCD, the task that is queued is a block, which is a fairly lightweight data structure. Operations, on the other hand, are Objective-C objects and are therefore more heavyweight.
+
+That said, GCD is not always the approach of choice. Sometimes, this overhead is minimal, and the benefits of using full objects far outweigh the downsides. These queues can also do much more complex things that would require additional code on top of GCD.
 
 - Cancelling operations
 - Operation dependencies
-- Key-Value Observing of operation properties: such as `isCancelled` to determine whether it has been cancelled and `isFinished` to determine whether it has finished. 当这些值变更时，会得到通知。
+- Key-Value Observing of operation properties: such as `isCancelled` to determine whether it has been cancelled and `isFinished` to determine whether it has finished.
 - Operation priorities
 - Reuse of operations. `BlockOperation`的子类在执行时可以充分利用自己的成员变量和方法，这些封装好的`Operation`可以在代码中多次使用。
 
 # 44: Use Dispatch Groups to Take Advantage of Platform Scaling
+
+Dispatch groups are a GCD feature that allows you to easily group tasks. You can then wait on that set of tasks to finish or be notified through a callback when the set of tasks has finished.
+
+```objc
+dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+dispatch_group_t dispatchGroup = dispatch_group_create();
+for (id object in collection) {
+    dispatch_group_async(dispatchGroup,
+                         queue,
+                         ^{ [object performTask]; });
+}
+dispatch_group_wait(dispatchGroup, DISPATCH_TIME_FOREVER); // 等待
+```
+
+If the current thread should not be blocked, you can use the notify function instead of waiting:
+
+```objc
+dispatch_queue_t notifyQueue = dispatch_get_main_queue();
+dispatch_group_notify(dispatchGroup,
+                      notifyQueue,
+                      ^{ /* Continue processing after completing tasks */ });
+```
 
 GCD automatically creates new threads or reuses old ones as it sees fit to service blocks on a queue. In the case of concurrent queues, this can be multiple threads, meaning that multiple blocks are executed concurrently. This leaves you to code your business logic and not have to write any kind of complex scheduler to handle concurrent tasks.
 

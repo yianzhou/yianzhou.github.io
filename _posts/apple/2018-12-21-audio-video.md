@@ -3,6 +3,10 @@ title: "音视频基础知识"
 categories: [Apple]
 ---
 
+<!-- prettier-ignore -->
+* Do not remove this line (it will not be displayed)
+{:toc}
+
 # 音频
 
 声音被看成是一种波动的能量，主要用三个参数表征：频率（单位时间内的振动次数，单位为 Hz）、振幅（发声物体在震动时，偏离中心位置的幅度）、波形（声波的波形形状决定了声音的音色）

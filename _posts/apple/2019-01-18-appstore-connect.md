@@ -1,7 +1,11 @@
 ---
-title:  "App Store Connect"
+title: "App Store Connect"
 categories: [Apple]
 ---
+
+<!-- prettier-ignore -->
+* Do not remove this line (it will not be displayed)
+{:toc}
 
 [生成营销活动链接](https://analytics.itunes.apple.com/#/campaigngenerator)
 

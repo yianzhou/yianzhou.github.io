@@ -1,7 +1,11 @@
 ---
-title:  "Appsflyer 安装归因"
+title: "Appsflyer 安装归因"
 categories: [Development]
 ---
+
+<!-- prettier-ignore -->
+* Do not remove this line (it will not be displayed)
+{:toc}
 
 # Mobile Attribution
 
@@ -23,6 +27,7 @@ AppsFlyer’s NativeTrackTM provides marketers with the insights they need to un
 ![image](https://massets.appsflyer.com/wp-content/uploads/2016/10/26142157/soccer2-for-website-01.jpg)
 
 How it works?
+
 - 3,000+ integrated partners
 - Certified Network Integrations: server-to-server integrations with Facebook, Google, Twitter, Snapchat and Pinterest, etc.
 - View-Through Attribution: attribute an install to a media source based an ad being viewed, even if it wasn’t clicked.
@@ -31,11 +36,11 @@ How it works?
 
 # Deep Linking
 
- A link is sometimes referred to as a URL or URI (Universal Resource Locator / Indicator), refers to a file with a address.
+A link is sometimes referred to as a URL or URI (Universal Resource Locator / Indicator), refers to a file with a address.
 
 In programming, a URI (Uniform Resource Identifier) is just a string of characters to identify the name of a resource on a network. The most common URI out there is the URL.
 
-Example Link ‘https://www.walmart.com’. This is a URL or “link”. It has two main components, separated by a colon.
+Example Link ‘<https://www.walmart.com>’. This is a URL or “link”. It has two main components, separated by a colon.
 
 Protocol Identifier (Scheme): ‘https’ – this is the protocol identifier or the scheme.
 

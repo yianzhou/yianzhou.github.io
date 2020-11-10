@@ -3,6 +3,10 @@ title: "AVFoundation"
 categories: [Apple]
 ---
 
+<!-- prettier-ignore -->
+* Do not remove this line (it will not be displayed)
+{:toc}
+
 [Learning-AV-Foundation 示例代码](https://github.com/tapharmonic/Learning-AV-Foundation)
 
 AVFoundation Stack on iOS:

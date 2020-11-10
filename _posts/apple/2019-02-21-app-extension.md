@@ -1,7 +1,11 @@
 ---
-title:  "App Extension 开发"
+title: "App Extension 开发"
 categories: [Apple]
 ---
+
+<!-- prettier-ignore -->
+* Do not remove this line (it will not be displayed)
+{:toc}
 
 iOS and macOS define several types of **app extensions**, each of which is tied to a single, well-scoped area of the system. A system area that enables extensions is called an **extension point**.
 
@@ -9,9 +13,9 @@ An app extension is different from an app. Although you must use an app to conta
 
 You create an app extension by adding a new **target** to an app. You can add multiple extension targets to a single app (an app that contains one or more extensions is called a **containing app**).
 
-An app that a user employs to choose an app extension is called a **host app**. An app extension communicates primarily with its host app. Any app extension and its containing app can access shared data in a privately defined shared container. 
+An app that a user employs to choose an app extension is called a **host app**. An app extension communicates primarily with its host app. Any app extension and its containing app can access shared data in a privately defined shared container.
 
->  A Today widget (**and no other app extension type**) can ask the system to open its containing app by calling the `openURL:completionHandler:` method of the `NSExtensionContext` class.
+> A Today widget (**and no other app extension type**) can ask the system to open its containing app by calling the `openURL:completionHandler:` method of the `NSExtensionContext` class.
 
 ![image](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/Art/detailed_communication_2x.png)
 
@@ -27,7 +31,6 @@ When a host app sends a request to an app extension, it specifies an extension *
 
 If your app extension initiates a background `NSURLSession` task, you must also set up a shared container that both the extension and its containing app can access. Use the `sharedContainerIdentifier` property of the `NSURLSessionConfiguration` class to specify an identifier for the shared container so that you can access it later.
 
-[开启完全访问](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/CustomKeyboard.html#//apple_ref/doc/uid/TP40014214-CH16-SW1) 定位服务、地址簿、与宿主APP共享容器、网络请求/云输入等……
+[开启完全访问](https://developer.apple.com/library/archive/documentation/General/Conceptual/ExtensibilityPG/CustomKeyboard.html#//apple_ref/doc/uid/TP40014214-CH16-SW1) 定位服务、地址簿、与宿主 APP 共享容器、网络请求/云输入等……
 
 To ask the system to switch to another keyboard, call the `advanceToNextInputMode` method of the `UIInputViewController` class. The system picks the appropriate “next” keyboard from the list of user-enabled keyboards; there is no API to obtain a list of enabled keyboards or for picking a particular keyboard to switch to. 不能切换到指定输入法
-

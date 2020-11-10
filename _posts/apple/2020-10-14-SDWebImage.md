@@ -93,7 +93,7 @@ typedef NSDictionary<SDWebImageContextOption, id> SDWebImageContext;
 
 ```objc
 - (nullable NSURL *)sd_imageURL {
-    // 为什么 @selector 可以作为 key？
+    // selector 作为 key！
     return objc_getAssociatedObject(self, @selector(sd_imageURL));
 }
 

@@ -279,11 +279,7 @@ Using this approach requires the implementation of the method to already be avai
 
 ## forwardInvocation
 
-如果以上都不能处理消息，最后一个方法就是通过创建一个 `NSInvocation` 对象，包装着未被处理的消息，然后调用
-
-`-(void)forwardInvocation:(NSInvocation*)invocation`
-
-并向上转发，如果继承关系里的所有父类都没有处理，那么最后，NSObject 的 `doesNotRecognizeSelector:` 方法会抛出一个异常。
+如果以上都不能处理消息，最后一个方法就是通过创建一个 `NSInvocation` 对象，包装着未被处理的消息，然后调用 `-(void)forwardInvocation:(NSInvocation*)invocation` 并向上转发，如果继承关系里的所有父类都没有处理，那么最后，NSObject 的 `doesNotRecognizeSelector:` 方法会抛出一个异常。
 
 注意，消息转发是需要开销的，而且越往后的步骤开销越大。
 

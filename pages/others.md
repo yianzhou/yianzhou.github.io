@@ -3,20 +3,30 @@ title: Others
 permalink: others
 ---
 
-# 2020
+# 投资
 
 <ul>
-  {% for post in site.categories['2020'] %}
+  {% for post in site.categories['invest'] %}
     <li>
       <a href="{{ post.url }}">{{ post.title }}</a>
     </li>
   {% endfor %}
 </ul>
 
-# 2019
+# 互联网
 
 <ul>
-  {% for post in site.categories['2019'] %}
+  {% for post in site.categories['internet'] %}
+    <li>
+      <a href="{{ post.url }}">{{ post.title }}</a>
+    </li>
+  {% endfor %}
+</ul>
+
+# 其它
+
+<ul>
+  {% for post in site.categories['others'] %}
     <li>
       <a href="{{ post.url }}">{{ post.title }}</a>
     </li>
@@ -24,6 +34,16 @@ permalink: others
 </ul>
 
 # 链接
+
+[iOS 开发高手课](https://time.geekbang.org/column/intro/161)
+
+[The Ultimate Guide To iPhone Resolutions](https://www.paintcodeapp.com/news/ultimate-guide-to-iphone-resolutions)
+
+Plist 文件里声明 [Required Device Capabilities](https://developer.apple.com/support/required-device-capabilities/)，保证用户只下载到他们设备所支持的 App：
+
+[CoreImage 滤镜列表](https://developer.apple.com/library/archive/documentation/GraphicsImaging/Reference/CoreImageFilterReference/index.html#//apple_ref/doc/filter/ci/CIBoxBlur)
+
+[Lookin - 免费好用的 iOS UI 调试软件](https://lookin.work/)
 
 工具类：
 

@@ -1,6 +1,6 @@
 ---
 title: "可转债"
-categories: [2020]
+categories: [invest]
 ---
 
 <!-- prettier-ignore -->

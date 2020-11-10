@@ -1,9 +1,11 @@
 ---
-title: 'Semaphore'
+title: "Semaphore"
 categories: [Apple]
 ---
 
-> 原文地址：<https://medium.com/swiftly-swift/a-quick-look-at-semaphores-6b7b85233ddb#.61uw6lq2d>
+# 工作原理
+
+> <https://medium.com/swiftly-swift/a-quick-look-at-semaphores-6b7b85233ddb#.61uw6lq2d>
 
 How Semaphores Work, three steps:
 
@@ -55,10 +57,11 @@ func asyncPrint(queue: DispatchQueue, symbol: String) {
 
 asyncPrint(queue: higherPriority, symbol: "🚗")
 asyncPrint(queue: lowerPriority, symbol: "🚴‍♀️")
-
 ```
 
-**优先级反转**：在极少数情况下，处理器决定先执行低优先级的线程（这是真的，它的确会发生）。低优先级的线程被放行，高优先级的线程必须等待低优先级的线程完成。
+# 优先级反转
+
+在极少数情况下，处理器决定先执行低优先级的线程（这是真的，它的确会发生）。低优先级的线程被放行，高优先级的线程必须等待低优先级的线程完成。
 
 # 饥饿
 

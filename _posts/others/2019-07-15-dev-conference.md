@@ -1,6 +1,6 @@
 ---
 title: "开发者大会"
-categories: [2019]
+categories: [internet]
 ---
 
 # WWDC

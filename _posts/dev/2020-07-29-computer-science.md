@@ -19,9 +19,9 @@ categories: [Development]
 
 # Dart vs JavaScript
 
-JavaScript 之父 Brendan Eich 曾在一次采访中说，JavaScript“几天就设计出来了”。JavaScript 实际上是两类编程语言风格的混合产物:(简化的)函数式编程风格，与(简化的)面向对象编程风格。
+JavaScript 之父 Brendan Eich 曾在一次采访中说，JavaScript“几天就设计出来了”。JavaScript 实际上是两类编程语言风格的混合产物:（简化的）函数式编程风格，与（简化的）面向对象编程风格。
 
-原本 JavaScript 只能在浏览器中运行，但 Node.js 的出现让它开始有能力运行在服务端；很快手机应用与桌面应用也成为了 JavaScript 的宿主容器，一些明星项目比如 React、React Native、Vue、Electron、NW(node-webkit)等框架如雨后春笋般崛起。
+原本 JavaScript 只能在浏览器中运行，但 Node.js 的出现让它开始有能力运行在服务端；很快手机应用与桌面应用也成为了 JavaScript 的宿主容器，一些明星项目比如 React、React Native、Vue、Electron、NW (node-webkit) 等框架如雨后春笋般崛起。
 
 2011 年，Google 发布 Dart 语言。正如 Objective-C -> Swift，Java -> Kotlin；Dart 的诞生正是要解决 JavaScript 存在的、在语言本质上无法改进的缺陷。
 
@@ -35,7 +35,11 @@ Java 代码编译执行（mixed 模式下）：
 
 # 字符集的发展
 
-用 8 个开关组合成不同的状态，来表示 1 个字节，一共可以表示 2^8 = 256 种状态。
+[一文说清文本编码那些事](https://zhuanlan.zhihu.com/p/113772793)
+
+计算机中最基本的存储单位为字节（byte），由 8 个比特位（bit）组成，也叫做八位字节（octet）。8 个比特位可以表示 2^8 = 256 个字符。
+
+比特本身没有意义，比特在上下文（context）中才构成信息。举个例子，对于内存中一个字节 01000001，你将它看做一个整数，它就是 65；将它作为一个英文字符，它就是字母 A；你看待比特的方式，就是所谓的上下文。
 
 ASCII 定义了 0 - 127。
 

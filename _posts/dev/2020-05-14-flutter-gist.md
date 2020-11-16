@@ -19,22 +19,6 @@ Future.delayed(Duration(seconds: 10), () {
 });
 ```
 
-过渡、导航：
-
-```dart
-    // 有些手机上打开页面的效果是从底部拉起来
-    Navigator.push(context, MaterialPageRoute(builder: (context) => page));
-
-    // 使用 iOS 的从右向左打开页面效果
-    Navigator.push(
-        context,
-        CupertinoPageRoute(
-            fullscreenDialog: fullscreenDialog, builder: (context) => page));
-    
-    // 无动画过渡
-    Navigator.of(context).pushReplacement(NoAnimRouteBuilder(TabPage()));
-```
-
 屏幕参数：
 
 ```dart
@@ -52,6 +36,8 @@ class Screen {
   }
 }
 ```
+
+找到一个 widget 实例，[Find widgets](https://flutter.dev/docs/cookbook/testing/widget/finders)
 
 自定义 widget：
 

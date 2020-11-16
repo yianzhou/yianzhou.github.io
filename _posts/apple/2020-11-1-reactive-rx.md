@@ -116,17 +116,11 @@ class Student {
         case female
     }
 
-    /// 基本信息
     private var name: String = ""
-    /// 基本信息
     private var gender: Gender = .male
-    /// 基本信息
     private var number: Int = 0
-    /// 得分
     private var score: Int = 0
-    /// 是否合格
     private var isPass: Bool = false
-    /// 判断是否合格的方法
     private var isPassActionBlock: IsPassActionBlock?
     /// Subject
     var scoreSubject = ScoreSubject()

@@ -23,10 +23,10 @@ categories: [Apple]
 
 在 main() 函数执行前，系统主要会做下面几件事情：
 
-- 加载可执行文件(App 的 .o 文件的集合)
+- 加载可执行文件（App 的 .o 文件的集合）
 - 加载动态链接库，进行 rebase 指针调整和 bind 符号绑定
 - Objc 运行时的初始处理，包括 Objc 相关类的注册、category 注册、selector 唯一性检查等
-- 初始化，包括了执行 +load() 方法、attribute((constructor)) 修饰的函数的调用、创建 C++ 静态全局变量
+- 初始化，包括了执行 +load() 方法、attribute((constructor)) 修饰的 C 函数的调用、创建 C++ 静态全局变量
 
 相应地，这个阶段对于启动速度优化来说，可以做的事情包括：
 

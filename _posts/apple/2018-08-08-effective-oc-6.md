@@ -165,6 +165,8 @@ That said, GCD is not always the approach of choice. Sometimes, this overhead is
 - Operation priorities
 - Reuse of operations. `BlockOperation`的子类在执行时可以充分利用自己的成员变量和方法，这些封装好的`Operation`可以在代码中多次使用。
 
+总的来说，Operation提供了更多在编写多线程程序时需要的功能，比如线程调度、任务取消、线程优先级等，为我们提供了简单的 API。从编程原则来说，一般我们需要尽可能使用高等级、封装完美的 API，在必须时才使用底层 API。但当我们认为需求能够以更简单的代码块实现的时候，简洁的 GCD 或许是个更好的选择。
+
 # 44: Use Dispatch Groups to Take Advantage of Platform Scaling
 
 Dispatch groups are a GCD feature that allows you to easily group tasks. You can then wait on that set of tasks to finish or be notified through a callback when the set of tasks has finished.

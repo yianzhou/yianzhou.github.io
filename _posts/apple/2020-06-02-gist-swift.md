@@ -251,3 +251,68 @@ UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge
     }
 }
 ```
+
+# UICollectionView
+
+实现一个左右滑动的轮播图，每张图的大小略小于屏幕宽度，显示第一张图时，第二张图能稍微露出一点点。
+
+Many solutions presented here result in some weird behaviour that doesn't feel like properly implemented paging.
+
+The solution presented in [this tutorial](https://medium.com/@shaibalassiano/tutorial-horizontal-uicollectionview-with-paging-9421b479ee94), however, doesn't seem to have any issues. It just feels like a perfectly working paging algorithm. You can implement it in 5 simple steps:
+
+Add the following property to your type: `private var indexOfCellBeforeDragging = 0`
+
+Set the collectionView delegate like this: `collectionView.delegate = self`
+
+Add conformance to UICollectionViewDelegate: `YourType: UICollectionViewDelegate { }`
+
+Add the following method to the extension implementing the UICollectionViewDelegate conformance and set a value for pageWidth:
+
+```swift
+func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+    let pageWidth = // The width your page should have (plus a possible margin)
+    let proportionalOffset = collectionView.contentOffset.x / pageWidth
+    indexOfCellBeforeDragging = Int(round(proportionalOffset))
+}
+```
+
+Add the following method to the extension implementing the UICollectionViewDelegate conformance, set the same value for pageWidth (you may also store this value at a central place) and set a value for collectionViewItemCount:
+
+```swift
+func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity: CGPoint, targetContentOffset: UnsafeMutablePointer<CGPoint>) {
+    // Stop scrolling
+    targetContentOffset.pointee = scrollView.contentOffset
+    // Calculate conditions
+    let pageWidth = // The width your page should have (plus a possible margin)
+    let collectionViewItemCount = // The number of items in this section
+    let proportionalOffset = collectionView.contentOffset.x / pageWidth
+    let indexOfMajorCell = Int(round(proportionalOffset))
+    let swipeVelocityThreshold: CGFloat = 0.5
+    let hasEnoughVelocityToSlideToTheNextCell = indexOfCellBeforeDragging + 1 < collectionViewItemCount && velocity.x > swipeVelocityThreshold
+    let hasEnoughVelocityToSlideToThePreviousCell = indexOfCellBeforeDragging - 1 >= 0 && velocity.x < -swipeVelocityThreshold
+    let majorCellIsTheCellBeforeDragging = indexOfMajorCell == indexOfCellBeforeDragging
+    let didUseSwipeToSkipCell = majorCellIsTheCellBeforeDragging && (hasEnoughVelocityToSlideToTheNextCell || hasEnoughVelocityToSlideToThePreviousCell)
+
+    if didUseSwipeToSkipCell {
+        // Animate so that swipe is just continued
+        let snapToIndex = indexOfCellBeforeDragging + (hasEnoughVelocityToSlideToTheNextCell ? 1 : -1)
+        let toValue = pageWidth * CGFloat(snapToIndex)
+        UIView.animate(
+            withDuration: 0.3,
+            delay: 0,
+            usingSpringWithDamping: 1,
+            initialSpringVelocity: velocity.x,
+            options: .allowUserInteraction,
+            animations: {
+                scrollView.contentOffset = CGPoint(x: toValue, y: 0)
+                scrollView.layoutIfNeeded()
+            },
+            completion: nil
+        )
+    } else {
+        // Pop back (against velocity)
+        let indexPath = IndexPath(row: indexOfMajorCell, section: 0)
+        collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
+    }
+}
+```

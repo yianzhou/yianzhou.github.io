@@ -7,6 +7,38 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
+# OptionSet
+
+需求：用户通过点击按钮，回答问卷，可多选。
+
+```swift
+struct Answers: OptionSet {
+    let rawValue: Int
+
+    static let A = Answers(rawValue: 1 << 0)
+    static let B = Answers(rawValue: 1 << 1)
+    static let C = Answers(rawValue: 1 << 2)
+    static let D = Answers(rawValue: 1 << 3)
+    static let E = Answers(rawValue: 1 << 4)
+    static let F = Answers(rawValue: 1 << 5)
+    static let G = Answers(rawValue: 1 << 5)
+    static let H = Answers(rawValue: 1 << 5)
+
+    static let all: Answers = [.A, .B, .C, .D, .E, .F, .G, .H]
+}
+```
+
+We can pass `.all` instead of [.all] if we want to select all answers. The reason for this is that OptionSet is an **object** that can be initialized using an array literal but it is not an array. Instead, it is an object that stands on its own and it uses a **single raw value** to represent all options that it holds.
+
+```swift
+let singleOption: ShippingOptions = .priority
+let multipleOptions: ShippingOptions = [.nextDay, .secondDay, .priority]
+let noOptions: ShippingOptions = []
+var freeOptions: ShippingOptions = []
+freeOptions.insert(.priority)
+if freeOptions.contains(.priority) {}
+```
+
 # Media Player
 
 [Becoming a Now Playable App](https://developer.apple.com/documentation/mediaplayer/becoming_a_now_playable_app)

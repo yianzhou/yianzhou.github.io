@@ -13,6 +13,8 @@ categories: [Apple]
 
 [如何利用 RunLoop 原理去监控卡顿？](https://time.geekbang.org/column/article/89494)
 
+# 卡顿原因
+
 可能导致主线程卡顿的原因：
 
 - 界面绘制工作量太大（如大量图文混排等复杂的 UI）

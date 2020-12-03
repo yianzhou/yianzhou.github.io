@@ -75,7 +75,11 @@ FFmpeg Libraries for developers:
 
 # 使用 Metal 渲染视频并播放
 
-平时我们用到的播放框架：AVPlayer, ijkplayer ...
+平时我们用到的播放框架：
+
+- AVPlayer
+- [ijkplayer](https://github.com/bilibili/ijkplayer), Video player based on ffplay. 跨平台，iOS 使用 Video Toolbox 硬件解码，渲染使用 Open GL ES。
+- [kvmovie](https://github.com/kolyvan/kxmovie), A movie player for iOS based on FFmpeg.
 
 使用 GPU 能力的接口会提到“硬件加速”，这部分工作是由 GPU 而不是 CPU 完成的，比如 AVFoundation 中的人脸识别、编解码中的“硬解码”。
 
@@ -89,7 +93,13 @@ shading language 是视觉团队写的，我们做的更多是对接的工作，
 
 GPUImage 提供了 OpenGL ES 和 Metal 的封装，让 iOS 开发者更方便地使用。
 
-视频文件 mp4 -> 提取其中的图像文件 h264 -> 解码成内存中的数据 -> 渲染
+## FFPlay 同步策略
+
+视频文件 mp4 = 图像文件 h264 + 音频文件 aac, mp3
+
+图像经过解码、渲染、并显示，音频经过解压，播放，那么它们之间如何同步呢？
+
+音视频同步的模式，业界普遍使用的（FFPlay 的默认策略）：音频时钟作为主时钟，视频同步到音频。主要原因是人眼对帧率不敏感，当音频慢了，可以把帧率降低，当音频快了，可以把帧率提高，人眼很难察觉。
 
 图片使用 RGB，视频使用 YUV，为什么？
 

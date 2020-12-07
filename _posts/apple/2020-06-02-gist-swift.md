@@ -7,7 +7,9 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
-# OptionSet
+# Swift
+
+## OptionSet
 
 需求：用户通过点击按钮，回答问卷，可多选。
 
@@ -39,145 +41,220 @@ freeOptions.insert(.priority)
 if freeOptions.contains(.priority) {}
 ```
 
-# Media Player
+## String
 
-[Becoming a Now Playable App](https://developer.apple.com/documentation/mediaplayer/becoming_a_now_playable_app)
-
-# CAGradientLayer
+是否匹配正则表达式：
 
 ```swift
-// 从左到右渐变色
-// addSublayer
-let color1 = UIColor(rgba: "#F4DEA9")
-let color2 = UIColor(rgba: "#F4C467")
-let gradientColors: [CGColor] = [color1.cgColor, color2.cgColor]
-let gradientLayer = CAGradientLayer()
-gradientLayer.colors = gradientColors
-gradientLayer.startPoint = CGPoint(x: 0, y: 0)
-gradientLayer.endPoint = CGPoint(x: 1, y: 0)
-gradientLayer.frame = unlockButton.bounds
-button.layer.insertSublayer(gradientLayer, at: 0)
+var str = "HelloaZ0123___"
+var str2 = "Hello, playground"
+var str3 = "Hello???"
 
-// UIView backing layer
-private class ProgressView: UIView {
-    override class var layerClass: AnyClass { return CAGradientLayer.self }
-}
-
-let progressView = ProgressView()
-let color1 = UIColor(rgba: "#15E78D")
-let color2 = UIColor(rgba: "#BFF95D")
-let gradientColors: [CGColor] = [color1.cgColor, color2.cgColor]
-let gradientLayer = progressView.layer as! CAGradientLayer
-gradientLayer.colors = gradientColors
-gradientLayer.startPoint = CGPoint(x: 0, y: 0)
-gradientLayer.endPoint = CGPoint(x: 1, y: 0)
-```
-
-# 页面时长统计打点
-
-```swift
-private var viewDidAppearDate = Date()
-
-override func viewDidLoad() {
-    super.viewDidLoad()
-
-    NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
-    NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActive(_:)), name: UIApplication.willResignActiveNotification, object: nil)
-}
-
-override func viewDidAppear(_ animated: Bool) {
-    super.viewDidAppear(animated)
-    viewDidAppearDate = Date()
-}
-
-override func viewWillDisappear(_ animated: Bool) {
-    super.viewWillDisappear(animated)
-    let duration = Date().timeIntervalSince(self.viewDidAppearDate)
-    if duration < 100000 {
-        log(duration)
+extension String {
+    // 是否匹配正则表达式
+    func matchRegex(_ pattern: String) -> Bool {
+        guard let regex = try? NSRegularExpression(pattern: pattern, options: []) else { return false }
+        let matches = regex.matches(in: self, options: [], range: NSRange(location: 0, length: self.count))
+        return matches.count > 0
     }
 }
 
-@objc func appDidBecomeActive(_ notification: Any) {
-    viewDidAppearDate = Date()
-}
+str.matchRegex("^[A-Za-z0-9_]+$") // true
+str2.matchRegex("^[A-Za-z0-9_]+$") // false
+str3.matchRegex("^[A-Za-z0-9_]+$") // false
+```
 
-@objc func appWillResignActive(_ notification: Any) {
-    let duration = Date().timeIntervalSince(self.viewDidAppearDate)
-    if duration < 100000 {
-        log(duration)
+过滤，只允许数字、字母、小数点、下划线：
+
+```swift
+let str = "1A_2b_$9.99_¥8.88"
+let set = CharacterSet.alphanumerics.union(CharacterSet.init(charactersIn: "_."))
+let filted = String(v.unicodeScalars.filter(set.contains))
+```
+
+# Foundation
+
+## URL
+
+拼接参数到链接里：
+
+```swift
+var domain = "https://github.com"
+var params = ["device": "iOS", "systemVersion": "13.2.2"]
+var query = "?"
+params.forEach { (key, value) in
+    if let valueWithPercentEncoding = value.addingPercentEncoding(withAllowedCharacters: .alphanumerics) {
+        query += key
+        query += "="
+        query += valueWithPercentEncoding
+        query += "&"
+    }
+}
+if query.last == "&" {
+    query.removeLast()
+}
+print(domain + query)
+
+if let url = URL(string: domain + query), let components = URLComponents(url: url, resolvingAgainstBaseURL: true), let queryItems = components.queryItems {
+    var dict = [String: Any]()
+    for item in queryItems {
+        dict[item.name] = item.value
     }
 }
 ```
 
-# UILabel with padding
+## URLSession
+
+断点续传：
 
 ```swift
-@IBDesignable class URLabel: UILabel {
-    @IBInspectable var topInset: CGFloat = 0
-    @IBInspectable var bottomInset: CGFloat = 0
-    @IBInspectable var leftInset: CGFloat = 4
-    @IBInspectable var rightInset: CGFloat = 4
+/// 下载模型，实现了 URLSessionDataDelegate 用于断点续传
+class NetworkDownloadModel: NSObject, URLSessionDataDelegate {
+    /// 下载的 URL
+    private var url: URL
+    /// 下载文件的存放路径（注意带.temp后缀）
+    private var destination: URL
+    /// 临时文件，下载成功后再移到目的地
+    private var tempDestination: URL
+    /// 下载完成的回调
+    private var completion: (Error?) -> Void
+    /// 文件处理
+    private var fileHandle: FileHandle?
 
-    override func drawText(in rect: CGRect) {
-        let insets = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
-        super.drawText(in: rect.inset(by: insets))
+    init(url: URL, destination: URL, completion: @escaping (Error?) -> Void) {
+        self.url = url
+        self.destination = destination
+        self.completion = completion
+        // 目的地创建一个tmp文件夹用于存放文件
+        let tmp = destination.deletingLastPathComponent().appendingPathComponent("tmp")
+        try? FileManager.default.createDirectory(at: tmp, withIntermediateDirectories: true, attributes: nil)
+        self.tempDestination = tmp.appendingPathComponent(destination.lastPathComponent)
+        super.init()
     }
 
-    override var intrinsicContentSize: CGSize {
-        let size = super.intrinsicContentSize
-        return CGSize(width: size.width + leftInset + rightInset,
-                      height: size.height + topInset + bottomInset)
+    /// 执行下载任务
+    ///
+    /// - Parameter resumeAtBreakPoint: 是否断点续传
+    @discardableResult
+    func download(resumeAtBreakPoint: Bool) -> URLSessionDataTask {
+        // 已下载的字节数
+        var downloadedBytes: UInt64 = 0
+        // 不断点续传的话，删掉旧的文件。
+        if !resumeAtBreakPoint {
+            try? FileManager.default.removeItem(at: tempDestination)
+        }
+        if FileManager.default.fileExists(atPath: tempDestination.path) {
+            // 如果已经下载过，取得已下载的字节数
+            if let fileDict = try? FileManager.default.attributesOfItem(atPath: tempDestination.path) as NSDictionary {
+                downloadedBytes = fileDict.fileSize()
+            }
+        } else {
+            // 如果未下载过，创建文件用于断点续传
+            FileManager.default.createFile(atPath: tempDestination.path, contents: nil, attributes: nil)
+        }
+        var urlRequest = URLRequest(url: url)
+        // 断点续传的 header
+        if downloadedBytes > 0 {
+            urlRequest.setValue("bytes=\(downloadedBytes)-", forHTTPHeaderField: "Range")
+        }
+
+        let configuration = URLSessionConfiguration.default
+        configuration.httpMaximumConnectionsPerHost = 1
+        let session = URLSession(configuration: configuration, delegate: self, delegateQueue: nil)
+        let task = session.dataTask(with: urlRequest)
+        task.resume()
+        return task
     }
 
-    override var bounds: CGRect {
-        didSet {
-            // ensures this works within stack views if multi-line
-            preferredMaxLayoutWidth = bounds.width - (leftInset + rightInset)
+    // MARK: URLSessionDataDelegate
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive response: URLResponse, completionHandler: @escaping (URLSession.ResponseDisposition) -> Void) {
+        if let httpResponse = response as? HTTPURLResponse {
+            if (200...299).contains(httpResponse.statusCode) {
+                fileHandle = try? FileHandle(forUpdating: tempDestination)
+                completionHandler(.allow)
+            }
+            else {
+                try? FileManager.default.removeItem(at: tempDestination) // 出现服务器异常，删除旧的临时文件
+                completionHandler(.cancel)
+                completion(NSError(domain: "", code: httpResponse.statusCode, userInfo: nil))
+            }
         }
     }
+
+    func urlSession(_ session: URLSession, dataTask: URLSessionDataTask, didReceive data: Data) {
+        fileHandle?.seekToEndOfFile()
+        fileHandle?.write(data)
+    }
+
+    // 请求结束
+    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
+        fileHandle?.closeFile()
+        if error == nil {
+            try? FileManager.default.moveItem(at: tempDestination, to: destination)
+        }
+        completion(error)
+    }
 }
 ```
 
-# UILabel, NSAttributedString
+失败重试：
 
 ```swift
-// 字间距
-let tryText = "TRY FOR FREE!!!"
-let tryTextMark = "!!!"
-let substringRange = tryText.range(of: tryTextMark)!
-let nsRange = NSRange(substringRange, in: tryText)
-let attrStr = NSMutableAttributedString(string: tryText)
-attrStr.addAttribute(NSAttributedString.Key.kern, value: -5, range: nsRange)
-tryLabel.attributedText = attrStr
-tryLabel.font = UIFont.systemFont(ofSize: 40 * kAppScale, weight: .heavy)
-tryLabel.textColor = UIColor.white
-
-let line1 = "Your Meditation Program\n"
-let line2 = "Listen to meditation audio for weight-loss"
-let attrString = NSMutableAttributedString(string: line1 + line2)
-
-// 字体及颜色
-attrString.addAttribute(.font, value: UIFont.systemFont(ofSize: 24 * kAppScale375, weight: .heavy), range: NSRange(location: 0, length: line1.count))
-attrString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: 0, length: line1.count))
-attrString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14 * kAppScale375, weight: .bold), range: NSRange(location: line1.count, length: line2.count))
-attrString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: line1.count, length: line2.count))
-
-// 斜体
-attrString.addAttribute(NSAttributedString.Key.obliqueness, value: 0.2, range: NSRange(location: line1.count, length: line2.count))
-
-// 行间距
-let style = NSMutableParagraphStyle()
-style.lineSpacing = 10.0
-attrString.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: line1.count + line2.count))
-
-self.listenLabel.attributedText = attrString
+func retry(times: Int, data: Data) {
+    if times == 0 {
+        return
+    }
+    upload(data, success: {}, failure: { error in
+        retry(times: times - 1, data: data)
+    })
+}
 ```
 
-# 时间 Date
+## JSONSerialization
 
 ```swift
-/// 将秒数转换为 00:00:00 格式的字符串
+// 从bundle中读取一个json文件
+if let url = Bundle.main.url(forResource: "stickers", withExtension: "json"),
+    let data = try? Data(contentsOf: url),
+    let jsonObject = try? JSONSerialization.jsonObject(with: data),
+    let json = jsonObject as? [String: Any] {
+     // ...
+}
+
+// json 字符串转成字典
+if let data = json.data(using: .utf8), let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
+    logEventCount(code, dict: dict)
+}
+```
+
+## Bundle
+
+```swift
+private let appVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
+private let buildVersion = Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
+private let osVersion = UIDevice.current.systemVersion
+private let deviceString = DeviceGuru().hardwareString() // dependency: DeviceGuru
+private let idfv = UIDevice.current.identifierForVendor?.uuidString
+private let systemLanguage = Locale.preferredLanguages.first // 设置 - 通用 - 语言与地区 - 首选语言顺序（第一位）
+private let regionCode = Locale.current.regionCode // 国家或地区
+UIDevice.current.isBatteryMonitoringEnabled = true
+```
+
+## Date
+
+获取当前时间：
+
+```swift
+private func getCurrentDate() -> String {
+    let dateFormater = DateFormatter()
+    dateFormater.dateFormat = "yyyyMMdd"
+    return dateFormater.string(from: Date())
+}
+```
+
+将秒数转换为 00:00:00 格式的字符串：
+
+```swift
 func ms(from count: Int) -> (String, String) {
     let minute = count / 60
     let second = count - minute * 60
@@ -247,7 +324,44 @@ if let date617 = dateFormatter.date(from: "2020-06-17T23:59:59+0000") {
 }
 ```
 
-# UIAlertController
+## NSAttributedString
+
+```swift
+// 字间距
+let tryText = "TRY FOR FREE!!!"
+let tryTextMark = "!!!"
+let substringRange = tryText.range(of: tryTextMark)!
+let nsRange = NSRange(substringRange, in: tryText)
+let attrStr = NSMutableAttributedString(string: tryText)
+attrStr.addAttribute(NSAttributedString.Key.kern, value: -5, range: nsRange)
+tryLabel.attributedText = attrStr
+tryLabel.font = UIFont.systemFont(ofSize: 40 * kAppScale, weight: .heavy)
+tryLabel.textColor = UIColor.white
+
+let line1 = "Your Meditation Program\n"
+let line2 = "Listen to meditation audio for weight-loss"
+let attrString = NSMutableAttributedString(string: line1 + line2)
+
+// 字体及颜色
+attrString.addAttribute(.font, value: UIFont.systemFont(ofSize: 24 * kAppScale375, weight: .heavy), range: NSRange(location: 0, length: line1.count))
+attrString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: 0, length: line1.count))
+attrString.addAttribute(.font, value: UIFont.systemFont(ofSize: 14 * kAppScale375, weight: .bold), range: NSRange(location: line1.count, length: line2.count))
+attrString.addAttribute(.foregroundColor, value: UIColor.black, range: NSRange(location: line1.count, length: line2.count))
+
+// 斜体
+attrString.addAttribute(NSAttributedString.Key.obliqueness, value: 0.2, range: NSRange(location: line1.count, length: line2.count))
+
+// 行间距
+let style = NSMutableParagraphStyle()
+style.lineSpacing = 10.0
+attrString.addAttribute(.paragraphStyle, value: style, range: NSRange(location: 0, length: line1.count + line2.count))
+
+self.listenLabel.attributedText = attrString
+```
+
+# UIViewController
+
+## UIAlertController
 
 ```swift
 let alert = UIAlertController(title: "", message: "", preferredStyle: .alert)
@@ -261,30 +375,125 @@ alert.preferredAction = ok
 self.parentViewController?.present(alert, animated: true, completion: nil)
 ```
 
-# Notification
+## UINavigationController
+
+解决 push 和 pop 时动画卡顿问题：
 
 ```swift
-/// 是否询问过通知权限
-var notDetermined = false
-UNUserNotificationCenter.current().getNotificationSettings { (settings) in
-    if settings.authorizationStatus == .notDetermined {
-        notDetermined = true
-    }
+// 背景图片的contentMode不对
+if let path = Bundle.main.path(forResource: "skin_preview_background", ofType: "png"), let image = UIImage(contentsOfFile: path) {
+    let imageView = UIImageView(frame: view.bounds)
+    imageView.image = image
+    imageView.contentMode = .scaleToFit
+    view.addSubview(imageView)
 }
-UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
-    if notDetermined && granted {
-        // 首次询问并同意了
-    } else if notDetermined && !granted {
-        // 首次询问并拒绝了
-    } else if !notDetermined && granted {
-        // 用户之前已同意过了
-    } else {
-        // 用户之前已拒绝过了
+
+// 当前vc的背景色设为白色
+self.view.backgroundColor = .white
+```
+
+# UIView
+
+## UILabel
+
+带内边距：
+
+```swift
+@IBDesignable class URLabel: UILabel {
+    @IBInspectable var topInset: CGFloat = 0
+    @IBInspectable var bottomInset: CGFloat = 0
+    @IBInspectable var leftInset: CGFloat = 4
+    @IBInspectable var rightInset: CGFloat = 4
+
+    override func drawText(in rect: CGRect) {
+        let insets = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
+        super.drawText(in: rect.inset(by: insets))
+    }
+
+    override var intrinsicContentSize: CGSize {
+        let size = super.intrinsicContentSize
+        return CGSize(width: size.width + leftInset + rightInset,
+                      height: size.height + topInset + bottomInset)
+    }
+
+    override var bounds: CGRect {
+        didSet {
+            // ensures this works within stack views if multi-line
+            preferredMaxLayoutWidth = bounds.width - (leftInset + rightInset)
+        }
     }
 }
 ```
 
-# UICollectionView
+## UIButton
+
+图片在上面，文字在下面：
+
+```swift
+extension UIButton {
+    func centerVertically(padding: CGFloat = 6.0) {
+        guard let imageViewSize = currentImage?.size, let titleLabelSize = titleLabel?.intrinsicContentSize else { return }
+        imageEdgeInsets = UIEdgeInsets.only(top: -(titleLabelSize.height + padding), right: -titleLabelSize.width)
+        titleEdgeInsets = UIEdgeInsets.only(left: -imageViewSize.width, bottom: -(imageViewSize.height + padding))
+    }
+}
+```
+
+扩大点击区域：
+
+```swift
+private var pTouchAreaEdgeInsets: UIEdgeInsets = .zero
+extension UIButton {
+    public var touchAreaEdgeInsets: UIEdgeInsets {
+        get {
+            if let value = objc_getAssociatedObject(self, &pTouchAreaEdgeInsets) as? NSValue {
+                var edgeInsets: UIEdgeInsets = .zero
+                value.getValue(&edgeInsets)
+                return edgeInsets
+            }
+            else {
+                return .zero
+            }
+        }
+        set {
+            var newValueCopy = newValue
+            let objCType = NSValue(uiEdgeInsets: .zero).objCType
+            let value = NSValue(&newValueCopy, withObjCType: objCType)
+            objc_setAssociatedObject(self, &pTouchAreaEdgeInsets, value, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+        }
+    }
+
+    override open func point(inside point: CGPoint, with event: UIEvent?) -> Bool {
+        if self.isHidden || !self.isEnabled || self.touchAreaEdgeInsets == .zero {
+            return super.point(inside: point, with: event)
+        }
+        let newRect = self.bounds.inset(by: self.touchAreaEdgeInsets)
+        return newRect.contains(point)
+    }
+}
+```
+
+按钮左对齐（左边图片，右边文字）：
+
+```swift
+class LeftAlignedIconButton: UIButton {
+    override func titleRect(forContentRect contentRect: CGRect) -> CGRect {
+        let titleRect = super.titleRect(forContentRect: contentRect)
+        let imageSize = currentImage?.size ?? .zero
+        let availableWidth = contentRect.width - imageEdgeInsets.right - imageSize.width - titleRect.width
+        return titleRect.offsetBy(dx: round(availableWidth / 2), dy: 0)
+    }
+}
+```
+
+按钮状态的组合：
+
+```swift
+// https://www.jianshu.com/p/bd232eac8de8
+button.setImage(image, for: UIControlState.selected.union(.highlighted))
+```
+
+## UICollectionView
 
 实现一个左右滑动的轮播图，每张图的大小略小于屏幕宽度，显示第一张图时，第二张图能稍微露出一点点。
 
@@ -345,6 +554,180 @@ func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity
         // Pop back (against velocity)
         let indexPath = IndexPath(row: indexOfMajorCell, section: 0)
         collectionView.scrollToItem(at: indexPath, at: .left, animated: true)
+    }
+}
+```
+
+# CALayer
+
+## CAShapeLayer
+
+CAShapeLayer 画圆：
+
+```swift
+let circleView = UIView(frame: CGRect(x: 0, y: 0, width: 100, height: 100))
+circleView.center = CGPoint(x: kMainScreenWidth/2, y: kMainScreenHeight*0.7)
+let shapeLayer = CAShapeLayer()
+let bezierPath = UIBezierPath(ovalIn: circleView!.bounds)
+shapeLayer.path = bezierPath.cgPath
+shapeLayer.strokeColor = UIColor.white.cgColor
+shapeLayer.lineWidth = 5.0
+shapeLayer.strokeStart = 0
+shapeLayer.strokeEnd = 1
+shapeLayer.fillColor = UIColor.clear.cgColor
+circleView.layer.addSublayer(shapeLayer)
+circleView.isUserInteractionEnabled = false
+self.view.addSubview(circleView)
+```
+
+部分圆角：
+
+```swift
+let maskPath = UIBezierPath(roundedRect: normalView.bounds, byRoundingCorners: [UIRectCorner.topLeft, UIRectCorner.topRight], cornerRadii: CGSize(width: 10, height: 10))
+let maskLayer = CAShapeLayer()
+maskLayer.frame = normalView.bounds
+maskLayer.path = maskPath.cgPath
+normalView.layer.mask = maskLayer
+```
+
+## CAGradientLayer
+
+从左到右渐变色，添加子图层方式：
+
+```swift
+let color1 = UIColor(rgba: "#F4DEA9")
+let color2 = UIColor(rgba: "#F4C467")
+let gradientColors: [CGColor] = [color1.cgColor, color2.cgColor]
+let gradientLayer = CAGradientLayer()
+gradientLayer.colors = gradientColors
+gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+gradientLayer.endPoint = CGPoint(x: 1, y: 0)
+gradientLayer.frame = unlockButton.bounds
+button.layer.insertSublayer(gradientLayer, at: 0)
+```
+
+从左到右渐变色，UIView backing layer：
+
+```swift
+private class ProgressView: UIView {
+    override class var layerClass: AnyClass { return CAGradientLayer.self }
+}
+
+let progressView = ProgressView()
+let color1 = UIColor(rgba: "#15E78D")
+let color2 = UIColor(rgba: "#BFF95D")
+let gradientColors: [CGColor] = [color1.cgColor, color2.cgColor]
+let gradientLayer = progressView.layer as! CAGradientLayer
+gradientLayer.colors = gradientColors
+gradientLayer.startPoint = CGPoint(x: 0, y: 0)
+gradientLayer.endPoint = CGPoint(x: 1, y: 0)
+```
+
+# UIImage
+
+降采样：
+
+```swift
+    // data buffer - 图片从磁盘文件加载到内存中，这是经过编码的图片数据
+    // image buffer - 图片解码后的数据，每个元素描述一个图片像素的颜色信息，buffer 的大小为 width*height*4 (rgba)
+    // frame buffer - 类似于OpenGL的Frame Buffer，用于上传到GPU中成像
+
+    // Downsampling large images for display at smaller size
+    public class func downsample(imageAt imageURL: URL, to pointSize: CGSize, scale: CGFloat) -> UIImage? {
+        // 设置`kCGImageSourceShouldCache`为`false`，可以避免缓存解码后的数据，64位设置上默认是开启缓存的
+        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        if let imageSource = CGImageSourceCreateWithURL(imageURL as CFURL, imageSourceOptions) {
+            return downsample(imageAt: imageSource, to: pointSize, scale: scale)
+        } else {
+            return nil
+        }
+    }
+
+    public class func downsample(imageAt imageData: Data, to pointSize: CGSize, scale: CGFloat) -> UIImage? {
+        let imageSourceOptions = [kCGImageSourceShouldCache: false] as CFDictionary
+        if let imageSource = CGImageSourceCreateWithData(imageData as CFData, imageSourceOptions) {
+            return downsample(imageAt: imageSource, to: pointSize, scale: scale)
+        } else {
+            return nil
+        }
+    }
+
+    public class func downsample(imageAt imageSource: CGImageSource, to pointSize: CGSize, scale: CGFloat) -> UIImage? {
+        let maxDimensionInPixels = max(pointSize.width, pointSize.height) * scale
+        let downsampleOptions =
+            [kCGImageSourceCreateThumbnailFromImageAlways: true,
+             kCGImageSourceShouldCacheImmediately: true,
+             kCGImageSourceCreateThumbnailWithTransform: true,
+             kCGImageSourceThumbnailMaxPixelSize: maxDimensionInPixels] as CFDictionary
+        if let downsampledImage =
+            CGImageSourceCreateThumbnailAtIndex(imageSource, 0, downsampleOptions) {
+            return UIImage(cgImage: downsampledImage)
+        } else {
+            return nil
+        }
+    }
+```
+
+# Media Player
+
+[Becoming a Now Playable App](https://developer.apple.com/documentation/mediaplayer/becoming_a_now_playable_app)
+
+# 页面时长统计打点
+
+```swift
+private var viewDidAppearDate = Date()
+
+override func viewDidLoad() {
+    super.viewDidLoad()
+
+    NotificationCenter.default.addObserver(self, selector: #selector(appDidBecomeActive(_:)), name: UIApplication.didBecomeActiveNotification, object: nil)
+    NotificationCenter.default.addObserver(self, selector: #selector(appWillResignActive(_:)), name: UIApplication.willResignActiveNotification, object: nil)
+}
+
+override func viewDidAppear(_ animated: Bool) {
+    super.viewDidAppear(animated)
+    viewDidAppearDate = Date()
+}
+
+override func viewWillDisappear(_ animated: Bool) {
+    super.viewWillDisappear(animated)
+    let duration = Date().timeIntervalSince(self.viewDidAppearDate)
+    if duration < 100000 {
+        log(duration)
+    }
+}
+
+@objc func appDidBecomeActive(_ notification: Any) {
+    viewDidAppearDate = Date()
+}
+
+@objc func appWillResignActive(_ notification: Any) {
+    let duration = Date().timeIntervalSince(self.viewDidAppearDate)
+    if duration < 100000 {
+        log(duration)
+    }
+}
+```
+
+# UNUserNotificationCenter
+
+```swift
+/// 是否询问过通知权限
+var notDetermined = false
+UNUserNotificationCenter.current().getNotificationSettings { (settings) in
+    if settings.authorizationStatus == .notDetermined {
+        notDetermined = true
+    }
+}
+UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
+    if notDetermined && granted {
+        // 首次询问并同意了
+    } else if notDetermined && !granted {
+        // 首次询问并拒绝了
+    } else if !notDetermined && granted {
+        // 用户之前已同意过了
+    } else {
+        // 用户之前已拒绝过了
     }
 }
 ```

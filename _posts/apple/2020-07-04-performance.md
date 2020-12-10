@@ -17,7 +17,7 @@ categories: [Apple]
 
 可能导致主线程卡顿的原因：
 
-- 界面绘制工作量太大（如大量图文混排等复杂的 UI）
+- 界面绘制计算量太大（如大量图文混排等复杂的 UI）
 - 主线程同步请求网络、等待子线程同步块
 - 主线程执行大量 IO 操作或计算
 - 总运算量过大，CPU 持续高占用
@@ -34,7 +34,11 @@ YYFPSLabel 采用这样的办法显示屏幕帧率。计算两次刷新的时间
 
 # 子线程 Ping
 
-创建一个专门用于监控的子线程 ping 主线程（ping 的时候主线程肯定是在 kCFRunLoopBeforeSources 和 kCFRunLoopAfterWaiting 之间）。
+创建一个专门用于监控的子线程去 ping 主线程。
+
+[iOS卡顿监控实战（开源）](https://juejin.cn/post/6844904005437489165)
+
+针对同一个卡顿只会上报一次，并没有像微信那样重复上报。一是出于我们本身业务考虑；二是上报使用的 Fabric，它会在下一次启动时将所有记录数据推到平台，并且对于上报量有限制。
 
 ```swift
 private final class PingMainThread: Thread {
@@ -42,15 +46,18 @@ private final class PingMainThread: Thread {
         while !isCancelled {
             autoreleasepool {
                 isResponse = false
+                // 主线程同步标志位，同时释放信号量
                 DispatchQueue.main.async {
                     self.isResponse = true
                     self.semaphore.signal()
                 }
+                // 暂停指定间隔，检验此时标志位是否修改，没有修改则说明线程卡顿，需要上报
                 Thread.sleep(forTimeInterval: TimeInterval(threshold))
                 if !isResponse {
                     // 获取所有线程
                     // 获取线程栈寄存器，获得指令地址
                 }
+                // 避免重复上报，一次卡顿仅上报一次（这里与微信runloop方案有比较大的区别，微信会按照斐波拉契间隔重复上报）
                 _ = semaphore.wait(timeout: DispatchTime.distantFuture)
             }
         }

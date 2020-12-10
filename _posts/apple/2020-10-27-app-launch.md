@@ -25,7 +25,7 @@ categories: [Apple]
 
 - 加载可执行文件（App 的 .o 文件的集合）
 - 加载动态链接库，进行 rebase 指针调整和 bind 符号绑定
-- Objc 运行时的初始处理，包括 Objc 相关类的注册、category 注册、selector 唯一性检查等
+- objc 运行时的初始处理，包括 objc 相关类的注册、category 注册、selector 唯一性检查等
 - 初始化，包括了执行 +load() 方法、attribute((constructor)) 修饰的 C 函数的调用、创建 C++ 静态全局变量
 
 相应地，这个阶段对于启动速度优化来说，可以做的事情包括：
@@ -47,4 +47,4 @@ main() 函数执行后的阶段，指的是从 main() 函数执行开始，到 a
 
 一、Instruments 的分析工具 "App Launch"、"Time Profiler"，Time Profiler 定时抓取主线程上的方法调用堆栈，计算一段时间里各个方法的耗时。
 
-二、对 objc_msgSend 方法进行 hook 来掌握所有方法的执行耗时。利用开源库 [fishhook](https://github.com/facebook/fishhook) 和汇编实现。可参考戴铭的开源项目 [GCDFetchFeed](https://github.com/ming1016/GCDFetchFeed)，在需要检测耗时的地方调用 [SMCallTrace start]，结束时调用 stop 和 save 就可以打印出方法的调用层级和耗时了。
+二、对 objc_msgSend 方法进行 hook 来掌握所有方法的执行耗时。利用开源库 [fishhook](https://github.com/facebook/fishhook) 和汇编实现。可参考戴铭的开源项目 [GCDFetchFeed](https://github.com/ming1016/GCDFetchFeed)，在需要检测耗时的地方调用 `[SMCallTrace start]`，结束时调用 stop 和 save 就可以打印出方法的调用层级和耗时了。

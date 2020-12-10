@@ -13,7 +13,7 @@ permalink: apple
 
 [卡顿监测]({% post_url apple/2020-07-04-performance %})，[包体大小]({% post_url apple/2020-11-2-app-size %})，[内存优化]({% post_url apple/2020-10-31-memory %})，[启动时长优化]({% post_url apple/2020-10-27-app-launch %})，[崩溃监控]({% post_url apple/2020-10-30-crash %})
 
-[UIView]({% post_url apple/2020-10-27-uiview %})，[动画]({% post_url apple/2018-07-28-animation %})，[图形渲染]({% post_url apple/2020-04-22-graphics %})，[Metal]({% post_url apple/2019-01-10-Metal %})，[ARKit]({% post_url apple/2018-12-20-ARKit %})
+[Auto Layout]({% post_url apple/2020-10-27-uiview %})，[Core Animation]({% post_url apple/2018-07-28-core-animation %})，[图形渲染]({% post_url apple/2020-04-22-graphics %})，[Metal]({% post_url apple/2019-01-10-Metal %})，[ARKit]({% post_url apple/2018-12-20-ARKit %})
 
 [音视频基础知识]({% post_url apple/2018-12-21-audio-video %})，[AVFoundation]({% post_url apple/2018-12-21-AVFoundation %})
 
@@ -29,7 +29,7 @@ permalink: apple
 
 [代码签名]({% post_url apple/2020-10-10-signing %})
 
-[前端]({% post_url apple/2020-11-2-front-end %})
+[WebView]({% post_url apple/2020-11-2-webview %})
 
 # Effective Objective-C
 

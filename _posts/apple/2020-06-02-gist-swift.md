@@ -558,6 +558,25 @@ func scrollViewWillEndDragging(_ scrollView: UIScrollView, withVelocity velocity
 }
 ```
 
+## UIWindow
+
+新建项目后如何从代码中加载 ViewController 而不是 Storyboard？
+
+```swift
+class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
+        guard let windowScene = (scene as? UIWindowScene) else { return }
+        let window = UIWindow(windowScene: windowScene)
+        let vc = ViewController()
+        window.rootViewController = vc
+        window.makeKeyAndVisible()
+        self.window = window
+    }
+}
+```
+
+另外，删除 Info.plist 里面的两项有关 Storyboard 的键值。
+
 # CALayer
 
 ## CAShapeLayer

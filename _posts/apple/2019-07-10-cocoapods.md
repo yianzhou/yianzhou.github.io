@@ -22,9 +22,7 @@ export GEM_HOME=$HOME/.gem
 export PATH=$GEM_HOME/bin:$PATH
 ```
 
-You can find out where a gem is installed with `gem which cocoapods`.
-
-The downside of this is that there is no way to ensure that a project needing a specific version of a library can use that, it would always use the latest version. This is the problem bundler solves.
+The downside of this is that there is no way to ensure that a project needing a specific version of a library can use that, it would always use the latest version.（就像 App Store 永远给你安装最新版本一样）This is the problem bundler solves.
 
 参考：[Bundler's Purpose and Rationale](https://bundler.io/v2.1/rationale.html)
 

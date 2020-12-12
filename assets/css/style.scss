@@ -34,7 +34,7 @@
   z-index: 99; /* Make sure it does not overlap */
   border: none; /* Remove borders */
   outline: none; /* Remove outline */
-  background-color: #FFFFFF; /* Set a background color */
+  background-color: #ffffff; /* Set a background color */
   color: white; /* Text color */
   cursor: pointer; /* Add a mouse pointer on hover */
   border-radius: 10px; /* Rounded corners */
@@ -42,21 +42,27 @@
 }
 
 #myBtn:hover {
-  background-color: #EEEEEE; /* Add a dark-grey background on hover */
+  background-color: #eeeeee; /* Add a dark-grey background on hover */
 }
 
-img[alt=img10] {
+img[alt="img-c"] {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+img[alt="img-10"] {
   width: 10%;
 }
 
-img[alt=img20] {
+img[alt="img-20"] {
   width: 20%;
 }
 
-img[alt=img40] {
+img[alt="img-40"] {
   width: 40%;
 }
 
-img[alt=img60] {
+img[alt="img-60"] {
   width: 60%;
 }

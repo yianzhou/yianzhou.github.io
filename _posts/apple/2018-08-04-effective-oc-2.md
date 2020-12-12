@@ -101,7 +101,7 @@ readonly 的属性有办法修改吗？有，[Key-Value Coding](https://develope
 @property(nonatomic, strong) NSMutableSet* set;
 ```
 
-添加关联对象 `objc_setAssociatedObject`，其中 `objc_AssociationPolicy` 常用的有三种：
+添加关联对象 `objc_setAssociatedObject`，其中关联对象的内存管理语义 `objc_AssociationPolicy` 常用的有三种：
 
 - OBJC_ASSOCIATION_ASSIGN
 - OBJC_ASSOCIATION_COPY_NONATOMIC

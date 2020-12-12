@@ -9,9 +9,56 @@ categories: [Apple]
 
 [Learning-AV-Foundation 示例代码](https://github.com/tapharmonic/Learning-AV-Foundation)
 
+# 初识
+
 AVFoundation Stack on iOS:
 
-![image](/assets/images/1_zY4oLLDPVGW1cMdhzSHElg.png)
+![img-60](/assets/images/1_zY4oLLDPVGW1cMdhzSHElg.png)
+
+AVFoudation 提供的一些核心功能。
+
+音频播放和记录：`AVAudioPlayer` 和 `AVAudioRecorder` 提供了最简单的音频播放和记录的功能。
+
+媒体元数据读写：`AVMetadataItem` 允许开发者读写媒体资源的描述信息，如艺术家、专辑等。
+
+`AVPlayer` 和 `AVPlayerItem` 让你从本地文件或远程流中播放视频或音频，并对播放进行控制。
+
+摄像头采集的核心类是 `AVCaptureSession`，可以对采集设备进行精确控制，捕捉静态图片和视频。
+
+`AVAssetReader` 和 `AVAssetWriter` 提供直接访问视频帧和音频样本的功能。
+
+# 播放和录制音频
+
+`AVAudioSession` 在应用程序和操作系统之间扮演了中间人的角色。[`AVAudioSession.Category`](https://developer.apple.com/documentation/avfoundation/avaudiosession/category) 定义了 7 种分类来描述应用程序的音频行为。
+
+| Category            | 是否被锁屏和静音开关静音 | 是否允许混音 | 音频输入 | 音频输出 |
+| ------------------- | ------------------------ | ------------ | -------- | -------- |
+| ambient             | ✅                       | ✅           |          | ✅       |
+| soloAmbient（默认） | ✅                       |              |          | ✅       |
+| playback            |                          | Optional     |          | ✅       |
+| record              |                          |              | ✅       |          |
+| playAndRecord       |                          | Optional     | ✅       | ✅       |
+| multiRoute          |                          |              | ✅       | ✅       |
+
+音频会话在应用程序的生命周期中是可以修改的，但通常我们只对其配置一次，最佳位置就是在启动时：
+
+```swift
+func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
+    let session = AVAudioSession.sharedInstance()
+    try? session.setCategory(.playback)
+    try? session.setActive(true) // tell the session to active
+    return true
+}
+```
+
+想要在后台播放音频，除了设置合适的音频会话外，还需要在 `Info.plist` 里面增加配置：
+
+```xml
+<key>UIBackgroundModes</key>
+<array>
+    <string>audio</string>
+</array>
+```
 
 # Media Assets and Metadata
 

@@ -13,15 +13,6 @@ A lot of ideas for CocoaPods came from similar projects (for example [RubyGems](
 
 RubyGems is a hosted ruby library service. It centralizes where you look for a library, and installing ruby libraries / apps.（例如，[cocoapods](https://rubygems.org/gems/cocoapods) 就是通过 `gem install cocoapods` 安装的） These are installed into a central database of versions.
 
-Gems 通常安装在这个目录下: `/Library/Ruby/Gems/2.6.0/gems/`，比较熟悉的 Gems 如 bundler、jekyll、github-pages、cocoapods 等。
-
-You can tell RubyGems to install into your user directory by configuring the RubyGems environment. Edit your `.bash_profile`:
-
-```sh
-export GEM_HOME=$HOME/.gem
-export PATH=$GEM_HOME/bin:$PATH
-```
-
 The downside of this is that there is no way to ensure that a project needing a specific version of a library can use that, it would always use the latest version.（就像 App Store 永远给你安装最新版本一样）This is the problem bundler solves.
 
 参考：[Bundler's Purpose and Rationale](https://bundler.io/v2.1/rationale.html)

@@ -51,7 +51,7 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 }
 ```
 
-想要在后台播放音频，除了设置合适的音频会话外，还需要在 `Info.plist` 里面增加配置：
+想要在后台播放音频，除了设置合适的音频会话外，需要在 `Info.plist` 里面增加配置：
 
 ```xml
 <key>UIBackgroundModes</key>
@@ -59,6 +59,15 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
     <string>audio</string>
 </array>
 ```
+
+想要录制音频，需要在 `Info.plist` 里面增加配置，首次访问麦克风会询问用户同意。
+
+```xml
+<key>NSMicrophoneUsageDescription</key>
+<string>To record memo.</string>
+```
+
+AVAudioRecorder 和 AVAudioPlayer 可以对音量进行测量。通过 `averagePowerForChannel:` 和 `peakPowerForChannel:` 方法获得的读数，是一个描述音量等级的对数单位，取值范围从最大分贝的 0（full scale）到最小分贝或静音的 -160dB。我们想在用户界面上展示音量大小，需要把这个值转化为 0 - 1 之间的值。参考 `THMeterTable` 类。
 
 # Media Assets and Metadata
 

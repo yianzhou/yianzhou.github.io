@@ -1324,3 +1324,10 @@ SDAnimatedImageView, by default, will decode and cache the image frames with a b
 let prefetchURLs = [URL]()
 SDWebImagePrefetcher.shared.prefetchURLs(prefetchURLs)
 ```
+
+# 总结
+
+- 使用 NSMapTable 存储 UIView 正在运行的操作；NSMapTable 可以指定 key 和 value 的内存管理语义。
+- 面向协议编程，缓存、下载、transformer、甚至 manager 本身都是协议，接口依赖协议、不依赖具体实现类，开发者可自行实现替换。
+- 内存缓存（NSCache + WeakMemoryCache）、磁盘缓存。
+- 后台线程降采样解码。

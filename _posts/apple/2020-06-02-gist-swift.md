@@ -7,6 +7,8 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
+退出 App：`exit(0)`
+
 # Swift
 
 ## OptionSet
@@ -361,6 +363,55 @@ self.listenLabel.attributedText = attrString
 
 # UIViewController
 
+## UITabBarController
+
+圆角 TabBar
+
+```swift
+class TabBarController: UITabBarController, UITabBarControllerDelegate {
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+
+        let sleep = ("sleep_icon_normal", "sleep_icon_hover", "Sleep")
+        let sounds = ("sounds_icon_normal", "sounds_icon_hover", "Sounds")
+        let more = ("more_icon_normal", "more_icon_hover", "More")
+        let tabTuples = [sleep, sounds, more]
+
+        var viewControllers = [UIViewController]()
+        for i in 0 ..< tabTuples.count {
+            let vc = ViewController()
+            let nav = UINavigationController(rootViewController: vc)
+            nav.tabBarItem.image = UIImage(named: tabTuples[i].0)
+            nav.tabBarItem.selectedImage = UIImage(named: tabTuples[i].1)
+            nav.tabBarItem.title = tabTuples[i].2
+            viewControllers.append(nav)
+        }
+
+        self.viewControllers = viewControllers
+        self.selectedIndex = 0
+        self.tabBar.tintColor = UIColor.white
+        self.tabBar.unselectedItemTintColor = UIColor.white.withAlphaComponent(0.42)
+        self.tabBar.backgroundColor = UIColor(red: 16/255, green: 16/255, blue: 16/255, alpha: 1)
+        self.tabBar.backgroundImage = UIImage.from(color: .clear)
+        self.tabBar.shadowImage = UIImage()
+    }
+
+    override func viewWillLayoutSubviews() {
+        let cornerRadius: CGFloat = 30.0
+        if #available(iOS 11.0, *) {
+            self.tabBar.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+            self.tabBar.layer.cornerRadius = cornerRadius
+        } else {
+            let bezierpath = UIBezierPath.init(roundedRect: self.tabBar.bounds, byRoundingCorners: [UIRectCorner.topLeft, UIRectCorner.topRight], cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
+            let shape = CAShapeLayer()
+            shape.path = bezierpath.cgPath
+            self.tabBar.layer.mask = shape
+        }
+    }
+}
+```
+
 ## UIAlertController
 
 ```swift
@@ -393,6 +444,23 @@ self.view.backgroundColor = .white
 ```
 
 # UIView
+
+## 圆角
+
+```swift
+override func layoutSubviews() {
+    let cornerRadius: CGFloat = 20
+    if #available(iOS 11.0, *) {
+        self.layer.maskedCorners = [.layerMinXMinYCorner, .layerMaxXMinYCorner]
+        self.layer.cornerRadius = cornerRadius
+    } else {
+        let bezierpath = UIBezierPath.init(roundedRect: self.bounds, byRoundingCorners: [UIRectCorner.topLeft, UIRectCorner.topRight], cornerRadii: CGSize(width: cornerRadius, height: cornerRadius))
+        let shape = CAShapeLayer()
+        shape.path = bezierpath.cgPath
+        self.layer.mask = shape
+    }
+}
+```
 
 ## UILabel
 
@@ -643,6 +711,23 @@ gradientLayer.endPoint = CGPoint(x: 1, y: 0)
 ```
 
 # UIImage
+
+生成纯色图片：
+
+```swift
+extension UIImage {
+    static func from(color: UIColor) -> UIImage {
+        let rect = CGRect(x: 0, y: 0, width: 1, height: 1)
+        UIGraphicsBeginImageContext(rect.size)
+        let context = UIGraphicsGetCurrentContext()
+        context!.setFillColor(color.cgColor)
+        context!.fill(rect)
+        let img = UIGraphicsGetImageFromCurrentImageContext()
+        UIGraphicsEndImageContext()
+        return img!
+    }
+}
+```
 
 降采样：
 

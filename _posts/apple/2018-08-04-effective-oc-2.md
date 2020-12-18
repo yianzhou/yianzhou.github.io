@@ -111,11 +111,25 @@ readonly 的属性有办法修改吗？有，[Key-Value Coding](https://develope
 
 # 7. Instance Variables
 
-A good compromise is to write instance variables using the setter and to read using direct access. Doing so has the benefit of fast reading and not losing the control of writing via properties.
+Properties should always be used to access instance variables of an object **externally**, but how you access instance variables **internally** is a hotly debated topic within the Objective-C community. 在类的外部，毫无疑问应该使用属性，但在类的内部是否使用属性，存在争议。
 
-Within initializers and dealloc, always read and write data directly through instance variables, because subclasses could override the setter.
+## 访问实例变量和访问属性的区别
 
-You will need to read data through properties when that data is being lazily initialized.
+Direct access to the instance variables will undoubtedly be faster, as it does not have to go through Objective-C method dispatch. The compiler will emit code that directly accesses the memory where the object’s instance variables are stored. 直接访问实例变量，不会经过 OC 方法的消息发送，而是直接访问内存里当前类的内存首地址加上一个偏移量，速度更快。
+
+Direct access bypasses the property’s memory-management semantics defined by the setter. For example, if your property is declared as copy, directly setting the instance variable will not cause a copy to be made. The new value will be retained and the old value released. 直接设置实例变量，会跳过属性的内存管理语义！
+
+Key-Value Observing (KVO) notifications would not be fired when accessing the instance variables directly.
+
+Accessing through properties can make it easier to debug issues surrounding a property, since you can add a breakpoint to the getter and/or setter to determine who is accessing the properties and when.
+
+## 作者推荐的用法
+
+I strongly encourage you to read instance variables using direct access but to set them using the property, with a few caveats.
+
+The first caveat is when values are set within an initializer method. Here, you should always use direct instance variable access, because subclasses could override the setter. However, there are some cases in which you must use the setter in an initializer. This is when the instance variable is declared within a superclass; you cannot access the instance variable directly anyway, so you must use the setter.
+
+Another caveat is when the property uses lazy initialization. In this case, you have to go via the getter; if you don’t, the instance variable will never get a chance to be initialized.
 
 # 8. Object Equality
 
@@ -273,7 +287,7 @@ Using this approach requires the implementation of the method to already be avai
 
 第二次尝试处理一个未知的 selector，是看有没有替补的消息接受者。
 
- `-(id)forwardingTargetForSelector:(SEL)selector`
+`-(id)forwardingTargetForSelector:(SEL)selector`
 
 使用此方法，可以提供多重继承的某些好处。一个对象可能在内部拥有多个对象，在这个方法中返回实际处理消息的对象，在外部看来好像它自己处理这个消息一样。
 

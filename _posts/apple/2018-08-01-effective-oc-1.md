@@ -17,8 +17,6 @@ NSString *str = @"Hello";
 
 All Objective-C objects must be declared in this way because the memory for objects is always allocated in heap space and never on the stack.
 
-Memory size of a pointer: 4 bytes for a 32-bit architecture, 8 bytes for a 64-bit architecture. These bits of memory will contain the memory address of the `NSString` instance.
-
 The memory allocated in the heap has to be managed directly, whereas the stack-allocated memory to hold the variables is automatically cleaned up when the stack frame on which they are allocated is popped.
 
 Objective-C 不需要像 C 一样使用 malloc 和 free 来分配或释放堆区内存，Objective-C Runtime 把这部分工作抽象为一套内存管理架构，即引用计数机制。
@@ -42,7 +40,8 @@ To compile anything that imports EOCPerson.h, you don’t need to know the full 
 The implementation file for EOCPerson would then need to import the header file of EOCEmployer, as it would need to know the full interface details of the class in order to use it.
 
 ```objc
-#import "EOCPerson.h" #import "EOCEmployer.h"
+#import "EOCPerson.h"
+#import "EOCEmployer.h"
 @implementation EOCPerson
 
 @end
@@ -52,13 +51,13 @@ Deferring the import to where it is required enables you to limit the scope of w
 
 Using forward declaration also alleviates the problem of both classes referring to each other.
 
-When writing an import into a header file, always ask yourself whether it’s really necessary. If the import can be forward declared, prefer that. If the import is for something used in a property, instance variable, or protocol conformance and can be moved to the class-continuation category (see Item 27), prefer that. Doing so will keep compile time as low as possible and reduce interdependency. 加快编译速度、外部使用者依赖尽可能少的头文件
+When writing an import into a header file, always ask yourself whether it’s really necessary. If the import can be forward declared, prefer that. If the import is for something used in a property, instance variable, or protocol conformance and can be moved to the class-continuation category (see Item 27), prefer that. Doing so will keep compile time as low as possible and reduce interdependency.
 
 ## 3. Literal Syntax
 
 不用 Foundation 也能写出 Objective-C 代码，但 iOS 开发与 Foundation 密不可分。使用 literal syntax 使代码更易读：
 
-```
+```objc
 NSString *str = @"Hello";
 NSNumber *num = @1;
 NSArray *animals = @[@"cat", @"dog"];
@@ -67,7 +66,7 @@ NSDictionary* dic = @{@"key" : @"value", @"key2" : @28};
 
 通过下标进行 get 和 set：
 
-```
+```objc
 mutableArray[1] = @"dog";
 mutableDictionary[@"lastName"] = @"Galloway";
 ```
@@ -78,13 +77,13 @@ mutableDictionary[@"lastName"] = @"Galloway";
 
 若常量是在某个实现文件之内，则在名称前加字母 k：
 
-```
+```objc
 static const NSTimeInterval kAnimationDuration = 0.3;
 ```
 
 若在类之外可见，则以类名称为前缀：
 
-```
+```objc
 // EOCAnimatedView.h
 extern const NSTimeInterval EOCAnimatedViewAnimationDuration;
 
@@ -94,17 +93,13 @@ const NSTimeInterval EOCAnimatedViewAnimationDuration = 0.3;
 
 ## 5. Use Enumerations
 
-```
+```objc
 enum EOCConnectionState {
     EOCConnectionStateDisconnected,
     EOCConnectionStateConnecting,
     EOCConnectionStateConnected,
 };
 typedef enum EOCConnectionState EOCConnectionState;
-```
 
-Use:
-
-```
 EOCConnectionState state = EOCConnectionStateDisconnected;
 ```

@@ -9,19 +9,16 @@ categories: [Apple]
 
 [WWDC 2018 - Practical Approaches to Great App Performance](https://developer.apple.com/videos/play/wwdc2018/407/)
 
-[Matrix-iOS 卡顿监控](https://cloud.tencent.com/developer/article/1427933)
-
 [如何利用 RunLoop 原理去监控卡顿？](https://time.geekbang.org/column/article/89494)
 
 # 卡顿原因
 
 可能导致主线程卡顿的原因：
 
-- 界面绘制计算量太大（如大量图文混排等复杂的 UI）
-- 主线程同步请求网络、等待子线程同步块
-- 主线程执行大量 IO 操作或计算
-- 总运算量过大，CPU 持续高占用
-- 死锁、主子线程抢锁
+- 大量 UI 绘制
+- 大量 I/O 操作
+- 大量计算
+- 死锁、主子线程抢锁、等待子线程同步块
 
 # CADisplayLink
 

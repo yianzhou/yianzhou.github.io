@@ -74,3 +74,55 @@ SDWebImage 中主要用到 `os_unfair_lock`、`dispatch_semaphore`、`@synchroni
 `@synchronized` 使用后，会在代码块前面插入 `objc_sync_enter`，代码块最后插入 `objc_sync_exit`。其核心逻辑是 `recursive_mutex_lock` 和 `recursive_mutex_unlock`，这两个函数在苹果私有库当中，从文档中得知是基于递归类型的 pthread_mutex 的。
 
 `NSLock`, `NSRecursiveLock`：NSLock 是对 pthread_mutex_lock 的封装，是普通类型的互斥锁；如果用在需要递归嵌套加锁的场景时，需要使用其子类 NSRecursiveLock。
+
+# 几种锁的使用
+
+同步块使用：
+
+```objc
+@synchronized (self) {
+    callbacks = [[self.callbackBlocks valueForKey:key] mutableCopy];
+}
+```
+
+信号量加锁：
+
+```objc
+dispatch_semaphore_t lock = dispatch_semaphore_create(1);
+dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER); // 等待和发出信号必须对称！重复调用 wait 不会崩溃，但会造成无限的等待……
+NSLog(@"safe here ...");
+dispatch_semaphore_signal(lock);
+```
+
+os_unfair_lock 使用：
+
+```objc
+#import <os/lock.h>
+os_unfair_lock lock = OS_UNFAIR_LOCK_INIT;
+os_unfair_lock_lock(&lock); // 加锁和解锁必须对称，重复加锁会直接崩溃！
+NSLog(@"safe here ...");
+os_unfair_lock_unlock(&lock);
+```
+
+# 死锁的例子
+
+在主线程往主队列里派发一个同步任务，就会死锁！
+
+```objc
+dispatch_sync(dispatch_get_main_queue(), ^{
+    NSLog(@"never going to execute...");
+});
+```
+
+在串行队列里执行的代码，如果有派发到当前队列的同步块，也会造成死锁！
+
+```swift
+let queue = DispatchQueue(label: "demo")
+queue.async {
+    queue.sync {
+        print("test")
+    }
+}
+```
+
+主线程拿到锁 A，等待锁 B；同时某个子线程拿到锁 B，等待锁 A，这样就死锁了。

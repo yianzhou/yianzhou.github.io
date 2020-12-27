@@ -19,14 +19,14 @@ categories: [Effective Objective-C]
 
 This compact description can be used by forming a dictionary within your own description method and returning a string containing this dictionary’s description method.
 
-```
-- (NSString*)description {
+```objc
+- (NSString *)description {
     return [NSString stringWithFormat:@"<%@: %p, %@>",
-    [self class],
-    self,
-    @{@"title":_title,
-    @"latitude":@(_latitude),
-    @"longitude":@(_longitude)}];
+            [self class],
+            self,
+            @{@"title":_title,
+              @"latitude":@(_latitude),
+              @"longitude":@(_longitude)}];
 }
 ```
 

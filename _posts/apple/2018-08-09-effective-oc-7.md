@@ -111,12 +111,12 @@ typedef void(^EOCNetworkFetcherCompletionHandler)(NSData *data);
 
 ## 51: Keep load and initialize Implementations Lean
 
-`+ (void)load`: is called once and only once for **every class and category** that is added to the runtime. 在调试时很有用，但 Release 下极少用到。
+`+ (void)load`: is called once and only once for **every class and category** that is added to the runtime.
 
-`+ (void)initialize`: is called on every class, once and only once, before the class is used. 运行时首次向类发送消息时会调用。
+`+ (void)initialize`: is called on every class, once and only once, before the class is used.
 
 An important thing to note is that load does not follow the normal inheritance rules for methods. A class that does not implement load is not called, regardless of whether any of its superclasses do. Also, load can appear in a category and the class itself. Both implementations will be called, with the class’s coming before the category’s.
 
-initialize is sent just like any other message; if a class doesn’t implement it but its superclass does, that implementation will be run. 
+initialize is sent just like any other message; if a class doesn’t implement it but its superclass does, that implementation will be run.
 
 ## 52: Remember that NSTimer Retains Its Target

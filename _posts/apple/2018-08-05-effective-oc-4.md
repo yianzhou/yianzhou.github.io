@@ -41,7 +41,7 @@ After all, no method or instance variable is truly private in Objective-C, owing
 
 The class-continuation category, unlike normal categories, is the only category that is allowed to declare extra instance variables. Also, this category doesn’t have a specific implementation. Any method defined within it is expected to appear in the main implementation of the class. Unlike other categories, a class-continuation category has no name.
 
-```
+```objc
 @interface EOCPerson ()
 // Methods here
 @end
@@ -50,3 +50,5 @@ The class-continuation category, unlike normal categories, is the only category 
 Similarly, the instance variable could have been added to the implementation block, semantically equivalent to adding it to the class-continuation category and more a matter of preference. I prefer adding it to the category because it keeps all data definitions in the same place.
 
 ## 28: Use a Protocol to Provide Anonymous Objects
+
+`@property (nonatomic, weak) id <EOCDelegate> delegate;`

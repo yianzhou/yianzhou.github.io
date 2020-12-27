@@ -21,11 +21,11 @@ If the block is defined in an instance method of an Objective-C class, the self 
 
 ## block 的内存结构
 
- A block is an object itself, since the first variable within the region of memory that a block is defined in is a pointer to a Class object, called the isa pointer.
+A block is an object itself, since the first variable within the region of memory that a block is defined in is a pointer to a Class object, called the isa pointer.
 
 ![image](/assets/images/block_layout.png)
 
-The most important thing to note in the layout is the variable called invoke, a function pointer to where the implementation of the block resides. The prototype of the function takes at least a void*, which is the block itself. Recall that blocks are a simple replacement for function pointers where state is passed using an opaque void pointer.
+The most important thing to note in the layout is the variable called invoke, a function pointer to where the implementation of the block resides. The prototype of the function takes at least a void\*, which is the block itself. Recall that blocks are a simple replacement for function pointers where state is passed using an opaque void pointer.
 
 The descriptor variable is a pointer to a structure that each block has, declaring the overall size of the block object and function pointers for copy and dispose helpers. These helpers are run when a block is copied and disposed of, for example, to perform any retaining or releasing, respectively, of captured objects.
 
@@ -66,21 +66,20 @@ The key is to think about what objects a block may capture and therefore retain.
 
 Sometimes in Objective-C, you will come across code that you’re having trouble with because it’s being accessed from multiple threads. This situation usually calls for the application of some sort of synchronization through the use of locks. Before GCD, there were two ways to achieve this:
 
-一、built-in synchronization block
+1\. built-in synchronization block
 
 ```objc
 - (void)synchronizedMethod {
     @synchronized(self) {
-        // 对 self 使用同步锁
+        // 修改 self 的实例变量/属性
+        // 调用 self 的实例方法
     }
 }
 ```
 
 This construct automatically creates a lock based on the given object and waits on that lock until it executes the code contained in the block. At the end of the code block, the lock is released. In the example, the object being synchronized against is self. This construct is often a good choice, as it ensures that each instance of the object can run its own synchronizedMethod independently. However, overuse of @synchronized(self) can lead to inefficient code, as each synchronized block will execute serially across all such blocks. If you overuse synchronization against self, you can end up with code waiting unnecessarily on a lock held by unrelated code.
 
-这段话我的理解是，对 self 加锁之后，假设这个对象被很多人持有，分别在不同的线程调用对象的 synchronizedMethod 方法，那么因为锁的存在这些方法会顺序执行，不会互相干扰。
-
-二、use the `NSLock` object directly
+2\. use the `NSLock` object directly
 
 ```objc
 _lock = [[NSLock alloc] init];
@@ -98,30 +97,41 @@ Both of these approaches are fine but come with their own drawbacks. For example
 
 那么，更好的方案是使用 GCD，它能更简单、高效地为代码加锁。使用串行队列，将读取和写入操作都放在同一个队列里，即可保证数据同步。如此，全部加锁任务都交由 GCD 处理，而 GCD 是在相当深的底层实现的，安全且效率很高。
 
-```swift
-let myQueue = DispatchQueue(label: "com.hello.myQueue")
-var myString = "Hello"
-func getSomeString() -> String {
-    var str = ""
-    myQueue.sync {
-        str = myString
-    }
-    return str
+```objc
+@interface ViewController ()
+@property(nonatomic, copy, nonnull) dispatch_queue_t serialQueue;
+@property(nonatomic, copy, nonnull) NSString *str;
+@end
+
+@implementation ViewController
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.serialQueue = dispatch_queue_create("com.hello.queue", nil);
+    self.str = @"hello";
 }
-func setSomeString(_ string: String) {
-    myQueue.sync {
-        myString = string
-    }
+
+- (NSString *)getStr {
+    __block NSString *res;
+    dispatch_sync(self.serialQueue, ^{
+        res = self.str;
+    });
+    return res;
+}
+
+- (void)setStr:(NSString *)str {
+    dispatch_sync(self.serialQueue, ^{
+        self.str = str;
+    });
 }
 ```
 
 `set`方法不需要返回值，所以不一定要是同步的，也可以异步执行：
 
-```swift
-func setSomeString(_ string: String) {
-    myQueue.async {
-        myString = string
-    }
+```objc
+- (void)setStr:(NSString *)str {
+    dispatch_async(self.serialQueue, ^{
+        self.str = str;
+    });
 }
 ```
 
@@ -130,20 +140,30 @@ func setSomeString(_ string: String) {
 多个`get`方法可以并发执行，但`get`和`set`方法不能并发执行，利用这个特点，还可以写出更快的代码。
 
 ```swift
-let concurrentQueue = DispatchQueue.global()
-var conString = "Hello"
-func getConString() -> String {
-    var str = ""
-    concurrentQueue.sync {
-        str = conString
-    }
-    return str
+@interface ViewController ()
+@property(nonatomic, copy, nonnull) dispatch_queue_t concurrentQueue;
+@property(nonatomic, copy, nonnull) NSString *str;
+@end
+
+@implementation ViewController
+- (void)viewDidLoad {
+    [super viewDidLoad];
+    self.concurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+    self.str = @"hello";
 }
-func setConString(_ string: String) {
-    let workItem = DispatchWorkItem(qos: .default, flags: .barrier) {
-        conString = string
-    }
-    concurrentQueue.sync(execute: workItem)
+
+- (NSString *)getStr {
+    __block NSString *res;
+    dispatch_sync(self.concurrentQueue, ^{
+        res = self.str;
+    });
+    return res;
+}
+
+- (void)setStr:(NSString *)str {
+    dispatch_barrier_async(self.concurrentQueue, ^{
+        self.str = str;
+    });
 }
 ```
 
@@ -165,7 +185,7 @@ That said, GCD is not always the approach of choice. Sometimes, this overhead is
 - Operation priorities
 - Reuse of operations. `BlockOperation`的子类在执行时可以充分利用自己的成员变量和方法，这些封装好的`Operation`可以在代码中多次使用。
 
-总的来说，Operation提供了更多在编写多线程程序时需要的功能，比如线程调度、任务取消、线程优先级等，为我们提供了简单的 API。从编程原则来说，一般我们需要尽可能使用高等级、封装完美的 API，在必须时才使用底层 API。但当我们认为需求能够以更简单的代码块实现的时候，简洁的 GCD 或许是个更好的选择。
+总的来说，Operation 提供了更多在编写多线程程序时需要的功能，比如线程调度、任务取消、线程优先级等，为我们提供了简单的 API。从编程原则来说，一般我们需要尽可能使用高等级、封装完美的 API，在必须时才使用底层 API。但当我们认为需求能够以更简单的代码块实现的时候，简洁的 GCD 或许是个更好的选择。
 
 # 44: Use Dispatch Groups to Take Advantage of Platform Scaling
 
@@ -175,24 +195,37 @@ Dispatch groups are a GCD feature that allows you to easily group tasks. You can
 dispatch_queue_t queue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
 dispatch_group_t dispatchGroup = dispatch_group_create();
 for (id object in collection) {
-    dispatch_group_async(dispatchGroup,
-                         queue,
-                         ^{ [object performTask]; });
+    dispatch_group_async(dispatchGroup, queue, ^{
+        [object performTask];
+    });
 }
-dispatch_group_wait(dispatchGroup, DISPATCH_TIME_FOREVER); // 等待
+dispatch_group_wait(dispatchGroup, DISPATCH_TIME_FOREVER);
 ```
 
 If the current thread should not be blocked, you can use the notify function instead of waiting:
 
 ```objc
 dispatch_queue_t notifyQueue = dispatch_get_main_queue();
-dispatch_group_notify(dispatchGroup,
-                      notifyQueue,
-                      ^{ /* Continue processing after completing tasks */ });
+dispatch_group_notify(dispatchGroup, notifyQueue, ^{
+    /* Continue processing after completing tasks */
+});
 ```
 
 GCD automatically creates new threads or reuses old ones as it sees fit to service blocks on a queue. In the case of concurrent queues, this can be multiple threads, meaning that multiple blocks are executed concurrently. This leaves you to code your business logic and not have to write any kind of complex scheduler to handle concurrent tasks.
 
 # 45: Use dispatch_once for Thread-Safe Single-Time Code Execution
+
+`dispatch_once` ensures that for a given token, the block is executed once and only once. The block is always executed the first time and, most important, is entirely thread safe. The token has been declared static because it needs to be exactly the same token each time.
+
+```objc
++ (id)sharedInstance {
+    static EOCClass *sharedInstance = nil;
+    static dispatch_once_t onceToken;
+    dispatch_once(&onceToken, ^{
+        sharedInstance = [[self alloc] init];
+    });
+    return sharedInstance;
+}
+```
 
 # 46: Avoid dispatch_get_current_queue

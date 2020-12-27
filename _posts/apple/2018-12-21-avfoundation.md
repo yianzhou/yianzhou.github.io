@@ -75,7 +75,16 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 
 `AVAsset` 是一个抽象类。第一，它提供了对基本媒体格式的抽象，开发者不需考虑不同的编码和容器格式细节，只需面对“资源”这一概念；第二，它屏蔽了资源位置的细节，不管资源是在应用程序 bundle、沙盒文件夹、用户音乐库或远程音频流，开发者都可以合理地获取和载入媒体。
 
+如果创建一个用在音频或视频编辑场景中的资源，可以用更长的加载时间，来获取更精确的资源时长信息。
+
+```objc
+NSDictionary *options = @{AVURLAssetPreferPreciseDurationAndTimingKey: @YES};
+AVURLAsset *asset = [[AVURLAsset alloc] initWithURL:url options:options];
+```
+
 `AVAsset` 本身不是媒体资源，它是 timed media 的容器。它由一个或多个带有（描述自身的）元数据的媒体组成，即 `AVAssetTrack`，最常见的形态就是音频和视频流，还有文本、副标题、隐藏字幕等类型。
+
+---
 
 Many of AVFoundation’s key features and capabilities relate to playing and processing media assets. The framework models assets by using the `AVAsset` class, which is an abstract, immutable type representing a single media resource. It provides a composite view of a media asset, modeling the static aspects of the media as a whole. 它提供了媒体资产的组合视图，对整个媒体的静态方面进行了建模。
 

@@ -9,15 +9,11 @@ categories: [Apple]
 
 [Learning-AV-Foundation 示例代码](https://github.com/tapharmonic/Learning-AV-Foundation)
 
-# 初识
+# 介绍
 
 AVFoundation Stack on iOS:
 
 ![img-60](/assets/images/1_zY4oLLDPVGW1cMdhzSHElg.png)
-
-AVFoudation 提供的一些核心功能。
-
-音频播放和记录：`AVAudioPlayer` 和 `AVAudioRecorder` 提供了最简单的音频播放和记录的功能。
 
 媒体元数据读写：`AVMetadataItem` 允许开发者读写媒体资源的描述信息，如艺术家、专辑等。
 
@@ -29,7 +25,11 @@ AVFoudation 提供的一些核心功能。
 
 # 播放和录制音频
 
-`AVAudioSession` 在应用程序和操作系统之间扮演了中间人的角色。[`AVAudioSession.Category`](https://developer.apple.com/documentation/avfoundation/avaudiosession/category) 定义了 7 种分类来描述应用程序的音频行为。
+`AVAudioSession` 在应用程序和操作系统之间扮演了中间人的角色。
+
+`AVAudioPlayer` 和 `AVAudioRecorder` 提供了音频播放和记录的功能。
+
+[`AVAudioSession.Category`](https://developer.apple.com/documentation/avfoundation/avaudiosession/category) 定义了 7 种分类来描述应用程序的音频行为。
 
 | Category            | 是否被锁屏和静音开关静音 | 是否允许混音 | 音频输入 | 音频输出 |
 | ------------------- | ------------------------ | ------------ | -------- | -------- |
@@ -67,9 +67,15 @@ func application(_ application: UIApplication, didFinishLaunchingWithOptions lau
 <string>To record memo.</string>
 ```
 
-AVAudioRecorder 和 AVAudioPlayer 可以对音量进行测量。通过 `averagePowerForChannel:` 和 `peakPowerForChannel:` 方法获得的读数，是一个描述音量等级的对数单位，取值范围从最大分贝的 0（full scale）到最小分贝或静音的 -160dB。我们想在用户界面上展示音量大小，需要把这个值转化为 0 - 1 之间的值。参考 `THMeterTable` 类。
+`AVAudioRecorder` 和 `AVAudioPlayer` 都可以对音量进行测量。通过 `averagePowerForChannel:` 和 `peakPowerForChannel:` 方法获得的读数，是一个描述音量等级的对数单位，取值范围从最大分贝的 0（full scale）到最小分贝或静音的 -160dB。我们想在用户界面上展示音量大小，需要把这个值转化为 0 - 1 之间的值。参考 `THMeterTable` 类。
 
-# Media Assets and Metadata
+# 资源和元数据
+
+有别于传统面向文件的音频类，AVFoundation 把所有的代码设计围绕着“资源”进行，最核心的类就是 `AVAsset`！
+
+`AVAsset` 是一个抽象类。第一，它提供了对基本媒体格式的抽象，开发者不需考虑不同的编码和容器格式细节，只需面对“资源”这一概念；第二，它屏蔽了资源位置的细节，不管资源是在应用程序 bundle、沙盒文件夹、用户音乐库或远程音频流，开发者都可以合理地获取和载入媒体。
+
+`AVAsset` 本身不是媒体资源，它是 timed media 的容器。它由一个或多个带有（描述自身的）元数据的媒体组成，即 `AVAssetTrack`，最常见的形态就是音频和视频流，还有文本、副标题、隐藏字幕等类型。
 
 Many of AVFoundation’s key features and capabilities relate to playing and processing media assets. The framework models assets by using the `AVAsset` class, which is an abstract, immutable type representing a single media resource. It provides a composite view of a media asset, modeling the static aspects of the media as a whole. 它提供了媒体资产的组合视图，对整个媒体的静态方面进行了建模。
 

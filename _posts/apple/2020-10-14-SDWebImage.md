@@ -183,6 +183,8 @@ SDWebImageManager 这个类是 UIView category 提供的接口背后真正完成
 }
 ```
 
+这里的 cache 和 loader 可以由外部自行指定，如果没有指定则使用框架内的默认实现类。
+
 ## 一、组合操作
 
 ```objc
@@ -216,7 +218,7 @@ SDWebImageManager 这个类是 UIView category 提供的接口背后真正完成
 >
 > Finally, Git looks for configuration values in the configuration file in the Git directory (.git/config) of whatever repository you’re currently using. These values are specific to that **single repository**, and represent passing the --local option to git config. If you don’t specify which level you want to work with, this is the default.
 >
-> Each of these “levels” (system, global, local) overwrites values in the previous level, so values in .git/config trump those in [path]/etc/gitconfig, for instance.
+> Each of these “levels” (system, global, local) overwrites values in the previous level.
 
 ## 二、查找缓存流程
 
@@ -266,7 +268,7 @@ SDWebImageManager 这个类是 UIView category 提供的接口背后真正完成
                               completed:(nullable SDInternalCompletionBlock)completedBlock {
     if (shouldDownload) {
         if (cachedImage && options & SDWebImageRefreshCached) {
-            // 缓存命中 -> 刷新缓存
+            // 缓存命中
             [self callCompletionBlockForOperation:operation completion:completedBlock image:cachedImage data:cachedData error:nil cacheType:cacheType finished:YES url:url];
             // context 是不可变的，要想改变它需要经过以下的操作
             SDWebImageMutableContext *mutableContext;
@@ -639,12 +641,10 @@ static inline NSString * _Nonnull SDDiskCacheFileNameForKey(NSString * _Nullable
         ext = nil;
     }
 
-    // C语言中 %02X 是什么意思
     // X 表示以十六进制形式输出
     // 02 表示不足两位，前面补 0 输出；
-    // 举例：
-    // printf("%02X", 0x123);  //打印出：123
-    // printf("%02X", 0x1); //打印出：01
+    // printf("%02X", 0x123);  // 打印出：123
+    // printf("%02X", 0x1); // 打印出：01
     // 将字符串的每一位以 16 进制数输出！
     NSString *filename = [NSString stringWithFormat:@"%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%02x%@",
                           r[0], r[1], r[2], r[3], r[4], r[5], r[6], r[7], r[8], r[9], r[10],
@@ -1074,7 +1074,7 @@ headerDictionary[@"Accept"] = @"image/*,*/*;q=0.8"; // 图片类型权重 1.0；
 
 在开始研究 SDWebImageDownloaderOperation 前，先复习一下 NSOperation 的 `start` 和 `main` 两个方法。
 
-当 main 方法返回后，operation 就结束了。当我们在 main 方法中有异步操作时，这可能不是我们想要的结果。
+当 main 方法返回后，operation 就结束了。当我们在 main 方法中有异步操作时，这可能不是我们想要的结果。比如以下这段代码，operation 已经完成了，网络请求才返回。
 
 ```swift
 private final class DownloadOperation: Operation {
@@ -1088,20 +1088,10 @@ private final class DownloadOperation: Operation {
     }
 }
 
-class ViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        let op = DownloadOperation()
-        operationQueue.addOperation(op)
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.001) {
-            print("operation finished: \(op.isFinished)") // true
-        }
-        /**
-         operation finished: true
-         URL data task completed
-         */
-    }
+let op = DownloadOperation()
+operationQueue.addOperation(op)
+DispatchQueue.main.asyncAfter(deadline: .now() + 0.001) {
+    print("operation finished: \(op.isFinished)")
 }
 ```
 
@@ -1150,30 +1140,8 @@ private final class DownloadOperation: Operation {
     }
 }
 
-class ViewController: UIViewController {
-    override func viewDidLoad() {
-        super.viewDidLoad()
-
-        let op = DownloadOperation()
-        operationQueue.addOperation(op)
-
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.2) {
-            print("operation executing: \(op.isExecuting)")
-            print("operation finished: \(op.isFinished)")
-        }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-            print("operation executing: \(op.isExecuting)")
-            print("operation finished: \(op.isFinished)")
-        }
-    }
-    /**
-     operation executing: true
-     operation finished: false
-     URL data task completed
-     operation executing: false
-     operation finished: true
-     */
-}
+let op = DownloadOperation()
+operationQueue.addOperation(op)
 ```
 
 ## SDWebImageDownloaderOperation

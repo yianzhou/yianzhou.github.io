@@ -74,6 +74,42 @@ let set = CharacterSet.alphanumerics.union(CharacterSet.init(charactersIn: "_.")
 let filted = String(v.unicodeScalars.filter(set.contains))
 ```
 
+将秒数转换为时间字符串：
+
+```swift
+func ms(from count: Int) -> (String, String) {
+    let minute = count / 60
+    let second = count - minute * 60
+    var minuteStr = "\(minute)"
+    if minuteStr.count == 1 {
+        minuteStr = "0\(minuteStr[0])"
+    }
+    var secondStr = "\(second)"
+    if secondStr.count == 1 {
+        secondStr = "0\(secondStr[0])"
+    }
+    return (minuteStr, secondStr)
+}
+```
+
+将秒数转换为 00:00 格式：
+
+```swift
+func str(from seconds: Int) -> String {
+    let minute = seconds / 60
+    let second = seconds - minute * 60
+    var minuteStr = "\(minute)"
+    if minuteStr.count == 1 {
+        minuteStr = "0\(String(minuteStr.prefix(1)))"
+    }
+    var secondStr = "\(second)"
+    if secondStr.count == 1 {
+        secondStr = "0\(String(secondStr.prefix(1)))"
+    }
+    return "\(minuteStr):\(secondStr)"
+}
+```
+
 # Foundation
 
 ## URL
@@ -251,24 +287,6 @@ private func getCurrentDate() -> String {
     let dateFormater = DateFormatter()
     dateFormater.dateFormat = "yyyyMMdd"
     return dateFormater.string(from: Date())
-}
-```
-
-将秒数转换为 00:00:00 格式的字符串：
-
-```swift
-func ms(from count: Int) -> (String, String) {
-    let minute = count / 60
-    let second = count - minute * 60
-    var minuteStr = "\(minute)"
-    if minuteStr.count == 1 {
-        minuteStr = "0\(minuteStr[0])"
-    }
-    var secondStr = "\(second)"
-    if secondStr.count == 1 {
-        secondStr = "0\(secondStr[0])"
-    }
-    return (minuteStr, secondStr)
 }
 ```
 

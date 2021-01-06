@@ -29,7 +29,15 @@ The Render Loop consists of three phases -- Update Constraints, Layout, and Disp
 | setNeedsUpdateConstraints() | setNeedsLayout() | setNeedsDisplay() |
 | updateConstraintsIfNeeded() | layoutIfNeeded() |                   |
 
-You should not call `layoutSubviews()` directly. If you want to force a layout update, call the `setNeedsLayout()` method instead to do so. This method makes a note of the request and returns immediately. Because this method does not force an immediate update, but instead waits for the next update cycle, you can use it to invalidate the layout of multiple views before any of those views are updated. This behavior allows you to consolidate all of your layout updates to one update cycle, which is usually better for performance. If you want to update the layout of your views immediately, call the `layoutIfNeeded()` method. If no layout updates are pending, this method exits without modifying the layout or calling any layout-related callbacks.
+`setNeedsLayout` 是异步的，不要直接调用 `layoutSubviews`，我们自定义的 `UIView` 可以重载 `layoutSubviews`，用于调整子视图的 frame。
+
+You should not call `layoutSubviews` directly. If you want to force a layout update, call the `setNeedsLayout` method instead to do so. This method makes a note of the request and returns immediately. Because this method does not force an immediate update, but instead waits for the next update cycle, you can use it to invalidate the layout of multiple views before any of those views are updated. This behavior allows you to consolidate all of your layout updates to one update cycle, which is usually better for performance.
+
+If you want to update the layout of your views immediately, call the `layoutIfNeeded()` method. If no layout updates are pending, this method exits without modifying the layout or calling any layout-related callbacks.
+
+`setNeedsDisplay` 是异步的，不要直接调用 `drawRect:`，我们自定义的 `UIView` 可以重载 `drawRect:`，用于绘制自定义的内容。
+
+`drawRect:` Subclasses that use technologies such as Core Graphics and UIKit to draw their view’s content should override this method and implement their drawing code there. UIKit creates and configures a graphics context for drawing and adjusts the transform of that context so that its origin matches the origin of your view’s bounds rectangle. You can get a reference to the graphics context using the `UIGraphicsGetCurrentContext` function, but do not establish a strong reference to the graphics context because it can change between calls to the `drawRect:` method.
 
 # Auto Layout
 

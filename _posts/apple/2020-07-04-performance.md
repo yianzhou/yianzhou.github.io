@@ -9,15 +9,12 @@ categories: [Apple]
 
 [WWDC 2018 - Practical Approaches to Great App Performance](https://developer.apple.com/videos/play/wwdc2018/407/)
 
-[如何利用 RunLoop 原理去监控卡顿？](https://time.geekbang.org/column/article/89494)
-
 # 卡顿原因
 
 可能导致主线程卡顿的原因：
 
-- 大量 UI 绘制
-- 大量 I/O 操作
-- 大量计算
+- 主线程运算量过大：大量 UI 绘制、大量计算
+- 主线程进行了耗时的 I/O 操作
 - 死锁、主子线程抢锁、等待子线程同步块
 
 # CADisplayLink
@@ -33,7 +30,7 @@ YYFPSLabel 采用这样的办法显示屏幕帧率。计算两次刷新的时间
 
 创建一个专门用于监控的子线程去 ping 主线程。
 
-[iOS卡顿监控实战（开源）](https://juejin.cn/post/6844904005437489165)
+[iOS 卡顿监控实战（开源）](https://juejin.cn/post/6844904005437489165)
 
 针对同一个卡顿只会上报一次，并没有像微信那样重复上报。一是出于我们本身业务考虑；二是上报使用的 Fabric，它会在下一次启动时将所有记录数据推到平台，并且对于上报量有限制。
 
@@ -54,7 +51,7 @@ private final class PingMainThread: Thread {
                     // 获取所有线程
                     // 获取线程栈寄存器，获得指令地址
                 }
-                // 避免重复上报，一次卡顿仅上报一次（这里与微信runloop方案有比较大的区别，微信会按照斐波拉契间隔重复上报）
+                // 避免重复上报，一次卡顿仅记录一次（这里与微信 RunLoop 方案有比较大的区别，微信会按照斐波拉契间隔重复上报）
                 _ = semaphore.wait(timeout: DispatchTime.distantFuture)
             }
         }
@@ -64,27 +61,24 @@ private final class PingMainThread: Thread {
 
 # RunLoop 监听
 
+[如何利用 RunLoop 原理去监控卡顿？](https://time.geekbang.org/column/article/89494)
+
 A `CFRunLoopObserver` provides a general means to receive callbacks at different points within a running run loop. In contrast to sources, which fire when an asynchronous event occurs, and timers, which fire when a particular time passes, observers fire at special locations within the execution of the run loop, such as before sources are processed or before the run loop goes to sleep, waiting for an event to occur.
 
 要想监听 RunLoop，首先需要创建一个 CFRunLoopObserverContext 观察者，将创建好的观察者添加到主线程 RunLoop 的 common 模式下观察。然后，创建一个持续运行的子线程专门用来监控主线程的 RunLoop 状态。
 
-一旦发现进入睡眠前的 kCFRunLoopBeforeSources 状态，或者唤醒后的状态 kCFRunLoopAfterWaiting，在设置的时间阈值内一直没有变化，即可判定为卡顿。
-
-参考：<https://github.com/ming1016/DecoupleDemo/blob/master/DecoupleDemo/SMLagMonitor.m>
-
-卡顿堆栈的捕获：[BSBacktraceLogger](https://github.com/bestswifter/BSBacktraceLogger)，[PLCrashReporter](https://github.com/microsoft/plcrashreporter) 等开源框架均有实现。
+参考：[戴铭 - SMLagMonitor](https://github.com/ming1016/DecoupleDemo/blob/master/DecoupleDemo/SMLagMonitor.m)；卡顿堆栈的捕获：[BSBacktraceLogger](https://github.com/bestswifter/BSBacktraceLogger)。
 
 ```swift
 import Foundation
 
-class RunLoopObserver {
-    static let shared = RunLoopObserver()
-
+class MonitorThread: Thread {
     private var runLoopObserver: CFRunLoopObserver?
     private let semaphore = DispatchSemaphore(value: 0)
     private var runLoopActivity: CFRunLoopActivity?
 
-    private init() {
+    override init() {
+        super.init()
         // Creates a CFRunLoopObserver object with a block-based handler.
         runLoopObserver = CFRunLoopObserverCreateWithHandler(
             kCFAllocatorDefault, // The allocator to use to allocate memory for the new object.
@@ -98,19 +92,26 @@ class RunLoopObserver {
             })
 
         CFRunLoopAddObserver(CFRunLoopGetMain(), runLoopObserver, CFRunLoopMode.commonModes)
+    }
 
-        DispatchQueue.global().async {
-            while (true) {
-                let result = self.semaphore.wait(timeout: .now() + 2.0)
-                if result == .timedOut {
-                    if (self.runLoopObserver == nil) {
-                        return
+    override func main() {
+        while (true) {
+            let result = self.semaphore.wait(timeout: .now() + 2.0)
+            if result == .timedOut {
+                if (self.runLoopObserver == nil) {
+                    return
+                }
+                if let activity = self.runLoopActivity {
+                    // 没有发生卡顿时，每 2 秒 timeout 一次，此时的 runLoopActivity 应该是 .beforeWaiting
+                    print(activity)
+                }
+                if self.runLoopActivity == .beforeTimers || self.runLoopActivity == .beforeSources || self.runLoopActivity == .afterWaiting {
+                    // 在这里获取全线程堆栈并上传
+                    if let backtrace = BSBacktraceLogger.bs_backtraceOfMainThread() {
+                        print(backtrace)
                     }
-                    if self.runLoopActivity == .beforeSources || self.runLoopActivity == .afterWaiting {
-                        DispatchQueue.global(qos: .userInteractive).async {
-                            // 获取卡顿堆栈
-                        }
-                    }
+                    // 为了对键盘性能影响最小化，检测到卡顿后继续等待信号量，不再重复记录堆栈。
+                    let _ = self.semaphore.wait()
                 }
             }
         }
@@ -162,23 +163,6 @@ for _ in 1...100000000 {
 ```
 
 内存占用、FPS、CPU 的性能监控方案，它们的代码和业务逻辑是完全解耦的，监控时基本都是直接获取系统本身提供的数据，没有额外的计算量，因此对 App 本身的性能影响也非常小。
-
-# [腾讯 Matrix](https://github.com/Tencent/matrix)
-
-当前工具监控范围包括：崩溃、卡顿和爆内存，包含以下两款插件：
-
-WCCrashBlockMonitorPlugin：基于 KSCrash 框架开发，具有业界领先的卡顿堆栈捕获能力，同时兼备崩溃捕获能力。
-
-WCMemoryStatPlugin：一款性能优化到极致的爆内存（OOM）监控工具，能够全面捕获应用爆内存时的内存分配以及调用堆栈情况。
-
-为了降低检测带来的性能损耗，我们为检测线程增加了退火算法。
-
-每次子线程检查到主线程卡顿，会先获得主线程的堆栈并保存到内存中，然后，将获得的主线程堆栈与上次卡顿获得的主线程堆栈进行比对：
-
-- 如果堆栈不同，则将线程快照并写入文件中；
-- 如果堆栈相同，则跳过，并按照斐波那契数列将检查时间递增，直到没有遇到卡顿或者主线程卡顿堆栈不一样。
-
-这样，可以避免同一个卡顿写入多个文件的情况；避免检测线程遇到主线程卡死的情况下，不断写线程快照文件。
 
 # 线上效果
 

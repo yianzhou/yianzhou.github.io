@@ -43,6 +43,20 @@ freeOptions.insert(.priority)
 if freeOptions.contains(.priority) {}
 ```
 
+用 python 打印出 100111 对应的选项 ABCF：
+
+```py
+base = 65
+for i in range(0, 64):
+    string = "{0:b}".format(i)
+    N = len(string)
+    res = str(i) + " "
+    for j in range(N-1, -1, -1):
+        if string[j] == '1':
+            res += str(chr(base + N-j-1))
+    print(res)
+```
+
 ## String
 
 是否匹配正则表达式：

@@ -96,22 +96,24 @@ class MonitorThread: Thread {
 
     override func main() {
         while (true) {
-            let result = self.semaphore.wait(timeout: .now() + 2.0)
-            if result == .timedOut {
-                if (self.runLoopObserver == nil) {
-                    return
-                }
-                if let activity = self.runLoopActivity {
-                    // 没有发生卡顿时，每 2 秒 timeout 一次，此时的 runLoopActivity 应该是 .beforeWaiting
-                    print(activity)
-                }
-                if self.runLoopActivity == .beforeTimers || self.runLoopActivity == .beforeSources || self.runLoopActivity == .afterWaiting {
-                    // 在这里获取全线程堆栈并上传
-                    if let backtrace = BSBacktraceLogger.bs_backtraceOfMainThread() {
-                        print(backtrace)
+            autoreleasepool {
+                let result = self.semaphore.wait(timeout: .now() + 2.0)
+                if result == .timedOut {
+                    if (self.runLoopObserver == nil) {
+                        return
                     }
-                    // 为了对键盘性能影响最小化，检测到卡顿后继续等待信号量，不再重复记录堆栈。
-                    let _ = self.semaphore.wait()
+                    if let activity = self.runLoopActivity {
+                        // 没有发生卡顿时，每 2 秒 timeout 一次，此时的 runLoopActivity 应该是 .beforeWaiting
+                        print(activity)
+                    }
+                    if self.runLoopActivity == .beforeTimers || self.runLoopActivity == .beforeSources || self.runLoopActivity == .afterWaiting {
+                        // 在这里获取全线程堆栈并上传
+                        if let backtrace = BSBacktraceLogger.bs_backtraceOfMainThread() {
+                            print(backtrace)
+                        }
+                        // 为了对键盘性能影响最小化，检测到卡顿后继续等待信号量，不再重复记录堆栈。
+                        let _ = self.semaphore.wait()
+                    }
                 }
             }
         }

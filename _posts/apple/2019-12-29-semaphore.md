@@ -68,17 +68,14 @@ import UIKit
 
 let higherPriority = DispatchQueue.global(qos: .userInitiated)
 let lowerPriority = DispatchQueue.global(qos: .utility)
-
 let semaphoreA = DispatchSemaphore(value: 1)
 let semaphoreB = DispatchSemaphore(value: 1)
 
 func asyncPrint(queue: DispatchQueue, firstResource: String, firstSemaphore: DispatchSemaphore, secondResource: String, secondSemaphore: DispatchSemaphore) {
-
-  func requestResource(_ resource: String, with semaphore: DispatchSemaphore) {
-    print("\(queue.label) waiting \(resource)")
-    semaphore.wait()
-  }
-
+    func requestResource(_ resource: String, with semaphore: DispatchSemaphore) {
+        print("\(queue.label) waiting \(resource)")
+        semaphore.wait()
+    }
     queue.async {
         requestResource(firstResource, with: firstSemaphore)
         for i in 0...10 {
@@ -92,7 +89,7 @@ func asyncPrint(queue: DispatchQueue, firstResource: String, firstSemaphore: Dis
         }
         print("\(queue.label) releasing \(firstResource)")
         firstSemaphore.signal()
-  }
+    }
 }
 
 asyncPrint(queue: higherPriority, firstResource: "A", firstSemaphore: semaphoreA, secondResource: "B", secondSemaphore: semaphoreB)

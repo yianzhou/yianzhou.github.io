@@ -15,14 +15,6 @@ AVFoundation Stack on iOS:
 
 ![img-60](/assets/images/1_zY4oLLDPVGW1cMdhzSHElg.png)
 
-媒体元数据读写：`AVMetadataItem` 允许开发者读写媒体资源的描述信息，如艺术家、专辑等。
-
-`AVPlayer` 和 `AVPlayerItem` 让你从本地文件或远程流中播放视频或音频，并对播放进行控制。
-
-摄像头采集的核心类是 `AVCaptureSession`，可以对采集设备进行精确控制，捕捉静态图片和视频。
-
-`AVAssetReader` 和 `AVAssetWriter` 提供直接访问视频帧和音频样本的功能。
-
 # 播放和录制音频
 
 `AVAudioSession` 在应用程序和操作系统之间扮演了中间人的角色。

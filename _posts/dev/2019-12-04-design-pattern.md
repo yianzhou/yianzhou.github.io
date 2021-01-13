@@ -79,17 +79,15 @@ classDiagram
 | 原型模式（Prototype）            | 3        |
 | 单例模式（Singleton）            | 4        |
 
-例子：
-
-简单工厂模式主要解决不同情况下，需要创建不同子类，而这些子类又需要转化为公共父类让外界去使用的问题。Foundation 框架中的 `NSNumber` 所应用的就是简单工厂模式。
+简单工厂模式主要解决不同情况下，需要创建不同子类，而这些子类又需要转化为公共父类让外界去使用的问题。Foundation 框架中的 `NSNumber` 所应用的就是简单工厂模式。类似的还有 `NSArray`、`UIButton` 等。
 
 ```swift
 let boolValue: Bool = true
 let doubleValue: Double = 1.0
 let boolN = NSNumber(value: boolValue)
 let doubleN = NSNumber(value: doubleValue)
-print(type(of:boolN)) // __NSCFBoolean
-print(type(of:doubleN)) // __NSCFNumber
+print(type(of: boolN)) // __NSCFBoolean
+print(type(of: doubleN)) // __NSCFNumber
 ```
 
 建造者模式是用来隔离复杂对象的配置过程，将复杂对象的配置过程单独封装成一个 builder 对象，完成配置后，再获取配置完成的实例对象。如`NSDateComponent`，`NSURLComponent`。
@@ -106,11 +104,11 @@ components.queryItems = [
 let url = components.url // 建造完成
 ```
 
-单例模式：`URLSession.default`，`UserDefaults.standard`。
+单例模式：`URLSession.default`，`UserDefaults.standard`，`UIApplication.shared`。
 
 ## 结构型模式
 
-结构型模式(Structural Pattern)描述如何将类或者对象结合在一起形成更大的结构，就像搭积木，可以通过简单积木的组合形成复杂的、功能更为强大的结构。
+结构型模式 (Structural Pattern) 描述如何将类或者对象结合在一起形成更大的结构，就像搭积木，可以通过简单积木的组合形成复杂的、功能更为强大的结构。
 
 | 设计模式            | 重要程度 |
 | ------------------- | -------- |
@@ -122,11 +120,7 @@ let url = components.url // 建造完成
 | 享元模式(Flyweight) | 1        |
 | 代理模式(Proxy)     | 4        |
 
-组合模式就是将对象组合成树形结构，而且单个对象和组合对象的接口一致（同一个类）。数据结构中的二叉树、红黑树用`TreeNode`表示树的每个节点，就是组合模式。`UIView`组成的视图层级，`CALayer`组成的图层层级，是经典的组合模式。
-
-装饰模式（Decorator Pattern）：动态地给一个对象增加一些额外的职责（Responsibility），装饰模式相比继承机制（生成子类），更为灵活。比如 Swift 中的 Extension 特性。`UIView` 给 `CALayer` 装饰，`UIViewController` 给 `UIView` 装饰，是典型的对象装饰器模式。
-
-外观模式（Facade Pattern）：外观模式定义了一个高层接口，为子系统中的一组接口提供一个一致的界面。比如在`SDWebImage`中`imageView.sd_setImage()`接口的设计，将一系列复杂的调用封装成简单易用的接口。
+组合模式就是将对象组合成树形结构，而且单个对象和组合对象的接口一致（同一个类）。数据结构中的二叉树、红黑树用 `TreeNode` 表示树的每个节点，就是组合模式。`UIView` 组成的视图层级、`CALayer` 组成的图层层级，是经典的组合模式。
 
 在面向对象编程中，有时候一个类需要被创建多个对象，但当进程中对象数量太多时，将带来内存上涨、性能下降等问题。享元模式（Flyweight）通过共享技术实现相同或相似对象的重用。UIKit 中，`UITableViewCell` 和 `UICollectionViewCell` 的复用就是典型的享元模式。
 

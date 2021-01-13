@@ -13,9 +13,9 @@ categories: [Apple]
 
 iOS 响应式框架，最开始被大家知道的是 [ReactiveCocoa](https://github.com/ReactiveCocoa/ReactiveCocoa)（简称 RAC），后来比较流行的是 [RxSwift](https://github.com/ReactiveX/RxSwift)。
 
-ReactiveCocoa 是将函数式编程和响应式编程结合起来的库，通过函数式编程思想建立了数据流的通道，数据流动时会经过各种函数的处理最终到达和数据绑定的界面，由此实现了数据变化响应界面变化的效果。
+ReactiveCocoa 是将函数式编程和响应式编程结合起来的库，通过函数式编程思想建立了数据流的通道，数据流动时会经过各种函数的处理最终到达和数据绑定的界面。
 
-ReactiveCocoa 的核心类是 RACStream
+ReactiveCocoa 的核心类是 `RACStream`：
 
 ```objc
 /// An abstract class representing any stream of values.

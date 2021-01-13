@@ -94,7 +94,7 @@ iOS 4+，苹果对 UIView 添加了一种基于 block 的动画方法：`+animat
 UIView 关联的图层禁用了隐式动画，如果想对这个图层做动画可以：
 
 1. 使用 UIView 的动画函数
-2. 或者继承 UIView，并 override `-actionForLayer:forKey:` 方法，返回动画。（默认返回 nil 即无动画）
+2. 或者继承 UIView，并 override `-actionForLayer:forKey:` 方法，返回动画（默认返回 nil 即无动画）
 3. 或者直接创建一个显式动画
 
 ## 显式动画

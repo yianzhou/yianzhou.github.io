@@ -97,35 +97,7 @@ Both of these approaches are fine but come with their own drawbacks. For example
 
 那么，更好的方案是使用 GCD，它能更简单、高效地为代码加锁。使用串行队列，将读取和写入操作都放在同一个队列里，即可保证数据同步。如此，全部加锁任务都交由 GCD 处理，而 GCD 是在相当深的底层实现的，安全且效率很高。
 
-```objc
-@interface ViewController ()
-@property(nonatomic, copy, nonnull) dispatch_queue_t serialQueue;
-@property(nonatomic, copy, nonnull) NSString *str;
-@end
-
-@implementation ViewController
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.serialQueue = dispatch_queue_create("com.hello.queue", nil);
-    self.str = @"hello";
-}
-
-- (NSString *)getStr {
-    __block NSString *res;
-    dispatch_sync(self.serialQueue, ^{
-        res = self.str;
-    });
-    return res;
-}
-
-- (void)setStr:(NSString *)str {
-    dispatch_sync(self.serialQueue, ^{
-        self.str = str;
-    });
-}
-```
-
-`set`方法不需要返回值，所以不一定要是同步的，也可以异步执行：
+`get` 方法必须同步执行；`set`方法不需要返回值，所以不是必须同步执行，也可以异步执行：
 
 ```objc
 - (void)setStr:(NSString *)str {
@@ -139,32 +111,53 @@ Both of these approaches are fine but come with their own drawbacks. For example
 
 多个`get`方法可以并发执行，但`get`和`set`方法不能并发执行，利用这个特点，还可以写出更快的代码。
 
-```swift
-@interface ViewController ()
-@property(nonatomic, copy, nonnull) dispatch_queue_t concurrentQueue;
-@property(nonatomic, copy, nonnull) NSString *str;
+```objc
+#import <Foundation/Foundation.h>
+NS_ASSUME_NONNULL_BEGIN
+@interface DemoObject : NSObject
+@property(nonatomic, copy) NSString *someString;
+@end
+NS_ASSUME_NONNULL_END
+```
+
+```objc
+#import "DemoObject.h"
+
+@interface DemoObject()
+@property(nonatomic, strong, nonnull) dispatch_queue_t concurrentQueue;
 @end
 
-@implementation ViewController
-- (void)viewDidLoad {
-    [super viewDidLoad];
-    self.concurrentQueue = dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
-    self.str = @"hello";
+@implementation DemoObject
+
+@synthesize someString = _someString; // 重要
+
+- (instancetype)init
+{
+    self = [super init];
+    if (self) {
+        // 自己创建并发队列，栅栏函数不能配合全局队列使用！！
+        _concurrentQueue = dispatch_queue_create(NSStringFromClass([self class]).UTF8String, DISPATCH_QUEUE_CONCURRENT);
+    }
+    return self;
 }
 
-- (NSString *)getStr {
-    __block NSString *res;
-    dispatch_sync(self.concurrentQueue, ^{
-        res = self.str;
+-(NSString *)someString {
+    __block NSString *localSomeString;
+    dispatch_sync(_concurrentQueue, ^{
+        NSLog(@"%@", [[NSThread currentThread]description]); // 主线程！！
+        // 此处需使用 _someString 直接访问实例变量！
+        // 如果使用 self.someString 就是再次调用了 getter！会死循环！
+        localSomeString = _someString;
     });
-    return res;
+    return localSomeString;
 }
 
-- (void)setStr:(NSString *)str {
-    dispatch_barrier_async(self.concurrentQueue, ^{
-        self.str = str;
+-(void)setSomeString:(NSString *)someString{
+    dispatch_barrier_async(_concurrentQueue, ^{
+        self->_someString = someString;
     });
 }
+@end
 ```
 
 在队列中，barrier block 必须单独执行，不能并发执行，这只对并行队列有意义，因为串行队列中的块总是逐个执行。并发队列中如果要执行一个 barrier block，必须等待当前所有的并发块都执行完，再单独执行 barrier block，然后继续正常执行。

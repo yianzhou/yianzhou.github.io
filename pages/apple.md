@@ -3,9 +3,17 @@ title: Apple
 permalink: apple
 ---
 
-[开发及调试]({% post_url apple/2020-08-07-dev %})，[iOS 进阶]({% post_url apple/2020-08-07-advanced %})，[macOS]({% post_url apple/2018-12-18-macOS %})，[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})
+# 日常开发
 
-[C/C++]({% post_url apple/2020-11-9-c-cpp %})，[Runtime]({% post_url apple/2020-03-28-runtime %})，[RunLoop]({% post_url apple/2020-03-29-runloop %})，[Block]({% post_url apple/2020-04-22-block %})，[Swift 底层]({% post_url apple/2019-06-24-swift %})
+[开发及调试]({% post_url apple/2020-08-07-dev %})，[macOS]({% post_url apple/2018-12-18-macOS %})，[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})
+
+[通知]({% post_url apple/2021-01-25-user-notification %})
+
+# 知识图谱
+
+[iOS 进阶]({% post_url apple/2020-08-07-advanced %})，[Swift 底层]({% post_url apple/2019-06-24-swift %})
+
+[C/C++]({% post_url apple/2020-11-9-c-cpp %})，[Runtime]({% post_url apple/2020-03-28-runtime %})，[RunLoop]({% post_url apple/2020-03-29-runloop %})，[Block]({% post_url apple/2020-04-22-block %})
 
 [进程与线程]({% post_url apple/2020-10-23-processes-and-threads %})，[信号量]({% post_url apple/2019-12-29-semaphore %})
 
@@ -17,9 +25,7 @@ permalink: apple
 
 [音视频基础知识]({% post_url apple/2018-12-21-audio-video %})，[AVFoundation]({% post_url apple/2018-12-21-avfoundation %})
 
-[CocoaPods]({% post_url apple/2019-07-10-cocoapods %})，[第三方库]({% post_url apple/2020-05-06-frameworks %})，[SDWebImage]({% post_url apple/2020-10-14-SDWebImage %})，[Alamofire]({% post_url apple/2020-10-19-Alamofire %})，[Matrix]({% post_url apple/2020-11-1-matrix %})，[响应式编程]({% post_url apple/2020-11-1-reactive-rx %})
-
-[埋点]({% post_url apple/2020-10-30-event-log %})
+[CocoaPods]({% post_url apple/2019-07-10-cocoapods %})，[第三方库]({% post_url apple/2020-05-06-frameworks %})，[SDWebImage]({% post_url apple/2020-10-14-SDWebImage %})，[Alamofire]({% post_url apple/2020-10-19-Alamofire %})，[Matrix]({% post_url apple/2020-11-1-matrix %})，[响应式编程]({% post_url apple/2020-11-1-reactive-rx %})，[埋点]({% post_url apple/2020-10-30-event-log %})
 
 [iOS 重要更新]({% post_url apple/2020-10-08-iOS-update-notes %})，[App Store 相关]({% post_url apple/2019-01-18-appstore-connect %})
 

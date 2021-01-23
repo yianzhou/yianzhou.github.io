@@ -50,3 +50,15 @@ main() 函数执行后的阶段，指的是从 main() 函数执行开始，到 `
 一、Instruments 的分析工具 "App Launch"、"Time Profiler"，Time Profiler 定时抓取主线程上的方法调用堆栈，计算一段时间里各个方法的耗时。
 
 二、对 objc_msgSend 方法进行 hook 来掌握所有方法的执行耗时。利用开源库 [fishhook](https://github.com/facebook/fishhook) 和汇编实现。可参考戴铭的开源项目 [GCDFetchFeed](https://github.com/ming1016/GCDFetchFeed)，在需要检测耗时的地方调用 `[SMCallTrace start]`，结束时调用 stop 和 save 就可以打印出方法的调用层级和耗时了。
+
+# 二进制重排
+
+传统的启动优化是基于减少不必要代码、懒加载、划分任务优先级、利用多线程来做的，主要是从减少主线程任务的角度来出发，此类相关优化的策略已经很普遍了，很难再做出大的提升。今天，我们从另一个角度去思考启动优化——内存加载机制。
+
+APP 启动时，dyld 会把程序的二进制 mmap 到虚拟内存里，当执行代码需要使用到具体的物理内存时，再通过 page fault 触发物理内存加载，然后才能访问。
+
+page fault 在较差的情况下耗时超过 1ms，在较正常的情况下也要耗时 0.3 - 0.6ms 左右。那么 App 启动期间大概需要发生多少次 page fault 呢？在我们应用中的数据如下：一次冷启动触发了 2000 多次 page fault，总耗时达到了 300+ms。(Instruments - System Trace - Virtual Memory Trace - File Backed Page In)
+
+A9 之后的 CPU 物理页大小为 16KB，如果我们能让启动期间需要执行的指令，都紧凑地排列在相邻的内存分页，那么就能尽可能减少 page fault 的次数，这就是二进制重排的目的。
+
+Xcode 对二进制重排提供了支持，只需要在编译设置里指定一个 Order File 即可 (Build Settings - Linking - Order File)，例如 objc 的源码就使用了这项技术（源码文件夹下的 libobjc.order 文件）。编译器会按照这个文件指定的符号顺序来排列二进制代码段，达到优化的目的。

@@ -844,26 +844,3 @@ override func viewWillDisappear(_ animated: Bool) {
     }
 }
 ```
-
-# UNUserNotificationCenter
-
-```swift
-/// 是否询问过通知权限
-var notDetermined = false
-UNUserNotificationCenter.current().getNotificationSettings { (settings) in
-    if settings.authorizationStatus == .notDetermined {
-        notDetermined = true
-    }
-}
-UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge, .sound]) { (granted, error) in
-    if notDetermined && granted {
-        // 首次询问并同意了
-    } else if notDetermined && !granted {
-        // 首次询问并拒绝了
-    } else if !notDetermined && granted {
-        // 用户之前已同意过了
-    } else {
-        // 用户之前已拒绝过了
-    }
-}
-```

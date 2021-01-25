@@ -65,7 +65,7 @@ private final class PingMainThread: Thread {
 
 A `CFRunLoopObserver` provides a general means to receive callbacks at different points within a running run loop. In contrast to sources, which fire when an asynchronous event occurs, and timers, which fire when a particular time passes, observers fire at special locations within the execution of the run loop, such as before sources are processed or before the run loop goes to sleep, waiting for an event to occur.
 
-要想监听 RunLoop，首先需要创建一个 CFRunLoopObserverContext 观察者，将创建好的观察者添加到主线程 RunLoop 的 common 模式下观察。然后，创建一个持续运行的子线程专门用来监控主线程的 RunLoop 状态。
+要想监听 RunLoop，首先需要创建一个 `CFRunLoopObserverContext` 观察者，将创建好的观察者添加到主线程 RunLoop 的 common 模式下观察。然后，创建一个持续运行的子线程专门用来监控主线程的 RunLoop 状态。
 
 参考：[戴铭 - SMLagMonitor](https://github.com/ming1016/DecoupleDemo/blob/master/DecoupleDemo/SMLagMonitor.m)；卡顿堆栈的捕获：[BSBacktraceLogger](https://github.com/bestswifter/BSBacktraceLogger)。
 

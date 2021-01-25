@@ -58,9 +58,16 @@ dispatch_sync(dispatch_get_main_queue(), ^{
 
 **As a performance optimization, this function executes blocks on the current thread whenever possible, with one obvious exception. Specifically, blocks submitted to the main dispatch queue always run on the main thread.**
 
-在主线程使用 `dispatch_sync`，不管提交到串行队列还是并行队列，都在主线程执行！
+在主线程使用 `dispatch_sync`，不管派发到主队列还是子队列，都在主线程执行！！
 
-在子线程使用 `dispatch_sync`，如果提交到主队列的话，在主线程执行！
+```objc
+// 主线程
+dispatch_sync(任意队列, ^{
+    // 在主线程执行！
+});
+```
+
+在子线程使用 `dispatch_sync`，在当前线程执行！有一个例外，如果提交到主队列的话，在主线程执行！
 
 ## dispatch_barrier_async
 
@@ -108,15 +115,15 @@ Parallelism 并行: A condition that arises when at least two threads are execut
 
 iOS 有 5 个不同的线程优先级（DispatchQoS.QoSClass），大多数情况下，高优先级的线程会比低优先级的线程先执行；但在少数情况下，会存在优先级反转的情况。`OSSpinLock` 在优先级反转的情况下存在严重问题，除非开发者能保证访问锁的线程全部处于同一优先级，否则 iOS 系统中所有类型的自旋锁都不能再使用了。
 
-在 iOS 10/macOS 10.12 发布时，苹果提供了新的 os_unfair_lock 作为 OSSpinLock 的替代，并且将 OSSpinLock 标记为了 Deprecated。
+在 iOS 10 / macOS 10.12 发布时，苹果提供了新的 `os_unfair_lock` 作为 `OSSpinLock` 的替代，并且将 `OSSpinLock` 标记为了 Deprecated。
 
-一个简单的[性能测试](https://github.com/ibireme/tmp/blob/master/iOSLockBenckmark/iOSLockBenckmark/ViewController.m)，对比了一下几种能够替代 OSSpinLock 锁的性能。测试是在 iPhone6、iOS9 上跑的，只是测试了单线程的情况，不能反映多线程下的实际性能，所以这个结果只能当作一个定性分析。
+一个简单的[性能测试](https://github.com/ibireme/tmp/blob/master/iOSLockBenckmark/iOSLockBenckmark/ViewController.m)，对比了一下几种能够替代 OSSpinLock 锁的性能。测试是在 iPhone 6、iOS 9 上跑的，只是测试了单线程的情况，不能反映多线程下的实际性能，所以这个结果只能当作一个定性分析。
 
-![image](/assets/images/lock_benchmark.png)
+![img-80](/assets/images/lock_benchmark.png)
 
 SDWebImage 中主要用到 `os_unfair_lock`、`dispatch_semaphore`、`@synchronized` 这几种锁。
 
-`pthread_mutex_lock`，pthread 中的互斥锁，具有跨平台性质，又可分为普通锁、检错锁、递归锁。当锁处于占用状态时，其他线程会挂起；当锁被释放时，所有等待的线程都将被唤醒，再次对锁进行竞争。在挂起与释放过程中，涉及用户态与内核态之间的上下文切换，而这种切换是比较消耗性能的。
+`pthread_mutex_lock`，pthread 中的互斥锁，具有跨平台性质，又可分为普通锁、检错锁、递归锁。当锁处于占用状态时，其他线程会挂起；当锁被释放时，所有等待的线程都将被唤醒，再次对锁进行竞争。在挂起与唤醒过程中，涉及用户态与内核态之间的上下文切换，而这种切换是比较消耗性能的。
 
 `OSSpinLock`（自旋锁）已废弃，`os_unfair_lock` 作为替代。
 
@@ -124,7 +131,7 @@ SDWebImage 中主要用到 `os_unfair_lock`、`dispatch_semaphore`、`@synchroni
 
 `@synchronized` 使用后，会在代码块前面插入 `objc_sync_enter`，代码块最后插入 `objc_sync_exit`。其核心逻辑是 `recursive_mutex_lock` 和 `recursive_mutex_unlock`，这两个函数在苹果私有库当中，从文档中得知是基于递归类型的 pthread_mutex 的。
 
-`NSLock`, `NSRecursiveLock`：NSLock 是对 pthread_mutex_lock 的封装，是普通类型的互斥锁；如果用在需要递归嵌套加锁的场景时，需要使用其子类 NSRecursiveLock。
+`NSLock`, `NSRecursiveLock`：`NSLock` 是对 `pthread_mutex_lock` 的封装，是普通类型的互斥锁；如果用在需要递归嵌套加锁的场景时，需要使用其子类 `NSRecursiveLock`。
 
 # 几种锁的使用
 

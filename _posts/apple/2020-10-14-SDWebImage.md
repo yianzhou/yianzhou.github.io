@@ -686,15 +686,15 @@ static inline NSString * _Nonnull SDDiskCacheFileNameForKey(NSString * _Nullable
 
 在开始探索图片如何解码前，我们先学习一些准备知识。
 
-UIImageView is the class that UIKit provides for displaying a UIImage. In classical MVC style UIImage can be thought of as a model object, and UIImageView, of course, is a view.
+`UIImageView` is the class that UIKit provides for displaying a `UIImage`. In classical MVC style `UIImage` can be thought of as a model object, and `UIImageView`, of course, is a view.
 
-UIImage is responsible for loading image content. And UIImageView is responsible for displaying it, for rendering it. In addition to rendering, being a continuous process, rather than a one-time event, there's this hidden phase called decoding.
+`UIImage` is responsible for loading image content. And `UIImageView` is responsible for displaying it, for rendering it. In addition to rendering, being a continuous process, rather than a one-time event, there's this hidden phase called decoding.
 
-![img](/assets/images/956C45FD-8BB4-4BB5-9CC5-E788644BF46C.jpg)
+![img-60](/assets/images/956C45FD-8BB4-4BB5-9CC5-E788644BF46C.jpg)
 
 But in order to discuss decoding, I first need to discuss a concept called a buffer.
 
-A **buffer** is just a contiguous region of memory. But we tend to use the term buffer when we're discussing memory that's composed of a sequence of elements of the same size, usually, of the same internal construction.
+A buffer is just a contiguous region of memory. But we tend to use the term buffer when we're discussing memory that's composed of a sequence of elements of the same size, usually, of the same internal construction.
 
 A **data buffer**, which is just a buffer that contains a sequence of bytes. A data buffer that contains an image file, typically, begins with some metadata describing the size of the image, and then, the image data itself, which is encoded in some form like JPEG compression or PNG.
 
@@ -702,7 +702,7 @@ The **image buffer**, a term we use for buffer that holds the in-memory represen
 
 The **frame buffer** is what holds the actual rendered output of your application. As your application updates its view hierarchy UIKit will render the application's window and all of its subviews into the frame buffer. And that frame buffer provides per pixel color information that the display hardware will read in order to illuminate the pixels on the display, at a fixed interval like 60 fps.
 
-When we've assigned a UIImage to this image view, in order to populate the frame buffer with per pixel data, UIImage will allocate an image buffer and performs an operation called decoding that will convert the JPEG or PNG or other encoded image data into per pixel image information.
+When we've assigned a `UIImage` to this image view, in order to populate the frame buffer with per pixel data, `UIImage` will allocate an image buffer and performs an operation called decoding that will convert the JPEG or PNG or other encoded image data into per pixel image information.
 
 ![img](/assets/images/2AF50DAC-A1C4-4D6A-ABC2-2031CEED6A8C.jpg)
 
@@ -765,7 +765,7 @@ let image = UIImage(named: "unnamed") // encoded image in data buffer
 imageView.image = image; // decoded image in image buffer
 ```
 
-创建一个 UIImage 实例只会加载 data buffer， 将图像显示到屏幕上才会触发解码，可以通过 Xcode 断点调试，观察内存占用情况来验证这一点。解码后的数据即 image buffer，包含了图像所有像素的信息，会占用较多的内存。
+创建一个 `UIImage` 实例只会加载 data buffer， 将图像显示到屏幕上才会触发解码，可以通过 Xcode 断点调试，观察内存占用情况来验证这一点。解码后的数据即 image buffer，包含了图像所有像素的信息，会占用较多的内存。
 
 By default, we will decode the image in the background during cache query and download from the network. This can help to improve performance because when rendering image on the screen, it need to be firstly decoded. But this happen on the main queue by Core Animation. However, this process may increase the memory usage as well. 默认情况下，将图片渲染在屏幕上，需要先由 Core Animation 在主线程进行解码。SDWebImage 在查询缓存和下载图片时帮我们在后台线程进行解码，这可以提高性能，但会增加内存占用（例如你并不实际显示这张图片）。
 
@@ -1293,9 +1293,9 @@ let prefetchURLs = [URL]()
 SDWebImagePrefetcher.shared.prefetchURLs(prefetchURLs)
 ```
 
-# 总结
+# 亮点
 
-- 使用 NSMapTable 存储 UIView 正在运行的操作；NSMapTable 可以指定 key 和 value 的内存管理语义。
 - 面向协议编程，缓存、下载、transformer、甚至 manager 本身都是协议，接口依赖协议、不依赖具体实现类，开发者可自行实现替换。
-- 内存缓存（NSCache + WeakMemoryCache）、磁盘缓存。
+- 使用 `NSMapTable` 存储 `UIView` 正在运行的操作；`NSMapTable` 可以指定 key 和 value 的内存管理语义。
+- 内存缓存 `NSCache` + WeakMemoryCache (`NSMapTable`)；磁盘缓存。
 - 后台线程降采样解码。

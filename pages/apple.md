@@ -35,6 +35,10 @@ permalink: apple
 
 [WebView]({% post_url apple/2020-11-2-webview %})
 
+# 算法
+
+[数据结构与算法]({% post_url apple/2020-01-10-algorithm %})，[Leetcode 1]({% post_url apple/2020-06-17-leetcode %})，[Leetcode 2]({% post_url apple/2020-06-17-leetcode2 %})
+
 # Effective Objective-C
 
 <ul>

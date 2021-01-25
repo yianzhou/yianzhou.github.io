@@ -11,7 +11,7 @@ categories: [Apple]
 
 A lot of ideas for CocoaPods came from similar projects (for example [RubyGems](https://rubygems.org/), [Bundler](https://bundler.io/), [npm](https://www.npmjs.com/) and [Gradle](https://gradle.org/)).
 
-RubyGems is a hosted ruby library service. It centralizes where you look for a library, and installing ruby libraries / apps.（例如，[cocoapods](https://rubygems.org/gems/cocoapods) 就是通过 `gem install cocoapods` 安装的） These are installed into a central database of versions.
+RubyGems is a hosted ruby library service. It centralizes where you look for a library, and installing ruby libraries / apps.（例如，[cocoapods](https://rubygems.org/gems/cocoapods) 就是通过 `gem install cocoapods` 安装的）These are installed into a central database of versions.
 
 The downside of this is that there is no way to ensure that a project needing a specific version of a library can use that, it would always use the latest version.（就像 App Store 永远给你安装最新版本一样）This is the problem bundler solves.
 

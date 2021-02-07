@@ -41,7 +41,7 @@ AutoFill will:
 
 # 自动填充安全码
 
-⚠️ Rely on the native system keyboard
+Rely on the native system keyboard.
 
 iOS and macOS use data detector heuristics to infer that an incoming message carries a security code.
 

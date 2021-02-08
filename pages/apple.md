@@ -13,7 +13,7 @@ permalink: apple
 
 [iOS 进阶]({% post_url apple/2020-08-07-advanced %})，[Swift 底层]({% post_url apple/2019-06-24-swift %})
 
-[C/C++]({% post_url apple/2020-11-9-c-cpp %})，[Runtime]({% post_url apple/2020-03-28-runtime %})，[RunLoop]({% post_url apple/2020-03-29-runloop %})，[Block]({% post_url apple/2020-04-22-block %})
+[C]({% post_url apple/2020-11-9-c %})，[C++]({% post_url apple/2020-11-9-cpp %})，[Runtime]({% post_url apple/2020-03-28-runtime %})，[RunLoop]({% post_url apple/2020-03-29-runloop %})，[Block]({% post_url apple/2020-04-22-block %})
 
 [进程与线程]({% post_url apple/2020-10-23-processes-and-threads %})，[信号量]({% post_url apple/2019-12-29-semaphore %})
 

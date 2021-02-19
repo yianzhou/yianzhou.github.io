@@ -9,12 +9,15 @@
       </div>
     </main>
     {%- include footer.html -%}
-    <button id="myBtn" onclick="myFunction()">🔝</button>
+    <button class="myBtn goUp" onclick="goUp()">⬆️</button>
+    <button class="myBtn goDown" onclick="goDown()">⬇️</button>
   <script>
-    function myFunction() {
+    function goUp() {
       document.body.scrollTop = 0; // For Safari
       document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
-      console.log("hello")
+    }
+    function goDown() {
+      window.scrollTo(0,document.body.scrollHeight);
     }
   </script>
   </body>

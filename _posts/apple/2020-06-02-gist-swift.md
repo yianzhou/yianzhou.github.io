@@ -124,6 +124,58 @@ func str(from seconds: Int) -> String {
 }
 ```
 
+计算 MD5：
+
+```swift
+extension String {
+    var md5: String {
+        guard !isEmpty else { return "" }
+        // Create and initialize MD5 context:
+        var context = CC_MD5_CTX()
+        CC_MD5_Init(&context)
+        let data = Data(self.utf8)
+        // Read data and update MD5 context:
+        data.withUnsafeBytes {
+            _ = CC_MD5_Update(&context, $0.baseAddress, numericCast(data.count))
+        }
+        var digest: [UInt8] = Array(repeating: 0, count: Int(CC_MD5_DIGEST_LENGTH))
+        _ = CC_MD5_Final(&digest, &context)
+        let hex = digest.map { String(format: "%02hhx", $0) }.joined()
+        return hex
+    }
+}
+
+extension URL {
+    var md5: String {
+        return self.absoluteString.md5
+    }
+}
+```
+
+计算字符串的宽高：
+
+```swift
+extension String {
+    func width(font: UIFont) -> CGFloat {
+        return self.size(withAttributes: [.font: font]).width
+    }
+
+    func height(withConstrainedWidth width: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: width, height: .greatestFiniteMagnitude)
+        let boundingBox = self.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [.font: font], context: nil)
+
+        return ceil(boundingBox.height)
+    }
+
+    func width(withConstrainedHeight height: CGFloat, font: UIFont) -> CGFloat {
+        let constraintRect = CGSize(width: .greatestFiniteMagnitude, height: height)
+        let boundingBox = self.boundingRect(with: constraintRect, options: .usesLineFragmentOrigin, attributes: [.font: font], context: nil)
+
+        return ceil(boundingBox.width)
+    }
+}
+```
+
 # Foundation
 
 ## URL
@@ -276,6 +328,26 @@ if let url = Bundle.main.url(forResource: "stickers", withExtension: "json"),
 // json 字符串转成字典
 if let data = json.data(using: .utf8), let dict = try? JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] {
     logEventCount(code, dict: dict)
+}
+```
+
+## 文件目录
+
+```swift
+var DocumentDirectory: URL {
+    return FileManager.default.urls(for: .documentDirectory, in: .userDomainMask).first!
+//    return NSSearchPathForDirectoriesInDomains(.documentDirectory, .userDomainMask, true).first!
+}
+
+var CacheDirectory: URL {
+    return FileManager.default.urls(for: .cachesDirectory, in: .userDomainMask).first!
+}
+
+func VideoDirectory() -> URL {
+    let url = DocumentDirectory.appendingPathComponent("Video", isDirectory: true)
+    // create folder if not exist
+    try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+    return url
 }
 ```
 
@@ -477,6 +549,17 @@ self.view.backgroundColor = .white
 
 # UIView
 
+## tableHeaderView, tableFooterView
+
+extension UIView {
+/// 创建一个占位的 UIView，这是用于 tableHeaderView 和 tableFooterView
+/// When assigning a view to this property, set the height of that view to a nonzero value.
+/// 否则，tableHeaderView 和 tableFooterView 的高度会无法正确刷新
+static func tableHeaderFooterPlaceholder() -> UIView {
+return UIView(frame: CGRect(x: 0, y: 0, width: CGFloat.leastNormalMagnitude, height: CGFloat.leastNormalMagnitude))
+}
+}
+
 ## 圆角
 
 ```swift
@@ -677,6 +760,27 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 另外，删除 Info.plist 里面的两项有关 Storyboard 的键值。
 
+## UIView 截图
+
+```swift
+extension UIView {
+    func snapshot() -> UIImage {
+        UIGraphicsBeginImageContextWithOptions(bounds.size, false, UIScreen.main.scale)
+        drawHierarchy(in: bounds, afterScreenUpdates: true)
+        let result = UIGraphicsGetImageFromCurrentImageContext()!
+        UIGraphicsEndImageContext()
+        return result
+    }
+
+    func renderAsImage() -> UIImage {
+        let renderer = UIGraphicsImageRenderer(bounds: bounds)
+        return renderer.image { rendererContext in
+            layer.render(in: rendererContext.cgContext)
+        }
+    }
+}
+```
+
 # CALayer
 
 ## CAShapeLayer
@@ -744,6 +848,112 @@ gradientLayer.endPoint = CGPoint(x: 1, y: 0)
 
 # UIImage
 
+图片模糊处理：
+
+```swift
+/// 图片模糊效果处理
+/// - parameter image: 需要处理的图片
+/// - parameter level: 模糊程度（0~1）
+func blurry(_ image: UIImage, level: CGFloat) -> UIImage {
+
+    // boxSize 必须大于 0
+    let boxSize = level - level.truncatingRemainder(dividingBy: 2) + 1
+
+    let _cgImage = image.cgImage
+
+    // 图像缓存: 输入缓存、输出缓存
+    var inBuffer = vImage_Buffer()
+    var outBuffer = vImage_Buffer()
+    var error = vImage_Error()
+
+    let inProvider = _cgImage?.dataProvider
+    let inBitmapData = inProvider?.data
+
+    inBuffer.width = vImagePixelCount((_cgImage?.width)!)
+    inBuffer.height = vImagePixelCount((_cgImage?.height)!)
+    inBuffer.rowBytes = (_cgImage?.bytesPerRow)!
+    inBuffer.data = UnsafeMutableRawPointer(mutating: CFDataGetBytePtr(inBitmapData!))
+
+    // 像素缓存
+    let pixelBuffer = malloc((_cgImage?.bytesPerRow)! * (_cgImage?.height)!)
+    outBuffer.data = pixelBuffer
+    outBuffer.width = vImagePixelCount((_cgImage?.width)!)
+    outBuffer.height = vImagePixelCount((_cgImage?.height)!)
+    outBuffer.rowBytes = (_cgImage?.bytesPerRow)!
+
+    // 中间缓存区, 抗锯齿
+    let pixelBuffer2 = malloc((_cgImage?.bytesPerRow)! * (_cgImage?.height)!)
+    var outBuffer2 = vImage_Buffer()
+    outBuffer2.data = pixelBuffer2
+    outBuffer2.width = vImagePixelCount((_cgImage?.width)!)
+    outBuffer2.height = vImagePixelCount((_cgImage?.height)!)
+    outBuffer2.rowBytes = (_cgImage?.bytesPerRow)!
+
+    error = vImageBoxConvolve_ARGB8888(&inBuffer, &outBuffer2, nil, 0, 0, UInt32(boxSize), UInt32(boxSize), nil, vImage_Flags(kvImageEdgeExtend))
+    error = vImageBoxConvolve_ARGB8888(&outBuffer2, &outBuffer, nil, 0, 0, UInt32(boxSize), UInt32(boxSize), nil, vImage_Flags(kvImageEdgeExtend))
+
+    if error != kvImageNoError {
+        debugPrint(error)
+    }
+
+    let colorSpace = CGColorSpaceCreateDeviceRGB()
+    let ctx = CGContext(data: outBuffer.data, width: Int(outBuffer.width), height: Int(outBuffer.height), bitsPerComponent: 8, bytesPerRow: outBuffer.rowBytes, space: colorSpace, bitmapInfo: (_cgImage?.bitmapInfo.rawValue)!)
+
+    let finalCGImage = ctx!.makeImage()
+    let finalImage = UIImage(cgImage: finalCGImage!)
+
+    free(pixelBuffer!)
+    free(pixelBuffer2!)
+
+    return finalImage
+}
+
+extension UIImage {
+    func blurred(radius: CGFloat) -> UIImage {
+        let ciContext = CIContext(options: nil)
+        guard let cgImage = cgImage else { return self }
+        let inputImage = CIImage(cgImage: cgImage)
+        guard let ciFilter = CIFilter(name: "CIGaussianBlur") else { return self }
+        ciFilter.setValue(inputImage, forKey: kCIInputImageKey)
+        ciFilter.setValue(radius, forKey: kCIInputRadiusKey)
+        guard let resultImage = ciFilter.value(forKey: kCIOutputImageKey) as? CIImage else { return self }
+        guard let cgImage2 = ciContext.createCGImage(resultImage, from: inputImage.extent) else { return self }
+        return UIImage(cgImage: cgImage2)
+    }
+}
+
+extension UIImage {
+    public func blur(size: Float) -> UIImage! {
+
+        let boxSize = size - size.truncatingRemainder(dividingBy: 2) + 1
+
+        guard let image = self.cgImage else { return nil }
+
+        let height = vImagePixelCount(image.height)
+        let width = vImagePixelCount(image.width)
+        let bytesPerRow = image.bytesPerRow
+
+        let inBitmapData = image.dataProvider!.data!
+        let inData = UnsafeMutableRawPointer(mutating: CFDataGetBytePtr(inBitmapData))
+        var inBuffer = vImage_Buffer(data: inData, height: height, width: width, rowBytes: bytesPerRow)
+
+        let outData = malloc(bytesPerRow * Int(height))
+        var outBuffer = vImage_Buffer(data: outData, height: height, width: width, rowBytes: bytesPerRow)
+
+        let _ = vImageBoxConvolve_ARGB8888(&inBuffer, &outBuffer, nil, 0, 0, UInt32(boxSize), UInt32(boxSize), nil, vImage_Flags(kvImageEdgeExtend))
+
+        let colorSpace = CGColorSpaceCreateDeviceRGB()
+        let context = CGContext(data: outBuffer.data, width: Int(outBuffer.width), height: Int(outBuffer.height), bitsPerComponent: 8, bytesPerRow: outBuffer.rowBytes, space: colorSpace, bitmapInfo: image.bitmapInfo.rawValue)
+        let imageRef = context!.makeImage()
+        let bluredImage = UIImage(cgImage: imageRef!)
+
+        free(outData)
+        return bluredImage
+    }
+}
+
+```
+
 生成纯色图片：
 
 ```swift
@@ -802,6 +1012,65 @@ extension UIImage {
             return nil
         }
     }
+```
+
+生成渐变色图片：
+
+```swift
+func generateGradientImage(colors: [UIColor], imageSize: CGSize) -> UIImage? {
+    let cgColors = colors.map{ $0.cgColor }
+    let gradientLayer = CAGradientLayer()
+    let frame = CGRect(origin: .zero, size: imageSize)
+    gradientLayer.frame = frame
+    gradientLayer.colors = cgColors
+    gradientLayer.startPoint = CGPoint(x: 0.0, y: 0.5)
+    gradientLayer.endPoint = CGPoint(x: 1.0, y: 0.5)
+
+    UIGraphicsBeginImageContextWithOptions(gradientLayer.frame.size, gradientLayer.isOpaque, 0.0);
+
+    guard let context = UIGraphicsGetCurrentContext() else { return nil }
+    gradientLayer.render(in: context)
+    let image = UIGraphicsGetImageFromCurrentImageContext()
+    UIGraphicsEndImageContext()
+
+    return image
+}
+```
+
+修改曝光值：
+
+```swift
+extension UIImage {
+    func exposure(_ exposure: Float) -> UIImage {
+        if let cgImage = self.cgImage {
+            let context = CIContext()
+            let ciImage = CIImage(cgImage: cgImage)
+            let filter = CIFilter(name: "CIExposureAdjust")
+            filter?.setValue(ciImage, forKey: kCIInputImageKey)
+            filter?.setValue(exposure, forKey: kCIInputEVKey)
+            if let outputImage = filter?.outputImage, let imageRef = context.createCGImage(outputImage, from: ciImage.extent) {
+                let uiImage = UIImage(cgImage: imageRef)
+                return uiImage
+            }
+        }
+        return self
+    }
+}
+```
+
+# UIColor
+
+hex 颜色：
+
+```swift
+extension UIColor {
+    public convenience init(hex: Int) {
+        let red: CGFloat = CGFloat((hex >> 16) & 0x0000FF) / 255.0
+        let green: CGFloat = CGFloat((hex >> 8) & 0x0000FF) / 255.0
+        let blue: CGFloat = CGFloat(hex & 0x0000FF) / 255.0
+        self.init(red:red, green:green, blue:blue, alpha:1.0)
+    }
+}
 ```
 
 # Media Player

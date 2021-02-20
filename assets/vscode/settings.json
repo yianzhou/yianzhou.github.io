@@ -1,7 +1,0 @@
-{
-    "editor.codeActionsOnSave": {
-        "source.fixAll.markdownlint": true // plugin: - markdownlint
-    },
-    "editor.fontSize": 13,
-    "workbench.colorTheme": "Default Light+"
-}

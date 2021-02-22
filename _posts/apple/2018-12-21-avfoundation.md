@@ -1014,3 +1014,394 @@ The output for an asset containing audio and subtitle media options looks simila
 [1] 创建一个时间范围，左边界是负无穷、右边界是当前播放时间减去 3 秒。拿着这个时间范围，从后往前遍历章节，直到找到第一个位于这个时间范围内的章节起始时间。为什么要减去 3 秒呢？这是一个经验值。当视频播放时，时间不断前进，应该给用户的操作留一点时间余地，否则用户就会陷入再次回到章起始时间的循环中。
 
 [2] Core Media 定义了大量有用的函数和宏。
+
+# 捕捉媒体
+
+## AVCaptureSession
+
+捕捉的核心类是 `AVCaptureSession`，它就像一个“插线板”，用于连接输入和输出的资源。捕捉会话还可以配置一个预设值，默认是 `AVCaptureSessionPresetHigh`。
+
+`AVCaptureDevice` 定义了大量类方法用于访问系统的捕捉设备。
+
+在使用捕捉设备前，要将它添加为捕捉会话的输入，不过设备不能直接添加到会话中，需要封装成 `AVCaptureDeviceInput`。
+
+捕捉的输出类是一个抽象基类 `AVCaptureOutput`，它被扩展为 `AVCaptureStillImageOutput` 和 `AVCaptureMovieFileOutput`，分别实现捕捉静态图片和视频的功能。还有更底层的扩展 `AVCaptureAudioDataOutput` 和 `AVCaptureVideoDataOutput`，使用它们可以直接访问捕捉到的数字样本，对音频和视频流进行实时处理。
+
+我们来看看如何设置一个会话：
+
+```objc
+- (BOOL)setupSession:(NSError **)error {
+    self.captureSession = [[AVCaptureSession alloc] init];
+    self.captureSession.sessionPreset = AVCaptureSessionPresetHigh;
+
+    // Set up default camera device
+    AVCaptureDevice *videoDevice =
+        [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeVideo];
+    AVCaptureDeviceInput *videoInput =
+        [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:error];
+    if (videoInput) {
+        if ([self.captureSession canAddInput:videoInput]) {
+            [self.captureSession addInput:videoInput];
+            self.activeVideoInput = videoInput;
+        }
+    } else {
+        return NO;
+    }
+
+    // Setup default microphone
+    AVCaptureDevice *audioDevice =
+        [AVCaptureDevice defaultDeviceWithMediaType:AVMediaTypeAudio];
+    AVCaptureDeviceInput *audioInput =
+        [AVCaptureDeviceInput deviceInputWithDevice:audioDevice error:error];
+    if (audioInput) {
+        if ([self.captureSession canAddInput:audioInput]) {
+            [self.captureSession addInput:audioInput];
+        }
+    } else {
+        return NO;
+    }
+
+    // Setup the still image output
+    self.imageOutput = [[AVCaptureStillImageOutput alloc] init];
+    self.imageOutput.outputSettings = @{AVVideoCodecKey : AVVideoCodecJPEG};
+
+    if ([self.captureSession canAddOutput:self.imageOutput]) {
+        [self.captureSession addOutput:self.imageOutput];
+    }
+
+    // Setup movie file output
+    self.movieOutput = [[AVCaptureMovieFileOutput alloc] init];
+    if ([self.captureSession canAddOutput:self.movieOutput]) {
+        [self.captureSession addOutput:self.movieOutput];
+    }
+
+    return YES;
+}
+```
+
+## 预览视图
+
+捕捉会话的预览是通过 `AVCaptureVideoPreviewLayer`，像 `AVPlayer` 一样，也支持视频重力的概念。
+
+对于 iPhone 5 竖屏状态下，屏幕坐标系左上角为 (0, 0)，右下角为 (320, 568)。而捕捉设备的坐标系则定义不同，左上角为 (0, 0)，右下角为 (1, 1)。`AVCaptureVideoPreviewLayer` 定义了两个方法完成这两种坐标系之间的转换。
+
+- `captureDevicePointOfInterestForPoint` 传入屏幕坐标系的点，返回设备坐标系的点；
+- `pointForCaptureDevicePointOfInterest` 传入设备坐标系的点，返回屏幕坐标系的点。
+
+`THPreviewView` 使用了第一个方法，用于实现点击对焦功能。
+
+```objc
+- (void)setupView {
+    [(AVCaptureVideoPreviewLayer *)self.layer setVideoGravity:AVLayerVideoGravityResizeAspectFill];
+
+    _singleTapRecognizer =
+    [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleSingleTap:)];
+
+    _doubleTapRecognizer =
+    [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleTap:)];
+    _doubleTapRecognizer.numberOfTapsRequired = 2;
+
+    _doubleDoubleTapRecognizer =
+    [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleDoubleDoubleTap:)];
+    _doubleDoubleTapRecognizer.numberOfTapsRequired = 2;
+    _doubleDoubleTapRecognizer.numberOfTouchesRequired = 2;
+
+    [self addGestureRecognizer:_singleTapRecognizer];
+    [self addGestureRecognizer:_doubleTapRecognizer];
+    [self addGestureRecognizer:_doubleDoubleTapRecognizer];
+    [_singleTapRecognizer requireGestureRecognizerToFail:_doubleTapRecognizer];
+
+    _focusBox = [self viewWithColor:[UIColor colorWithRed:0.102 green:0.636 blue:1.000 alpha:1.000]];
+    _exposureBox = [self viewWithColor:[UIColor colorWithRed:1.000 green:0.421 blue:0.054 alpha:1.000]];
+    [self addSubview:_focusBox];
+    [self addSubview:_exposureBox];
+}
+
+- (void)handleSingleTap:(UIGestureRecognizer *)recognizer {
+    CGPoint point = [recognizer locationInView:self];
+    [self runBoxAnimationOnView:self.focusBox point:point];
+    if (self.delegate) {
+        [self.delegate tappedToFocusAtPoint:[self captureDevicePointForPoint:point]];
+    }
+}
+
+- (CGPoint)captureDevicePointForPoint:(CGPoint)point {
+    AVCaptureVideoPreviewLayer *layer =
+        (AVCaptureVideoPreviewLayer *)self.layer;
+    return [layer captureDevicePointOfInterestForPoint:point];
+}
+```
+
+## 启动和停止会话
+
+启动和停止会话是一个同步调用并会消耗一定的时间，为了不要阻塞主线程，一个好的做法是把对会话的操作都异步派发到全局队列里。
+
+```objc
+- (void)startSession {
+    if (![self.captureSession isRunning]) {
+        dispatch_async([self globalQueue], ^{
+            [self.captureSession startRunning];
+        });
+    }
+}
+
+- (void)stopSession {
+    if ([self.captureSession isRunning]) {
+        dispatch_async([self globalQueue], ^{
+            [self.captureSession stopRunning];
+        });
+    }
+}
+
+- (dispatch_queue_t)globalQueue {
+    return dispatch_get_global_queue(DISPATCH_QUEUE_PRIORITY_DEFAULT, 0);
+}
+```
+
+## 切换摄像头
+
+获取不同摄像头可以通过下面的方法：
+
+```objc
+- (AVCaptureDevice *)cameraWithPosition:(AVCaptureDevicePosition)position {
+    NSArray *devices = [AVCaptureDevice devicesWithMediaType:AVMediaTypeVideo];
+    for (AVCaptureDevice *device in devices) {
+        if (device.position == position) {
+            return device;
+        }
+    }
+    return nil;
+}
+```
+
+切换摄像头需要重新配置 `AVCaptureSession`，在会话初始化以后，对会话的任何改变，都要通过 `beginConfiguration` 和 `commitConfiguration` 进行原子性的改变。
+
+```objc
+- (BOOL)switchCameras {
+    if (![self canSwitchCameras]) {
+        return NO;
+    }
+
+    NSError *error;
+    AVCaptureDevice *videoDevice = [self inactiveCamera];
+    AVCaptureDeviceInput *videoInput =
+    [AVCaptureDeviceInput deviceInputWithDevice:videoDevice error:&error];
+
+    if (videoInput) {
+        [self.captureSession beginConfiguration];
+        [self.captureSession removeInput:self.activeVideoInput];
+        if ([self.captureSession canAddInput:videoInput]) {
+            [self.captureSession addInput:videoInput];
+            self.activeVideoInput = videoInput;
+        } else {
+            [self.captureSession addInput:self.activeVideoInput];
+        }
+        [self.captureSession commitConfiguration];
+    } else {
+        [self.delegate deviceConfigurationFailedWithError:error];
+        return NO;
+    }
+
+    return YES;
+}
+```
+
+## 配置捕捉设备
+
+应用任何配置项之前，都需要检查它是否可用。修改的过程是先获取锁、修改配置、解锁：
+
+```objc
+- (void)resetFocusAndExposureModes {
+    AVCaptureDevice *device = [self activeCamera];
+    AVCaptureExposureMode exposureMode = AVCaptureExposureModeContinuousAutoExposure;
+    AVCaptureFocusMode focusMode = AVCaptureFocusModeContinuousAutoFocus;
+    BOOL canResetFocus = [device isFocusPointOfInterestSupported] && [device isFocusModeSupported:focusMode];
+    BOOL canResetExposure = [device isExposurePointOfInterestSupported] && [device isExposureModeSupported:exposureMode];
+
+    CGPoint centerPoint = CGPointMake(0.5f, 0.5f);
+    NSError *error;
+    if ([device lockForConfiguration:&error]) {
+        if (canResetFocus) {
+            device.focusMode = focusMode;
+            device.focusPointOfInterest = centerPoint;
+        }
+        if (canResetExposure) {
+            device.exposureMode = exposureMode;
+            device.exposurePointOfInterest = centerPoint;
+        }
+        [device unlockForConfiguration];
+    } else {
+        [self.delegate deviceConfigurationFailedWithError:error];
+    }
+}
+```
+
+## 拍摄静态图片
+
+当创建一个会话并添加设备后，会话自动建立输入与输出的连接，按需选择信号流线路。访问这些连接可以让开发者对发送到输出端的数据进行精确的控制。
+
+```objc
+- (void)captureStillImage {
+    AVCaptureConnection *connection =                                   
+        [self.imageOutput connectionWithMediaType:AVMediaTypeVideo]; // 获取一个输出的连接
+    if (connection.isVideoOrientationSupported) {                       
+        connection.videoOrientation = [self currentVideoOrientation];
+    }
+    id handler = ^(CMSampleBufferRef sampleBuffer, NSError *error) {
+        if (sampleBuffer != NULL) {
+            NSData *imageData =
+                [AVCaptureStillImageOutput jpegStillImageNSDataRepresentation:sampleBuffer];
+            UIImage *image = [[UIImage alloc] initWithData:imageData];
+            [self writeImageToAssetsLibrary:image];
+        } else {
+            NSLog(@"NULL sampleBuffer: %@", [error localizedDescription]);
+        }
+    };
+    // Capture still image
+    [self.imageOutput captureStillImageAsynchronouslyFromConnection:connection
+                                                  completionHandler:handler];
+}
+```
+
+## 视频捕捉
+
+`AVCaptureMovieFileOutput` 继承于 `AVCaptureFileOutput`，这个抽象超类定义了许多功能，例如录制到最长时限、录制到最大文件大小为止等。
+
+QuickTime 影片文件的开始位置有影片头元数据，以便让播放器快速读取头的信息。我们录制影片时，直到所有的样本捕捉完成后才能创建信息头，这样做有一个问题，如果应用程序遇到崩溃或者电话拨入等中断，影片头就不会正确写入，会在磁盘生成一个不可读的影片文件。
+
+`AVCaptureMovieFileOutput` 提供了分段捕捉的功能，可以通过 `movieFragmentInterval` 来修改输出的间隔。默认每 10 秒写入一个片段，并更新头信息。
+
+```objc
+- (void)startRecording {
+    if (![self isRecording]) {
+        AVCaptureConnection *videoConnection =
+            [self.movieOutput connectionWithMediaType:AVMediaTypeVideo];
+        if ([videoConnection isVideoOrientationSupported]) {
+            // 设置视频方向后，输出文件会应用相应的矩阵变化
+            videoConnection.videoOrientation = self.currentVideoOrientation;
+        }
+        if ([videoConnection isVideoStabilizationSupported]) {
+            // 稳定效果不会在预览层看到，只会体现在输出文件里
+            videoConnection.preferredVideoStabilizationMode = AVCaptureVideoStabilizationModeAuto;
+        }
+
+        AVCaptureDevice *device = [self activeCamera];
+        if (device.isSmoothAutoFocusSupported) {
+            NSError *error;
+            if ([device lockForConfiguration:&error]) {
+                // 平滑对焦，避免切换焦点时的脉冲式对焦
+                device.smoothAutoFocusEnabled = YES;
+                [device unlockForConfiguration];
+            } else {
+                [self.delegate deviceConfigurationFailedWithError:error];
+            }
+        }
+
+        self.outputURL = [self uniqueURL];
+        [self.movieOutput startRecordingToOutputFileURL:self.outputURL
+                                        recordingDelegate:self]; // stopRecording 后，回调代理方法
+    }
+}
+
+- (void)captureOutput:(AVCaptureFileOutput *)captureOutput
+didFinishRecordingToOutputFileAtURL:(NSURL *)outputFileURL
+      fromConnections:(NSArray *)connections
+                error:(NSError *)error {
+    if (error) {
+        [self.delegate mediaCaptureFailedWithError:error];
+    } else {
+        [self writeVideoToAssetsLibrary:[self.outputURL copy]];
+    }
+    self.outputURL = nil;
+}
+```
+
+## 为视频创建缩略图
+
+```objc
+- (void)generateThumbnailForVideoAtURL:(NSURL *)videoURL {
+    dispatch_async([self globalQueue], ^{
+        AVAsset *asset = [AVAsset assetWithURL:videoURL];
+        AVAssetImageGenerator *imageGenerator =
+            [AVAssetImageGenerator assetImageGeneratorWithAsset:asset];
+        imageGenerator.maximumSize = CGSizeMake(100.0f, 0.0f);
+        imageGenerator.appliesPreferredTrackTransform = YES;
+        CGImageRef imageRef = [imageGenerator copyCGImageAtTime:kCMTimeZero
+                                                     actualTime:NULL
+                                                          error:nil];
+        UIImage *image = [UIImage imageWithCGImage:imageRef];
+        CGImageRelease(imageRef);
+        dispatch_async(dispatch_get_main_queue(), ^{
+            [self postThumbnailNotifification:image];
+        });
+    });
+}
+```
+
+# 高级捕捉功能
+
+## 视频缩放
+
+`AVCaptureDevice` 支持缩放参数，所有会话的输出，包括预览层，都会自动应用这一状态。设置 `videoZoomFactor` 属性会立即调整缩放，调用 `rampToVideoZoomFactor:withRate:` 会在一段时间内逐渐调整缩放。
+
+```objc
+- (void)setZoomValue:(CGFloat)zoomValue {
+    if (!self.activeCamera.isRampingVideoZoom) {
+        NSError *error;
+        if ([self.activeCamera lockForConfiguration:&error]) {
+            // Provide linear feel to zoom slider
+            CGFloat zoomFactor = pow([self maxZoomFactor], zoomValue);
+            self.activeCamera.videoZoomFactor = zoomFactor;
+            [self.activeCamera unlockForConfiguration];
+        } else {
+            [self.delegate deviceConfigurationFailedWithError:error];
+        }
+    }
+}
+```
+
+监听缩放属性的变化以更新界面：
+
+```objc
+[self.activeCamera addObserver:self
+                forKeyPath:@"videoZoomFactor"
+                    options:0
+                    context:&THRampingVideoZoomFactorContext];
+[self.activeCamera addObserver:self
+                forKeyPath:@"rampingVideoZoom"
+                    options:0
+                    context:&THRampingVideoZoomContext];
+```
+
+## 人脸检测
+
+通过 `AVCaptureOutput` 的子类 `AVCaptureMetadataOutput` 输出元数据。
+
+```objc
+- (BOOL)setupSessionOutputs:(NSError **)error {
+    self.metadataOutput = [[AVCaptureMetadataOutput alloc] init];
+    if ([self.captureSession canAddOutput:self.metadataOutput]) {
+        [self.captureSession addOutput:self.metadataOutput];
+
+        NSArray *metadataObjectTypes = @[AVMetadataObjectTypeFace];
+        self.metadataOutput.metadataObjectTypes = metadataObjectTypes;
+
+        dispatch_queue_t mainQueue = dispatch_get_main_queue();
+        [self.metadataOutput setMetadataObjectsDelegate:self
+                                                  queue:mainQueue];
+        return YES;
+    } else {
+        return NO;
+    }
+}
+
+- (void)captureOutput:(AVCaptureOutput *)captureOutput
+didOutputMetadataObjects:(NSArray *)metadataObjects
+       fromConnection:(AVCaptureConnection *)connection {
+    for (AVMetadataFaceObject *face in metadataObjects) {
+        NSLog(@"Face detected with ID: %li", (long)face.faceID);
+        NSLog(@"Face bounds: %@", NSStringFromCGRect(face.bounds));
+    }
+    [self.faceDetectionDelegate didDetectFaces:metadataObjects];
+}
+```

@@ -71,7 +71,244 @@ dispatch_sync(任意队列, ^{
 
 ## dispatch_barrier_async
 
-并发读，栅栏写！（见 [DemoGCD](https://github.com/yianzhou/ios-demos/)）`dispatch_barrier_async` The queue you specify should be a concurrent queue that you create yourself using the `dispatch_queue_create` function. If the queue you pass to this function is a serial queue or one of the global concurrent queues, this function behaves like the `dispatch_async` function. 栅栏函数要配合自己创建的并发队列使用！！
+并发读，互斥写！，见 [DemoGCD](https://github.com/yianzhou/ios-demos/)。
+
+`dispatch_barrier_async` The queue you specify should be a concurrent queue that you create yourself using the `dispatch_queue_create` function. If the queue you pass to this function is a serial queue or one of the global concurrent queues, this function behaves like the `dispatch_async` function. 栅栏函数要配合自己创建的并发队列使用！！
+
+# 进程同步
+
+## 竞争情况
+
+多个进程同时访问和操纵相同数据、并且执行结果取决于访问发生的特定顺序的情况称为**竞争情况** (race condition)。 为了防止出现竞争情况，我们要求以某种方式同步进程 (synchronized)。
+
+## 临界区
+
+每个进程都有一段称为临界区 (critical section) 的代码，在临界区中，进程可能正在访问（和更新）与至少一个其他进程共享的数据。当一个进程在临界区执行时，不允许其他进程在临界区执行。多个进程必须互斥地对临界资源进行访问。
+
+## 公平锁与非公平锁
+
+公平锁：在竞争情况下，把到达临界区的线程放到一个 FIFO 队列里等待，锁被释放后，唤醒队列头部的线程来获取锁。优点是每个线程都有机会得到锁，不会饿死；缺点是每个线程都要经历排队挂起、出队唤醒过程，涉及上下文切换，相对来说吞吐量没有非公平锁直接抢占来得高。
+
+非公平锁：在竞争情况下，线程进入临界区直接尝试获取锁，无须考虑等待队列里的线程，获取不到再进入队列等待。优点是某些线程可以在到达临界区时直接抢占锁，不用经历排队挂起、再出队唤醒的过程，提高了整体的吞吐效率；缺点是可能导致队列里等待的线程一直获取不到锁、甚至饿死。
+
+为什么要进入队列等待呢？一直尝试获取锁可以吗？——可以，一直尝试获取的叫自旋锁，与互斥锁类似，只是自旋锁被某线程占用时，其他线程不会挂起，而是一直运行（自旋/空转）直到锁被释放。由于不涉及用户态与内核态之间的切换，它的效率高于互斥锁。但相应地，会一直占用 CPU，如果不能在很短的时间内获得锁，无疑会使 CPU 整体效率降低。
+
+iOS 中日常使用到的锁，除了 `os_unfair_lock` 是非公平锁，其余都是公平锁。
+
+非公平锁/自旋锁适用于：预计临界区执行的时间很短，等待的线程能很快获得锁；临界区的代码经常被调用，但竞争情况很少发生。
+
+公平锁/互斥锁适用于：预计临界区执行的时间较长，线程等待锁的时间较长；临界区竞争情况经常发生。
+
+## os_unfair_lock
+
+```objc
+#import <os/lock.h>
+os_unfair_lock lock = OS_UNFAIR_LOCK_INIT;
+os_unfair_lock_lock(&lock); // 加锁和解锁必须对称，重复加锁会直接崩溃！
+NSLog(@"safe here ...");
+os_unfair_lock_unlock(&lock);
+```
+
+A lock must be unlocked only from the same thread in which it was locked. Attempting to unlock from a different thread causes a runtime error.
+
+This is a replacement for the deprecated `OSSpinLock`. This function doesn't spin on contention, but instead waits in the kernel to be awoken by an unlock. Like `OSSpinLock`, this function does not enforce fairness or lock ordering—for example, an unlocker could potentially reacquire the lock immediately, before an awoken waiter gets an opportunity to attempt to acquire the lock. This may be advantageous for performance reasons, but also makes starvation of waiters a possibility.
+
+## 互斥锁
+
+`pthread_mutex_lock`，pthread 中的互斥锁，具有跨平台性质，有普通锁、检错锁、递归锁三种。当锁处于占用状态时，其他线程会挂起；当锁被释放时，所有等待的线程都将被唤醒，再次对锁进行竞争。在挂起与唤醒过程中，涉及用户态与内核态之间的上下文切换，这种切换是比较消耗性能的。
+
+`NSLock` 是对 `pthread_mutex_lock` 的封装，是普通类型的互斥锁；如果用在需要递归嵌套加锁的场景时，需要使用其子类 `NSRecursiveLock`。
+
+## @synchronized
+
+`@synchronized` 是对 `pthread_mutex_t` 的封装，是递归类型的互斥锁。
+
+```objc
+@synchronized (self) {
+    callbacks = [[self.callbackBlocks valueForKey:key] mutableCopy];
+}
+```
+
+## 信号量
+
+信号量主要用于控制临界区的资源最多可以被多少个线程并发访问。
+
+```objc
+dispatch_semaphore_t lock = dispatch_semaphore_create(1);
+dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER); // 等待和发出信号必须对称！重复调用 wait 不会崩溃，但会造成无限的等待……
+NSLog(@"safe here ...");
+dispatch_semaphore_signal(lock);
+```
+
+## pthread_rwlock_t
+
+读写锁是用于“多线程读、单线程写”这一种读写互斥的场景，读操作可并发重入，写操作是互斥的。
+
+```objc
+- (instancetype)init {
+    self = [super init];
+    if (self) {
+        pthread_rwlock_init(&_lock, nil);
+    }
+    return self;
+}
+
+- (void)queryMoney {
+    pthread_rwlock_rdlock(&_lock);
+    [super queryMoney];
+    pthread_rwlock_unlock(&_lock);
+}
+
+- (void)saveMoney {
+    pthread_rwlock_wrlock(&_lock);
+    [super saveMoney];
+    pthread_rwlock_unlock(&_lock);
+}
+```
+
+## OSSpinLock (deprecated)
+
+在罕见的情况下，低优先级的线程先获得了锁，这时一个高优先级的线程也尝试获得这个锁，它会处于空转状态并持续占用 CPU。但与此同时，低优先级线程在 CPU 时间的分配上远远少于高、中优先级线程，这就导致任务迟迟完不成、无法释放锁。除非开发者能保证访问锁的线程全部处于同一优先级，否则 iOS 系统中所有类型的自旋锁都不能再使用了。
+
+过去 `atomic` 修饰的属性在底层也是使用自旋锁的，随着自旋锁被废弃，现在改用了 `os_unfair_lock`。
+
+# 生产者-消费者问题
+
+生产者-消费者问题是经典的、并发编程中的多线程同步问题。它有很多的变体，我们讨论一种最基本的情况：只有一个生产者线程和一个消费者线程；它们之间缓冲区的大小为一。
+
+[这个例子](https://levelup.gitconnected.com/producer-consumer-problem-using-mutex-in-c-764865c47483)中，我们通过互斥量，保证两个线程对竞争资源（即缓冲区）的访问是互斥的。
+
+```cpp
+class SolutionA {
+public:
+    int produceData() {
+        int ran = rand() % 1000; // [0, 1000) 的随机数
+        cout << "Produce data: " << ran << endl;
+        return ran;
+    }
+
+    void consumeData(int data) {
+        cout << "Consume data: " << data << endl;
+    }
+
+    void producer() {
+        while (true) {
+            mu.lock();
+            data = produceData();
+            ready = true;
+            mu.unlock();
+            while (ready) {
+                // 每秒检测一次，直到消费者吃完
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+            }
+        }
+    }
+
+    void consumer() {
+        while (true) {
+            while (!ready) {
+                // 每秒检测一次，直到生产者产出
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+            }
+            mu.lock();
+            consumeData(data);
+            ready = false;
+            mu.unlock();
+        }
+    }
+    
+    void run() {
+        thread t1(&SolutionA::producer, this);
+        thread t2(&SolutionA::consumer, this);
+        t1.join();
+        t2.join();
+    }
+private:
+    mutex mu;
+    bool ready = false;
+    int data = 0;
+};
+```
+
+这个例子显然是不够好的，因为我们缺少一种手段让生产者/消费者线程知道对方已经完成工作了，我们只好选择用 `while` 循环轮询，这会使得线程在等待对方时空转，尽管我们可以让线程休眠一定的时间、以节省资源，但这并不是完美的方案。**条件量**就是用来解决这种问题的。
+
+The `condition_variable` class is a synchronization primitive that can be used to block a thread, or multiple threads at the same time, until another thread both modifies a shared variable (the condition), and notifies the `condition_variable`.
+
+```cpp
+class SolutionB {
+public:
+    int produceData() {
+        int ran = rand() % 1000; // [0, 1000) 的随机数
+        cout << "Produce data: " << ran << endl;
+        return ran;
+    }
+
+    void consumeData(int data) {
+        cout << "Consume data: " << data << endl;
+    }
+
+    void producer() {
+        while (true) {
+            // Resource Acquisition Is Initialization or RAII
+            std::unique_lock<std::mutex> ul(mu);
+            // critical section
+            data = produceData();
+            ready = true;
+            // critical section
+            ul.unlock();
+            
+            cv.notify_one();
+            
+            ul.lock();
+            // The wait operations atomically release the mutex and suspend the execution of the thread.
+            cv.wait(ul, [this] {
+                return !this->ready;
+            });
+            // When the condition variable is notified, the thread is awakened, and the mutex is atomically reacquired. 
+        }
+    }
+
+    void consumer() {
+        while (true) {
+            std::unique_lock<std::mutex> ul(mu);
+            cv.wait(ul, [this]() {
+                return this->ready;
+            });
+            // after the wait, we own the lock.
+            consumeData(data);
+            ready = false;
+            ul.unlock();
+            cv.notify_one();
+        }
+    }
+    
+    void run() {
+        thread t1(&SolutionB::producer, this);
+        thread t2(&SolutionB::consumer, this);
+        t1.join();
+        t2.join();
+    }
+private:
+    std::mutex mu;
+    std::condition_variable cv;
+    int data = 0;
+    bool ready = false;
+};
+```
+
+# 并发与并行
+
+[Parallel programming with Swift: Operations](https://medium.com/flawless-app-stories/parallel-programming-with-swift-operations-54cbefaf3cb0)
+
+Concurrency 并发: A condition that exists when at least two threads are making progress. Single-core devices can achieve concurrency through time-slicing. 单核 CPU 通过分时策略实现并发。
+
+Parallelism 并行: A condition that arises when at least two threads are executing simultaneously. Multi-core devices execute multiple threads at the same time via parallelism.
+
+# 原子操作
+
+某些简单的表达式例如 `i += 1`，其实编译之后的得到的汇编指令，不止一条，所以他们并不是原子操作。
+
+原子操作一定是在同一个 CPU 时间片中完成，这样即使线程被切换，多个线程也不会看到同一块内存中不完整的数据。
 
 # IPC 跨进程通信
 
@@ -92,72 +329,3 @@ dispatch_sync(任意队列, ^{
 URLScheme 和 Universal Links 通过深链接 URL 传递信息。
 
 macOS 上还可以通过 local socket，进程 A 对某一个端口进行绑定、监听，进程 B 进行 TCP 连接。参考：[Inter-Process Communication](https://nshipster.com/inter-process-communication/)（不仅是 iOS，也有 macOS，针对整个苹果生态）。
-
-# 多线程
-
-[Parallel programming with Swift: Operations](https://medium.com/flawless-app-stories/parallel-programming-with-swift-operations-54cbefaf3cb0)
-
-Concurrency 并发: A condition that exists when at least two threads are making progress. Single-core devices can achieve concurrency through time-slicing. 单核 CPU 通过分时策略实现并发。
-
-Parallelism 并行: A condition that arises when at least two threads are executing simultaneously. Multi-core devices execute multiple threads at the same time via parallelism.
-
-# 原子操作
-
-某些简单的表达式例如 `i += 1`，其实编译之后的得到的汇编指令，不止一条，所以他们并不是原子操作。
-
-原子操作一定是在同一个 CPU 时间片中完成，这样即使线程被切换，多个线程也不会看到同一块内存中不完整的数据。
-
-# 锁
-
-[不再安全的 OSSpinLock](https://blog.ibireme.com/2016/01/16/spinlock_is_unsafe_in_ios/)
-
-[线程同步及线程锁](https://juejin.im/post/6844903543527178248)
-
-iOS 有 5 个不同的线程优先级（DispatchQoS.QoSClass），大多数情况下，高优先级的线程会比低优先级的线程先执行；但在少数情况下，会存在优先级反转的情况。`OSSpinLock` 在优先级反转的情况下存在严重问题，除非开发者能保证访问锁的线程全部处于同一优先级，否则 iOS 系统中所有类型的自旋锁都不能再使用了。
-
-在 iOS 10 / macOS 10.12 发布时，苹果提供了新的 `os_unfair_lock` 作为 `OSSpinLock` 的替代，并且将 `OSSpinLock` 标记为了 Deprecated。
-
-一个简单的[性能测试](https://github.com/ibireme/tmp/blob/master/iOSLockBenckmark/iOSLockBenckmark/ViewController.m)，对比了一下几种能够替代 OSSpinLock 锁的性能。测试是在 iPhone 6、iOS 9 上跑的，只是测试了单线程的情况，不能反映多线程下的实际性能，所以这个结果只能当作一个定性分析。
-
-![img-80](/assets/images/lock_benchmark.png)
-
-SDWebImage 中主要用到 `os_unfair_lock`、`dispatch_semaphore`、`@synchronized` 这几种锁。
-
-`pthread_mutex_lock`，pthread 中的互斥锁，具有跨平台性质，又可分为普通锁、检错锁、递归锁。当锁处于占用状态时，其他线程会挂起；当锁被释放时，所有等待的线程都将被唤醒，再次对锁进行竞争。在挂起与唤醒过程中，涉及用户态与内核态之间的上下文切换，而这种切换是比较消耗性能的。
-
-`OSSpinLock`（自旋锁）已废弃，`os_unfair_lock` 作为替代。
-
-自旋锁与互斥锁有点类似，只是自旋锁被某线程占用时，其他线程不会进入睡眠/挂起状态，而是一直运行（自旋/空转）直到锁被释放。由于不涉及用户态与内核态之间的切换，它的效率远远高于互斥锁。但相应地，会一直占用 CPU，如果不能在很短的时间内获得锁，无疑会使 CPU 整体效率降低。
-
-`@synchronized` 使用后，会在代码块前面插入 `objc_sync_enter`，代码块最后插入 `objc_sync_exit`。其核心逻辑是 `recursive_mutex_lock` 和 `recursive_mutex_unlock`，这两个函数在苹果私有库当中，从文档中得知是基于递归类型的 pthread_mutex 的。
-
-`NSLock`, `NSRecursiveLock`：`NSLock` 是对 `pthread_mutex_lock` 的封装，是普通类型的互斥锁；如果用在需要递归嵌套加锁的场景时，需要使用其子类 `NSRecursiveLock`。
-
-# 几种锁的使用
-
-同步块使用：
-
-```objc
-@synchronized (self) {
-    callbacks = [[self.callbackBlocks valueForKey:key] mutableCopy];
-}
-```
-
-信号量加锁：
-
-```objc
-dispatch_semaphore_t lock = dispatch_semaphore_create(1);
-dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER); // 等待和发出信号必须对称！重复调用 wait 不会崩溃，但会造成无限的等待……
-NSLog(@"safe here ...");
-dispatch_semaphore_signal(lock);
-```
-
-os_unfair_lock 使用：
-
-```objc
-#import <os/lock.h>
-os_unfair_lock lock = OS_UNFAIR_LOCK_INIT;
-os_unfair_lock_lock(&lock); // 加锁和解锁必须对称，重复加锁会直接崩溃！
-NSLog(@"safe here ...");
-os_unfair_lock_unlock(&lock);
-```

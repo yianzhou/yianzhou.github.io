@@ -1,6 +1,6 @@
 ---
 title: "设计模式"
-categories: [Development]
+categories: [Apple]
 ---
 
 <!-- prettier-ignore -->
@@ -10,6 +10,8 @@ categories: [Development]
 面向对象的三个基本特征是：**封装**、**继承**、**多态**
 
 一句话概括多态：子类重写了父类的方法，通过父类类型的指针调用了子类实例的方法，就是多态。
+
+先说项目中用到了哪些设计模式，再说整个技术方案是如何遵循六大设计原则。
 
 # MVC, MVP, MVVM
 
@@ -31,9 +33,7 @@ categories: [Development]
 
 MVVM 存在的问题：依赖 block 进行数据的传递，不安全（数据越多人知道就越不安全）、调试难度大、可读性差。目前正在慢慢被摒弃，只在一些小型组件或模块里面使用。
 
-# 设计模式
-
-## UML 类图
+# UML 类图
 
 <!-- markdownlint-disable MD037 -->
 <div class="mermaid">
@@ -63,6 +63,8 @@ classDiagram
 | 聚合 Aggregation    | 空心菱形箭头                                               | 同样表现为整体由部分构成，是一种弱依赖关系，整体不存在了，部分依然存在。                                                                   |
 | 关联 Association    | 一条直线表示，默认没有方向，如果特别强调方向，则加上箭头。 | 一般用来定义对象之间静态的、天然的结构，通常由常识等因素决定的，与运行状态无关。                                                           |
 | 依赖 Dependency     | 虚线箭头，我们总是应该保持单向依赖，杜绝双向依赖的产生。   | 与关联关系不同的是，它是一种临时性的关系，通常在运行期间产生，并且可能随着运行时的变化发生变化。                                           |
+
+# 设计模式 |
 
 > [图说设计模式](https://design-patterns.readthedocs.io/zh_CN/latest/index.html)
 
@@ -120,7 +122,9 @@ let url = components.url // 建造完成
 | 享元模式(Flyweight) | 1        |
 | 代理模式(Proxy)     | 4        |
 
-组合模式就是将对象组合成树形结构，而且单个对象和组合对象的接口一致（同一个类）。数据结构中的二叉树、红黑树用 `TreeNode` 表示树的每个节点，就是组合模式。`UIView` 组成的视图层级、`CALayer` 组成的图层层级，是经典的组合模式。
+适配器模式：将一个类的接口转换成客户端希望的另外一个接口，适配器模式使得原本由于接口不兼容而不能一起工作的类可以一起工作。如，数据上报迁移过程中使用的两套接口。
+
+组合模式就是将对象组合成树形结构，而且单个对象和组合对象的接口一致（同一个类）。数据结构中的树用 `TreeNode` 表示树的每个节点，就是组合模式。`UIView` 组成的视图层级、`CALayer` 组成的图层层级，是经典的组合模式。
 
 在面向对象编程中，有时候一个类需要被创建多个对象，但当进程中对象数量太多时，将带来内存上涨、性能下降等问题。享元模式（Flyweight）通过共享技术实现相同或相似对象的重用。UIKit 中，`UITableViewCell` 和 `UICollectionViewCell` 的复用就是典型的享元模式。
 
@@ -156,7 +160,7 @@ let url = components.url // 建造完成
 
 ## 单一职责原则（Single Responsibility Principle）
 
-简单讲就是一个类只做一件事，`CALayer`负责动画和视图的显示；`UIView`负责事件传递、事件响应。
+简单讲就是一个类只做一件事，`CALayer` 负责动画和视图的显示；`UIView` 负责事件传递、事件响应。
 
 ## 开闭原则（Open Closed Principle）
 

@@ -1,5 +1,5 @@
 ---
-title: 'Effective Objective-C (1) Get Accustomed'
+title: "Effective Objective-C (1) Get Accustomed"
 categories: [Effective Objective-C]
 ---
 
@@ -28,7 +28,7 @@ To compile anything that imports EOCPerson.h, you don’t need to know the full 
 ```objc
 #import <Foundation/Foundation.h>
 @class EOCEmployer;
-  
+
 @interface EOCPerson : NSObject
 @property (nonatomic, copy) NSString *firstName;
 @property (nonatomic, copy) NSString *lastName;
@@ -75,21 +75,37 @@ mutableDictionary[@"lastName"] = @"Galloway";
 
 少用预处理指令：`#define ANIMATION_DURATION 0.3`，多使用类型常量，后者提供了更多的可读性。
 
-若常量是在某个实现文件之内，则在名称前加字母 k：
+A constant that does not need to be exposed to the outside world should be defined in the implementation file where it is used. The usual convention for constants is to prefix with the letter k for constants that are local to a translation unit (implementation file).
 
 ```objc
+#import "EOCAnimatedView.h"
+
 static const NSTimeInterval kAnimationDuration = 0.3;
+
+@implementation EOCAnimatedView
+- (void)animate {
+    [UIView animateWithDuration:kAnimationDuration animations:^(){}];
+}
+@end
 ```
 
-若在类之外可见，则以类名称为前缀：
+It is important that the variable is declared as both `static` and `const`. The `const` qualifier means that the compiler will throw an error if you try to alter the value. The `static` qualifier means that the variable is local to the translation unit in which it is defined. A translation unit is the input the compiler receives to generate one object file. In the case of Objective-C, this usually means that there is one translation unit per class: every implementation (.m) file. So in the preceding example, `kAnimationDuration` will be declared locally to the object file generated from `EOCAnimatedView.m`. If the variable were not declared `static`, the compiler would create an external symbol for it. If another translation unit also declared a variable with the same name, the linker would throw an error.
+
+In fact, when declaring the variable as both `static` and `const`, the compiler doesn’t end up creating a symbol at all but instead replaces occurrences just like a preprocessor define does. Remember, however, the benefit is that the type information is present.
+
+For constants that are exposed outside of a class, it is usual to prefix with the class name. Such constants need to appear in the global symbol table to be used from outside the translation unit in which they are defined.
 
 ```objc
-// EOCAnimatedView.h
-extern const NSTimeInterval EOCAnimatedViewAnimationDuration;
+// In the header file
+extern NSString *const EOCStringConstant;
 
-// EOCAnimatedView.m
-const NSTimeInterval EOCAnimatedViewAnimationDuration = 0.3;
+// In the implementation file
+NSString *const EOCStringConstant = @"VALUE";
 ```
+
+The constant is declared in the header file and defined in the implementation file. The placement of the `const` qualifier is important, means "constant pointer to an `NSString`", the constant should not be allowed to change to point to a different `NSString` object.
+
+The `extern` keyword in the header tells the compiler that there will be a symbol for `EOCStringConstant` in the global symbol table. This means that the constant can be used without the compiler’s being able to see the definition for it. The compiler simply knows that the constant will exist when the binary is linked. The compiler will allocate storage for the string in the data section of the object file that is generated from this implementation file. When this object file is linked with other object files to produce the final binary, the linker will be able to resolve the global symbol for `EOCStringConstant` wherever else it has been used.
 
 ## 5. Use Enumerations
 

@@ -7,6 +7,220 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
+> [Welcome to the student resources for the Computer Networking: A Top-Down Approach Sixth Edition Companion Website.](https://wps.pearsoned.com/ecs_kurose_compnetw_6/216/55463/14198700.cw/index.html)
+
+# Computer Network and Internet
+
+## Network Edge
+
+因特网是世界范围的计算机网络。
+
+传统的桌面 PC、Linux 工作站、服务器，以及新兴的手机、家用电器、可穿戴设备等正在与因特网相连。这些设备被称为主机 (host)，主机又可分为两类：客户端和服务器；因主机运行在网络边缘 (network edge)，故又称为端系统 (end system)。
+
+接入网 (network access) 是指将端系统物理连接到 edge router 的网络。
+
+家庭入网过去用的是 DSL (Digital Subscriber Line)，DSL modem 得到数字信息后将其转换为高频信号，通过电话线（即双绞铜线）与电话公司的 DSLAM 交换数据，并在那里被转换回数字形式。电话线通过“频分复用技术”形成了双向电话信道（0 - 4kHz）、中速上行信道（4kHz - 50kHz）、告诉下行信道（50kHz - 1MHz）。使得电话呼叫和因特网连接能同时进行。
+
+另一种家庭入网是同轴电缆 (cable) 接入，利用了有线电视公司的基础设施。家庭先通过同轴电缆接入到地区的光纤节点，再通过光纤连接到有线电视公司。这种入网要用到 cable modem，同 DSL modem 一样将信号进行数模转换。
+
+现在更多的家庭享受到了光纤入户 (Fiber To The Home, FTTH)，用户在家中将无线路由器与 ONT (Optical Network Terminator) 相连，多个家庭的 ONT 通过光纤连接到临近的分配器 (splitter)，再通过一根共享的光纤连接到本地中心局的 OLT (Optical Line Terminator)。OLT 提供了光信号和电信号之间的转换。
+
+## Network Core
+
+### Packet Switching
+
+网络核心是由通信链路 (communication link) 和分组交换机 (packet switch) 构成的网状网络。
+
+端系统彼此交换报文 (message)。长的报文被划分成分组 (packet)，分组通过网络核心传送。
+
+通信链路由不同的物理媒体组成，包括同轴电缆、双绞铜线、光纤、无线电频谱等。链路的传输速率以 bit/s 度量。假设链路的传输速率是 R bits/s，经过一条链路发送 L bits 的 packet，传输时间应为 L/R 秒。
+
+Packet switch 最著名的两种类型是路由器 (router) 和链路层交换机 (link-layer switch)。
+
+#### Store-and-forward transmission
+
+多数 packet switch 在链路的输入端使用存储转发传输 (store-and-forward transmission)，这是指 packet switch 在开始向输出链路传输 packet 的第一个比特之前，必须收到整个 packet。
+
+为了理解这一机制，考虑两个端系统经一台路由器连接构成的简单网络，Source 在时刻 0 开始传输，经过 L/R 秒，路由器接受到整个 packet，并且开始向出链路传输，在时刻 2L/R 整个 packet 到达目的地，所以总时延是 2L/R。如果 packet switch 不使用存储转发机制，而是每到达一个比特就直接转发，那么总时延将会是 L/R。
+
+![img](/assets/images/1A46D224-C9F6-41C8-88A9-E2612F154B7F.jpg)
+
+一般地，通过由 N 条速率均为 R 的链路组成的路径（代表有 N - 1 台路由器），端到端的存储转发时延是 `d = N * L / R`。
+
+#### Queuing Delays and Packet Loss
+
+除了存储转发时延，packet 还要承受排队时延 (queueing delay) 和丢包 (packet loss)。
+
+对于每一条连接到 packet switch 上的链路，都有一个对应的输出缓存 (output buffer)，它用于存储准备发往那条链路的 packet。如果该链路正忙于传输其它 packet，则到达路由器的 packet 必须在输出缓存中等待，这就造成了排队时延。如果输出缓存已满，那么在新的 packet 到达时就会有 packet 被丢弃，造成丢包。
+
+![img](/assets/images/3CA03F1B-4719-4E90-977E-849FCD857DBB.jpg)
+
+#### Forwarding Tables and Routing Protocols
+
+路由器从与它相连的一条链路中收到 packet，然后向与它相连的另一条链路转发该 packet。那么，如何决定应该向哪条链路转发呢？
+
+源在 packet 的头部包含了目的地的 IP 地址。每台路由器都有一个转发表，用于将目的地址（或目的地址的一部分）映射到输出链路。
+
+我们不需人工对每台路由器配置转发表，因特网的 routing protocols 就是用于自动地设置这些转发表的。
+
+#### Delay, Packet Loss and Throughput
+
+Packet 在传输的路径上的**每个节点**都要经历几种不同类型的时延。
+
+- 节点处理时延 (nodal processing delay)：检查 packet 的头部并决定将该 packet 导向何处；
+- 排队时延 (queuing delay)：当出链路忙于传输时，特定 packet 必须排队等待；
+- 传输时延 (transmission delay)：L/R，这是将一个 packet 的所有比特推向链路的时间，传输时延的原因是前面学习的存储转发机制；
+- 传播时延 (propagation delay)：一旦一个比特被推向链路，它就会向下一个节点传播，这是一个比特从路由器 A 的出口到路由器 B 的入口所需要的时间。传播速率取决于该链路的物理媒体。
+
+下面一张图概括了路由器 A 的节点总时延 (total nodal delay)：
+
+![img](/assets/images/5A9F468D-F161-4FC4-B691-1FFC1C06B953.jpg)
+
+### Circuit Switching
+
+Circuit Switching 必须在发送方和接收方之间建立一条连接，该连接被称为一条电路 (circuit)，它路径上的交换机都要为该连接维护必要的状态。Circuit 预留了恒定的传输速率，以确保发送方能够以恒定速率向接收方传送数据。（类比固定电话之间的通话）
+
+与之相反，packet switching 不预留任何链路资源，因特网尽最大努力交付 packet 但不做任何保证。（类比微信语音通话）
+
+Circuit Switching 需要预先分配资源，已分配而没有用上的链路时间就被浪费掉了；Packet Switching 则可以按需共享链路传输能力。今天的电信网络正在朝 Packet switching 发展，特别是，电话网经常在昂贵的海外电话部分使用 Packet Switching。
+
+## A Network of Networks
+
+端系统要通过 ISP (Internet Service Provider) 接入因特网。Access ISPs 的类型多种多样，包括住宅 ISP、公司 ISP、大学 ISP、咖啡厅或医院等公共场所的 ISP……
+
+为了理解今天的因特网结构，我们以逐步递进的方式建造一系列网络结构，每一次递进都更接近现实中的因特网。
+
+在中国，每个城市有 Access ISPs，它们与省级 ISP 连接，再与国家级 ISP 连接，最终与 tier-1 ISP 连接。在此基础上，再加上 PoPs (Point of Presence)、multi-homing、peering、IXPs (Internet exchange points)，形成了 Network Structure 4。
+
+最终，今天的因特网在 Network Structure 4 的顶部增加内容提供商网络 (content provider network) 构成。例如谷歌通过创建自己的网络和数据中心，直接在可能的地方与低层 ISP 互联。
+
+![img](/assets/images/7182E1A1-1964-4FFD-8AC9-659F8101715C.jpg)
+
+总之，今天的因特网是一个网络的网络，结构非常复杂，由十多个 tier-1 ISP 和数十万个较低层 ISP 组成。用户和内容提供商是较低层 ISP 的客户，低层 ISP 是高层 ISP 的客户。
+
+## Protocol Layers
+
+网络设计者以分层的方式组织协议、并实现这些协议的网络硬件和软件。一个 layer 会使用它下层的服务，并同时向上层提供服务 (service model)。
+
+各层的所有协议被称为协议栈 (protocol stack)，因特网的协议栈由 5 个层次组成：物理层、链路层、网络层、运输层、应用层。
+
+| Layer             | Name               | Example                      |
+| ----------------- | ------------------ | ---------------------------- |
+| Application Layer | Message（报文）    | HTTP, SMTP, FTP, DNS         |
+| Transport Layer   | Segment（报文段）  | TCP, UDP                     |
+| Network Layer     | Datagram（数据报） | IP, Routing protocols        |
+| Link Layer        | Frame（帧）        | Ethernet, Wi-Fi, DOCSIS, PPP |
+| Physical Layer    |                    |                              |
+
+传输层负责进程到进程的传送；网络层负责主机到主机的传送；链路层负责将帧从一个节点移动到邻近的下一个节点；物理层负责将帧中的每一个比特从一个节点移动到下一个节点。
+
+![img](/assets/images/8399A4F3-9540-4485-A26D-2747A1DC4BAF.jpg)
+
+上图显示了这样一条路径：数据从源的协议栈一路向下、经过中间的链路层交换机和路由器的协议栈上上下下、最后向上到达目的地的协议栈。注意，路由器实现了第一层到第三层协议，而链路层交换机只实现了前二层。这意味着路由器能够实现 IP 协议，但链路层交换机不能，因此它不能识别 IP 地址，但它能够识别第二层地址如 Ethernet 地址。
+
+如上图所示，packet 到达每一层，都会被附加上该层的首部字段（用字母 H 表示），首部字段会在之后被相应的层使用。现实中的封装会比这张图所描述的更复杂一些，例如在发送端一个大的 message 可能被划分为多个 segment，每个 segment 又可能被划分为多个 datagram，并在接收端进行重构。
+
+## Network Security
+
+Much of the **malware** out there today is **self-replicating**: once it infects one host, from that host it seeks entry into other hosts over the Internet, and from the newly infected hosts, it seeks entry into yet more hosts. Malware can spread in the form of a **virus** or a **worm**. Viruses are malware that require some form of user interaction to infect the user’s device. Worms are malware that can enter a device without any explicit user interaction.
+
+Another broad class of security threats are known as **denial-of-service (DoS)** attacks. As the name suggests, a DoS attack renders a network, host, or other piece of infrastructure unusable by legitimate users.
+
+A passive receiver that records a copy of every packet that flies by is called a **packet sniffer**. These packets can contain all kinds of sensitive information, including passwords, social security numbers, trade secrets, and private personal messages.
+
+It is surprisingly easy to create a packet with an arbitrary source address, packet content, and destination address and then transmit this hand-crafted packet into the Internet, which will dutifully forward the packet to its destination. Imagine the unsuspecting receiver (say an Internet router) who receives such a packet, takes the (false) source address as being truthful, and then performs some command embedded in the packet’s contents (say modifies its forwarding table). The ability to inject packets into the Internet with a false source address is known as **IP spoofing**, and is but one of many ways in which one user can masquerade as another user.
+
+# Application Layer
+
+在同一个端系统上的进程，它们使用 IPC 相互通信，规则由操作系统确定；在两个不同端系统上的进程，通过跨越计算机网络交换 message 而相互通信。
+
+不管是 client-server architecture 还是 P2P architecture，对每对通信进程，我们把主动发起通信方称为客户，被动等待联系方称为服务器。在 P2P architecture 中，一个进程既能够是客户又能够是服务器。
+
+进程通过一个称为套接字 (socket) 的软件接口，向网络发送和从网络接受 message。
+
+在因特网中，目的地主机由 IP 地址标识；接收进程由端口号标识。
+
+开发一个应用时，必须选择一种运输层协议，如何选择呢？大体从可靠数据传输、吞吐量、时效性和安全性几个方面考虑。如电子邮件、Web 文档这类应用，必须保证可靠数据传输（不能丢失数据）、对吞吐量无要求、对响应时间不敏感；如流媒体、视频通话、游戏等应用，则可以容忍丢包、但对带宽有要求、对响应时间敏感。
+
+TCP 为应用层提供了面向连接的、可靠数据传输服务，还具有拥塞控制机制；UDP 是一种“仅提供最小服务”的传输层协议，它不提供可靠数据传输服务，不保证 message 能到达接收进程、message 也可能以乱序的方式到达接收进程。
+
+TCP 和 UDP 本身都没有提供安全性相关的服务，但 TCP 在应用层可以用 SSL 来提供安全服务。除了可靠数据传输和安全性，目前的因特网运输协议并不能提供吞吐量和时效性的保证。
+
+应用层协议定义了 Message 的类型，例如请求报文、响应报文；各种 Message 类型相应的语法，如 Message 中的各个字段的含义；确定进程何时、如何发送 message，以及对 message 进行响应的规则。
+
+## The Web and HTTP
+
+Web 的应用层协议是 HTTP (HyperText Transfer Protocol)。Web page 是由对象 (object) 组成的，一个对象是一个可通过 URL 寻址的文件（例如 HTML、JPEG、JavaScript 或视频片段这样的文件）。多数 Web page 包含一个 HTML 文件和多个引用对象。
+
+HTTP 服务器不保存关于客户的任何信息，我们说 HTTP 是一个无状态协议 (stateless protocol)。
+
+HTTP 在默认方式下使用持续连接 (persistent connection)，意味着客户端和服务器在一个长的时间范围内通信时，客户端一系列的请求及服务端的响应，都经同一个 TCP 连接发送。
+
+非持续连接有这样一些缺点：第一，必须为每一个请求的对象建立和维护一个全新的 TCP 连接。这意味着，在客户端和服务器中都要分配 TCP 的缓冲区、保持 TCP 的变量；第二，每请求一个对象都要经历 2 RTTs，即 1 RTT 用于创建 TCP 连接，1 RTT 用于请求和接收对象。
+
+HTTP/1.1 默认使用带流水线 (pipelining) 的持续连接，即，服务器在发送响应后保持该 TCP 连接打开，后续的请求和响应 message 能够通过相同的连接进行传送。一个完整的 Web page 及其所有资源，甚至，多个 Web page 都可以经同一个 TCP 连接发送给客户端。对对象的请求可以一个紧接一个发出，而不必等待对未决请求的响应。HTTP/2 在 HTTP/1.1 的基础上，允许在相同连接中多个请求和响应交错，并增加了按优先级排序请求和响应的机制。
+
+一般来说，如果一条连接经过一定时间间隔（可配置）仍未被使用，服务器就会关闭该连接。
+
+## HTTP Message Format
+
+HTTP Message 有两种，请求报文和响应报文。
+
+### Request Message
+
+下面看一个典型的请求报文：
+
+```s
+GET /somedir/page.html HTTP/1.1
+Host: www.someschool.edu
+Connection: close
+User-agent: Mozilla/5.0
+Accept-language: fr
+```
+
+The first line of an HTTP request message is called the **request line**; the subsequent lines are called the **header lines**.
+
+The request line has three fields: the method field, the URL field, and the HTTP version field.
+
+The header line `Host: www.someschool.edu` specifies the host on which the object resides. You might think that this header line is unnecessary, as there is already a TCP connection in place to the host. But, as we’ll see in Section 2.2.5, the information provided by the host header line is required by Web proxy caches.
+
+The `Accept-language:` header is just one of many content negotiation headers available in HTTP.
+
+下面是请求报文的通用格式：
+
+![img](/assets/images/636E8239-B438-48B9-82C4-4B7219C4B65C.jpg)
+
+After the header lines (and the additional carriage return and line feed) there is an “entity body.” The entity body is empty with the GET method, but is used with the POST method. If the value of the method field is POST, then the entity body contains what the user entered into the form fields.
+
+A request generated with a form does not necessarily use the POST method. Instead, HTML forms often use the GET method and include the inputted data (in the form fields) in the requested URL.
+
+### Response Message
+
+下面看一个典型的响应报文：
+
+```s
+HTTP/1.1 200 OK
+Connection: close
+Date: Tue, 18 Aug 2015 15:44:04 GMT
+Server: Apache/2.2.3 (CentOS)
+Last-Modified: Tue, 18 Aug 2015 15:11:03 GMT Content-Length: 6821
+Content-Type: text/html
+(data data data data data ...)
+```
+
+It has three sections: an initial **status line**, six **header lines**, and then the **entity body**.
+
+The status line has three fields: the protocol version field, a status code, and a corresponding status message.
+
+For the header lines:
+
+- The `Date:` header line indicates the time and date when the HTTP response was created and sent by the server.
+- The `Last-Modified:` header line indicates the time and date when the object was created or last modified. It is critical for object caching, both in the local client and in network cache servers (also known as proxy servers).
+- The `Content-Length:` header line indicates the number of bytes in the object being sent.
+- The `Content-Type:` header line indicates that the object in the entity body is HTML text. (The object type is officially indicated by the Content-Type: header and not by the file extension.)
+
+The entity body is the meat of the message—it contains the requested object itself (represented by data ...).
+
 # TCP 三次握手、四次挥手
 
 三次握手：
@@ -22,13 +236,68 @@ categories: [Apple]
 - 服务端：我说完了，下课。
 - 客户端：谢谢老师，老师再见。
 
+# TLS 握手
+
+一、客户端向服务器发出加密通信的请求 (ClientHello)。请求信息包括一个客户端生成的随机数，稍后用于生成"对话密钥"。
+
+二、服务器收到客户端请求后，向客户端发出回应 (SeverHello)。回应包含以下内容：服务器证书；一个服务器生成的随机数，稍后用于生成"对话密钥"。
+
+除了上面这些信息，如果服务器需要确认客户端的身份，就会再包含一项请求，要求客户端提供"客户端证书"。比如，金融机构往往只允许认证客户连入自己的网络，就会向正式客户提供 USB 密钥，里面就包含了一张客户端证书。
+
+三、客户端收到服务器回应以后，首先验证服务器证书，如果证书没有问题，客户端就会从证书中取出服务器的公钥，并向服务端发送以下信息：
+
+- 用服务器公钥加密的 PMS，防止被窃听。
+- 编码改变通知，表示随后的信息都将用双方商定的加密方法和密钥发送。
+- 客户端握手结束通知，表示客户端的握手阶段已经结束。这一项同时也是前面发送的所有内容的 hash 值，供服务端校验。
+
+四、服务器收到 PMS，通信双方拿着 PMS (pre-master key) 和 client nonce、server nonce 三个随机数一起，用事先商定的加密方法，各自生成本次会话所用的同一把"会话密钥"。最后，向客户端发送以下信息：
+
+- 编码改变通知，表示随后的信息都将用双方商定的加密方法和密钥发送。
+- 服务器握手结束通知，表示服务器的握手阶段已经结束。这一项同时也是前面发送的所有内容的 hash 值，供客户端校验。
+
+[参考](https://www.ruanyifeng.com/blog/2014/02/ssl_tls.html)
 
 # HTTP/2
 
-HTTP/1.1 head of line blocking（队头阻塞），请求是有顺序的，客户端请求资源一、服务端返回资源一；客户端请求资源二、服务端返回资源二……谷歌浏览器最多可以并行 6 个 TCP 连接，可以看作 6 个串行队列，队列之间没有关系，但是队内存在队头阻塞。
+队头阻塞 (head-of-line blocking) 发生在一个 TCP 分节丢失，导致其后续分节不按序到达接收端的时候。该后续分节将被接收端一直保持直到丢失的第一个分节被发送端重传并到达接收端为止。该后续分节的延迟递送确保了接收者能够按照发送端的发送顺序接收数据。这种为了达到完全有序而引入的延迟机制非常有用，但也有不利之处。
+
+HTTP/1.1 队头阻塞，HTTP 管道化要求服务端必须按照请求发送的顺序返回响应，那如果一个响应返回延迟了，那么其后续的响应都会被延迟，直到队头的响应送达。
+
+HTTP/1.1 请求是有顺序的，客户端请求资源一、服务端返回资源一；客户端请求资源二、服务端返回资源二……谷歌浏览器最多可以并行 6 个 TCP 连接，可以看作 6 个串行队列，队列之间没有关系，但是队内存在队头阻塞。
 
 一、多路复用的单一长连接。在 HTTP/2 中，客户端向某个域名的服务器请求的过程中，只会创建一条 TCP 连接，即使这页面可能包含上百个资源，避免了创建多个 TCP 连接带来的网络开销。HTTP 2 采用了二进制分帧 (binary framing layer)，多个帧之间可以乱序发送，根据帧首部的流标识可以重新组装，服务端返回资源的顺序可以交错。
 
 二、头部压缩：对消息 Header 采用 HPACK 进行压缩传输。网络传输数据量便少了。
 
 三、服务端推送：服务端可以主动把 JS 和 CSS 文件推送给客户端，而不需要客户端解析 HTML 再发送这些请求。这样，当客户端需要的时候，它已经在客户端了。
+
+# HTTPDNS
+
+> <https://cn.aliyun.com/product/httpdns>
+
+Local DNS 协议运行在 UDP 协议之上，使用端口号 53，向本地运营商询问域名对应的 IP 地址。
+
+HTTPDNS 使用 HTTP 协议进行域名解析，代替现有基于 UDP 的 DNS 协议，域名解析请求直接发送到阿里云的 HTTPDNS 服务器，从而绕过运营商的 Local DNS。
+
+HTTPDNS 的好处：
+
+- 绕过运营商 Local DNS，避免域名劫持（有时候我们访问一些未投入使用的域名，会被运营商插入广告）。
+- 精准调度：基于访问的来源 IP，获得最精准的解析结果，让客户端就近接入业务节点。
+- 0ms 解析延迟：通过热点域名预解析、缓存 DNS 解析结果、解析结果懒更新策略等方式实现 0 解析延迟。
+- 避免 Local DNS 不遵循权威 TTL，解析结果长时间无法更新的问题。
+- 有效降低无线场景下解析失败的比率。
+
+# 弱网优化
+
+弱网优化需要解决的核心问题有两点：
+
+1. 移动网络环境如此复杂，我们如何确定当下就是弱网环境。
+2. 如何提升弱网下的成功率，降低弱网下的时延，进而提升用户的网络体验。
+
+弱网定义的指标：RTT、信号强度、吞吐量、带宽时延乘积。
+
+对于不同的产品，影响网络质量的指标是一样的，但对于每个指标的阈值是不一样的，因为这包含着业务场景，比如抖音是视频类网络传输，微信是长连接数据传输，淘宝是文本图片类数据传输。
+
+被动检测：连接成功时看 RTT、吞吐量，超过阈值时判定弱网；连接失败次数大于 2 次。
+
+主动检测：dns 查询和 ping。

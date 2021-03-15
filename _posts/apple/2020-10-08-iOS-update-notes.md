@@ -5,8 +5,28 @@ categories: [Apple]
 
 # iOS 14
 
-- Place widgets anywhere on the Home Screen. Widgets now come in small, medium, and large sizes. You can create stacks of up to 10 widgets.
-- App Library on the Home Screen.
+Redesigned widgets.
+
+- Place widgets anywhere on the Home Screen.
+- Widgets now come in small, medium, and large sizes.
+- Widget gallery.
+- Widget stacks: You can create stacks of up to 10 widgets.
+
+App Library on the Home Screen.（自动分类、建议、搜索……）
+
+精简界面：来电以横幅显示（包括 FaceTime 和第三方 VoIP 通话）；视频画中画……
+
+App Clips
+
+- 轻 App 能在你需要的那刻为你所用，专以满足当下的特定需求。会在你使用完毕之后自动消失。
+- 通过 NFC 标签或扫描二维码，或是通过信息 app、地图 app 和 Safari 浏览器
+
+Privacy
+
+- App Store 中的每个产品页面增加了一个新版块，让你在下载某款 app 之前，能够参看它的隐私处理方法摘要。
+- App 追踪控制和透明度：开发者在通过 app 对你进行追踪之前，将会被要求先征得你的同意。
+- 如果开发者请求访问你的照片，你可以选择仅分享特定的项目，或允许访问你的整个图库。
+- 每当有 app 使用你的麦克风或相机时，iOS 会同时在 app 内及控制中心显示一个指示器。
 
 # iOS 13
 

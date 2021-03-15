@@ -367,9 +367,9 @@ Method Swizzling can be used to great advantage, as it can be used to change fun
 #import "objc/Runtime.h"
 @implementation Demo (Yell) // category 中实现
 
-// 1. 交换方法应在+load方法
+// 1. 交换方法应在 load 方法
 +(void)load{
-    // 2. 交换方法应该放到 dispatch_once 中执行
+    // 2. load 会被执行多次，所以交换方法应该放到 dispatch_once 中执行
     static dispatch_once_t onceToken;
     dispatch_once(&onceToken, ^{
         Method originalMethod = class_getInstanceMethod([self class], @selector(hello));
@@ -390,9 +390,8 @@ Method Swizzling can be used to great advantage, as it can be used to change fun
     });
 }
 
-// 4. 交换的方法应该添加前缀，避免命名冲突
 -(void)yellHello {
-    // 5. 根据需要，交换的分类方法可以调用原实现
+    // 4. 根据需要，交换的分类方法可以调用原实现
     [self yellHello];
     NSLog(@"Yell hello!");
 }

@@ -65,9 +65,42 @@ private final class PingMainThread: Thread {
 
 A `CFRunLoopObserver` provides a general means to receive callbacks at different points within a running run loop. In contrast to sources, which fire when an asynchronous event occurs, and timers, which fire when a particular time passes, observers fire at special locations within the execution of the run loop, such as before sources are processed or before the run loop goes to sleep, waiting for an event to occur.
 
-要想监听 RunLoop，首先需要创建一个 `CFRunLoopObserverContext` 观察者，将创建好的观察者添加到主线程 RunLoop 的 common 模式下观察。然后，创建一个持续运行的子线程专门用来监控主线程的 RunLoop 状态。
+创建一个常驻的子线程，在子线程初始化时，注册 `CFRunLoopObserverContext` 观察者，并将其添加到主线程 RunLoop 的 common 模式下观察。
 
-参考：[戴铭 - SMLagMonitor](https://github.com/ming1016/DecoupleDemo/blob/master/DecoupleDemo/SMLagMonitor.m)；卡顿堆栈的捕获：[BSBacktraceLogger](https://github.com/bestswifter/BSBacktraceLogger)。
+主线程 RunLoop 状态的每一次变迁，都会做两件事情：1. `runLoopActivity` 写入子线程实例变量中记录；2. 向子线程的信号量发出信号。
+
+<div class="mermaid">
+graph LR
+    sleep1[休眠] --> AfterWaiting
+    subgraph 发生卡顿时
+    AfterWaiting --> BeforeTimer
+    BeforeTimer --> BeforeSource
+    end
+    subgraph 没有发生卡顿时
+    BeforeWaiting
+    end
+    BeforeSource --> BeforeWaiting
+    BeforeWaiting --> sleep2[休眠]
+</div>
+
+子线程的 `main` 函数是一个 `while` 循环，信号量每次等待 2.0 秒的阈值时间，或者收到信号，或者超时。
+
+<div class="mermaid">
+graph LR
+    等待 --> 超时
+    等待 --> 收到信号
+    subgraph 代表主线程在处理任务
+    lag[AfterWaiting,BeforeTimer,BeforeSource]
+    end
+    超时 --> lag
+    lag --> backtrace["获取并记录卡顿堆栈"]
+    subgraph 代表主线程已进入休眠
+    BeforeWaiting
+    end
+    超时 --> BeforeWaiting
+    BeforeWaiting --> 进入下次循环体
+    收到信号 --> 进入下次循环体
+</div>
 
 ```swift
 import Foundation
@@ -86,14 +119,14 @@ class MonitorThread: Thread {
             true, // A flag identifying whether the observer is called only once or every time through the run loop.
             0, // A priority index indicating the order in which run loop observers are processed.
             {
-                (observer: CFRunLoopObserver!, activity: CFRunLoopActivity) -> Void in
-                self.runLoopActivity = activity
-                self.semaphore.signal()
+                [weak self] (observer: CFRunLoopObserver!, activity: CFRunLoopActivity) -> Void in
+                // 在主线程回调
+                self?.runLoopActivity = activity
+                self?.semaphore.signal()
             })
-
         CFRunLoopAddObserver(CFRunLoopGetMain(), runLoopObserver, CFRunLoopMode.commonModes)
     }
-
+    
     override func main() {
         while (true) {
             autoreleasepool {
@@ -133,6 +166,8 @@ for _ in 1...100000000 {
     pi *= Double.pi
 }
 ```
+
+参考：[戴铭 - SMLagMonitor](https://github.com/ming1016/DecoupleDemo/blob/master/DecoupleDemo/SMLagMonitor.m)；卡顿堆栈的捕获：[BSBacktraceLogger](https://github.com/bestswifter/BSBacktraceLogger)，[PLCrashReporter](https://github.com/microsoft/plcrashreporter)。
 
 # CPU 占用过高
 

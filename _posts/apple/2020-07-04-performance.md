@@ -9,6 +9,8 @@ categories: [Apple]
 
 [WWDC 2018 - Practical Approaches to Great App Performance](https://developer.apple.com/videos/play/wwdc2018/407/)
 
+[iOS 性能监控 SDK](https://github.com/aozhimin/iOS-Monitor-Platform#freezinglag)
+
 # 卡顿原因
 
 可能导致主线程卡顿的原因：
@@ -126,7 +128,7 @@ class MonitorThread: Thread {
             })
         CFRunLoopAddObserver(CFRunLoopGetMain(), runLoopObserver, CFRunLoopMode.commonModes)
     }
-    
+
     override func main() {
         while (true) {
             autoreleasepool {

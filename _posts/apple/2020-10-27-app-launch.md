@@ -17,21 +17,77 @@ categories: [Apple]
 
 [WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
 
+# 统计冷启动时机
+
+方法：Xcode -> Edit Scheme -> Arguments -> Environment Variables
+
+设置 `DYLD_PRINT_STATISTICS` 和 `DYLD_PRINT_STATISTICS_DETAILS` 两个值为 1。
+
+```log
+Total pre-main time: 1.3 seconds (100.0%)
+         dylib loading time: 1.0 seconds (74.7%)
+        rebase/binding time:  95.79 milliseconds (7.1%)
+            ObjC setup time:  41.65 milliseconds (3.0%)
+           initializer time: 202.46 milliseconds (15.0%)
+           slowest intializers :
+             libSystem.B.dylib :   7.37 milliseconds (0.5%)
+           libMTLCapture.dylib :  36.40 milliseconds (2.7%)
+                       Flutter :  79.66 milliseconds (5.9%)
+
+  total time: 2.4 seconds (100.0%)
+  total images loaded:  656 (584 from dyld shared cache)
+  total segments mapped: 221, into 63664 pages
+  total images loading time: 2.0 seconds (84.9%)
+  total load time in ObjC:  41.65 milliseconds (1.6%)
+  total debugger pause time: 1.0 seconds (44.1%)
+  total dtrace DOF registration time:   0.00 milliseconds (0.0%)
+  total rebase fixups:  295,165
+  total rebase fixups time:  69.41 milliseconds (2.8%)
+  total binding fixups: 29,525
+  total binding fixups time:  46.85 milliseconds (1.9%)
+
+  total weak binding fixups time:  10.28 milliseconds (0.4%)
+  total redo shared cached bindings time:  30.76 milliseconds (1.2%)
+  total bindings lazily fixed up: 0 of 0
+  total time in initializers and ObjC +load: 202.46 milliseconds (8.2%)
+                         libSystem.B.dylib :   7.37 milliseconds (0.2%)
+               libBacktraceRecording.dylib :   5.82 milliseconds (0.2%)
+                       libMTLCapture.dylib :  36.40 milliseconds (1.4%)
+                                 Alamofire :   2.95 milliseconds (0.1%)
+                                    Charts :   3.29 milliseconds (0.1%)
+                              FBSDKCoreKit :   6.85 milliseconds (0.2%)
+                                   Flutter :  79.66 milliseconds (3.2%)
+                                GBDNetwork :   2.85 milliseconds (0.1%)
+                                 HandyJSON :   2.61 milliseconds (0.1%)
+                                MoyaMapper :   2.59 milliseconds (0.1%)
+                                   RxSwift :   4.43 milliseconds (0.1%)
+                                   RxCocoa :   7.06 milliseconds (0.2%)
+                               LisPonOrbit :  18.68 milliseconds (0.7%)
+total symbol trie searches:    86758
+total symbol table binary searches:    0
+total images defining weak symbols:  70
+total images using weak symbols:  157
+```
+
 # 冷启动的各个阶段
 
 ## main() 函数执行前
 
 在 main() 函数执行前，系统主要会做下面几件事情：
 
-- 加载可执行文件；
-- 加载动态链接库，进行 rebase 指针调整、符号与地址的绑定；
-- Runtime 初始化，包括 objc 相关类的注册、category 注册、selector 唯一性检查等；
-- 初始化，包括了执行 `+load()` 方法、`attribute((constructor))` 修饰的 C 函数的调用、创建 C++ 静态全局变量。
+1\. 加载可执行文件，包括应用程序二进制文件和动态库，动态库又会依赖其它的动态库，系统会设置一个共享缓存来解决加载的递归依赖问题。
+
+2\. 进行 rebase 指针调整、符号与地址的绑定。Rebase 是在镜像内部调整指针的指向，由于 ASLR，需要根据随机的地址偏移量进行指向修正。
+
+3\. Runtime 初始化，包括 objc 相关类的注册、category 注册、selector 唯一性检查等。
+
+4\. Initializers：ObjC `+load()` 方法；`attribute((constructor))` C++ 构造函数属性函数；C++ 静态全局变量等。
 
 相应地，这个阶段对于启动速度优化来说，可以做的事情包括：
 
 - 和优化包体积的思路一样，清理无用的类和代码，减小可执行文件的体积。
-- 减少动态库的数量。苹果公司建议使用更少的动态库，尽量将多个动态库进行合并。数量上，苹果公司最多可以支持 6 个非系统动态库合并为一个。
+- 减少加载启动后不会去使用的类或者方法。
+- 减少动态库的数量。苹果建议最多使用 6 个非系统动态库。
 - `+load()` 方法里的内容可以放到首屏渲染完成后再执行，或使用 `+initialize()` 方法替换掉。因为，在一个 `+load()` 方法里，进行运行时方法替换操作会带来 4 毫秒的消耗。不要小看这 4 毫秒，积少成多，执行 +load() 方法对启动速度的影响会越来越大。
 - 控制 C++ 全局变量的数量。
 
@@ -45,6 +101,14 @@ main() 函数执行后的阶段，指的是从 main() 函数执行开始，到 `
 
 从函数上来看，这个阶段指的是 `application(_:didFinishLaunchingWithOptions:)` 方法作用域内，执行首屏渲染之后的所有方法执行完成。这个阶段用户已经能够看到 App 的首页了，所以优化的优先级排在最后。但是，那些会卡住主线程的方法还是需要最优先处理的，不然还是会影响到用户后面的交互操作。
 
+# 实战
+
+键盘里没有 StatusBar，将系统创建 StatusBar 的私有方法替换掉，优化了 8 ms；
+
+首屏视图根据功能逻辑，暂时不需显示的采用懒加载，优化了 7 ms。
+
+涉及文件或路径的操作，如检查文件夹是否存在，新建、复制、移动、删除文件等等操作，不要放在主线程。
+
 # 检查、监控方法耗时情况
 
 一、Instruments 的分析工具 "App Launch"、"Time Profiler"，Time Profiler 定时抓取主线程上的方法调用堆栈，计算一段时间里各个方法的耗时。
@@ -53,7 +117,7 @@ main() 函数执行后的阶段，指的是从 main() 函数执行开始，到 `
 
 # 二进制重排
 
-传统的启动优化是基于减少不必要代码、懒加载、划分任务优先级、利用多线程来做的，主要是从减少主线程任务的角度来出发，此类相关优化的策略已经很普遍了，很难再做出大的提升。今天，我们从另一个角度去思考启动优化——内存加载机制。
+传统的启动优化是基于减少不必要代码、懒加载、利用多线程、延后执行与首屏渲染无关的代码来做的，主要是从减少主线程任务的角度来出发，此类相关优化的策略已经很普遍了，很难再做出大的提升。今天，我们从另一个角度去思考启动优化——内存加载机制。
 
 APP 启动时，dyld 会把程序的二进制 mmap 到虚拟内存里，当执行代码需要使用到具体的物理内存时，再通过 page fault 触发物理内存加载，然后才能访问。
 

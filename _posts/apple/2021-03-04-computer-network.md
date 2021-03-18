@@ -136,7 +136,7 @@ It is surprisingly easy to create a packet with an arbitrary source address, pac
 
 不管是 client-server architecture 还是 P2P architecture，对每对通信进程，我们把主动发起通信方称为客户，被动等待联系方称为服务器。在 P2P architecture 中，一个进程既能够是客户又能够是服务器。
 
-进程通过一个称为套接字 (socket) 的软件接口，向网络发送和从网络接受 message。
+进程通过一个称为 socket 的软件接口，向网络发送和从网络接受 message。
 
 在因特网中，目的地主机由 IP 地址标识；接收进程由端口号标识。
 
@@ -190,7 +190,7 @@ The `Accept-language:` header is just one of many content negotiation headers av
 
 ![img](/assets/images/636E8239-B438-48B9-82C4-4B7219C4B65C.jpg)
 
-After the header lines (and the additional carriage return and line feed) there is an “entity body.” The entity body is empty with the GET method, but is used with the POST method. If the value of the method field is POST, then the entity body contains what the user entered into the form fields.
+After the header lines (and the additional carriage return 回车 and line feed 换行) there is an “entity body.” The entity body is empty with the GET method, but is used with the POST method. If the value of the method field is POST, then the entity body contains what the user entered into the form fields.
 
 A request generated with a form does not necessarily use the POST method. Instead, HTML forms often use the GET method and include the inputted data (in the form fields) in the requested URL.
 
@@ -212,6 +212,16 @@ It has three sections: an initial **status line**, six **header lines**, and the
 
 The status line has three fields: the protocol version field, a status code, and a corresponding status message.
 
+常见的状态码包括：
+
+| Status code                    | 说明                                                                                      |
+| ------------------------------ | ----------------------------------------------------------------------------------------- |
+| 200 OK                         | 请求成功                                                                                  |
+| 301 Moved Permanently          | 请求的对象被永久转移了，Client 将自动获取新 URL（位于响应报文的 `Location:` header line） |
+| 400 Bad Request                | 一个通用错误码，表示该请求不能被服务器理解                                                |
+| 404 Not Found                  | 被请求的文档不存在服务器上                                                                |
+| 505 HTTP Version Not Supported | 服务器不支持请求报文使用的 HTTP 协议版本                                                  |
+
 For the header lines:
 
 - The `Date:` header line indicates the time and date when the HTTP response was created and sent by the server.
@@ -219,7 +229,92 @@ For the header lines:
 - The `Content-Length:` header line indicates the number of bytes in the object being sent.
 - The `Content-Type:` header line indicates that the object in the entity body is HTML text. (The object type is officially indicated by the Content-Type: header and not by the file extension.)
 
+HTTP 规范定义了许多的 header lines，header lines 可以被浏览器、Web 服务器、Web 缓存服务器插入。这里提到的只是一小部分。
+
 The entity body is the meat of the message—it contains the requested object itself (represented by data ...).
+
+下面是响应报文的通用格式：
+
+![img](/assets/images/EA05AE9A-A41A-4AE1-A1E3-48D1E6A8AC03.jpg)
+
+## Cookie
+
+我们前面提到 HTTP 是无状态的，然而 Web 站点通常希望能够识别用户，为此，HTTP 使用了 cookie，它允许站点对用户进行跟踪。
+
+Cookie 有四个部分：
+
+1. A cookie header line in the HTTP response message;
+2. A cookie header line in the HTTP request message;
+3. A cookie file kept on the user’s end system and managed by the user’s browser;
+4. A back-end database at the Web site.
+
+![img](/assets/images/AD027E75-A0DC-49C4-ADCF-611BD0BE7459.jpg)
+
+从上面例子我们可以看到，在用户首次访问一个网站时，服务器为它创建一个标识附带在响应报文中，后续的会话会在请求报文中带上这个标识。因此，cookie 可以在无状态的 HTTP 之上建立一个用户会话层。
+
+## Web Caching and The Conditional GET
+
+A **Web cache**—also called a **proxy server**—is a network entity that satisfies HTTP requests on the behalf of an origin Web server.
+
+Web 缓存器有自己的磁盘存储空间，保存最近请求过的对象的副本。可以配置用户的浏览器，使得用户的所有 HTTP 请求首先指向 Web 缓存器。注意 Web cache 既是客户又是服务器。
+
+![img](/assets/images/E14F3F02-2CA7-43D9-94C9-8AF9913719FC.jpg)
+
+Web 缓存器通常由 ISP 购买并安装。例如，一所大学可能在它的校园网安装 Web cache，并且将所有校园网上的用户浏览器配置为指向它。
+
+在因特网上部署 Web cache 有两个原因。首先，Web cache 可以大大减少客户请求的响应时间；其次，Web 缓存器能够大大减少一个机构的接入链路到因特网的通信量，通过减少通信量，该机构就不必急于增加带宽，因此降低了费用。此外，Web 缓存器能从整体上大大减低因特网上的 Web 流量，从而改善了所有应用的性能。
+
+通过使用内容分发网络 (Content Distribution Network, CDN)，Web cache 正在因特网中发挥着越来越重要的作用。CDN 公司在因特网上安装了许多地理上分散的缓存器，使大量流量实现了本地化。
+
+Web cache 可以大大减少对客户请求的响应时间，但也引入了一个新的问题，即存放在 Web cache 中的对象副本可能是陈旧的。HTTP 协议有一种机制，允许 Web cache 证实它的对象是最新的，即 conditional GET。如果请求报文使用 GET 方法、并且请求报文中包含一个 `If-Modified-Since:` 的 header line，那么，这个 HTTP 请求报文就是一个条件 GET 请求报文。
+
+## DNS
+
+一个 IP 地址由 4 个字节组成，例如 121.7.106.83，每个字节表示 0-255 的十进制数字。在因特网中，识别主机有两种方式，host name 和 IP 地址。人们在浏览器中习惯输入 host name，而路由器则喜欢定长的、有层次结构的 IP 地址。因此，我们需要有一种能进行主机名到 IP 地址转换的目录服务，这就是域名系统 (Domain Name System, DNS) 的主要任务。
+
+DNS 有两层含义：1\. 一个由分层的 DNS 服务器实现的分布式数据库；2\. 一个使端系统能够查询分布式数据库的应用层协议。DNS 协议运行在 UDP 之上，使用 53 号端口。
+
+考虑浏览器请求 URL：`www.someschool.edu/index.html` 页面时会发生什么现象。
+
+- 浏览器从 URL 中提取出主机名 `www.someschool.edu`，并传给同一台用户主机上运行的 DNS 客户端。
+- DNS 客户端向 DNS 服务器发送请求。
+- DNS 客户收到响应报文，其中包含该主机名对应的 IP 地址。
+- 向该 IP 地址 80 端口的 HTTP 服务器进程发起一个 TCP 链接。
+
+从这个例子可以看到，DNS 请求为因特网应用带来了额外的时延，幸运的是，大部分 IP 地址通常就缓存在某个“附近的” DNS 服务器中。
+
+除了主机名到 IP 地址的转换之外，DNS 还提供了以下服务：
+
+- 主机别名 (host aliasing)。例如 `relay1.west-coast.enterprise.com` 称为规范主机名 (cannonical hostname)，它有两个别名 `enterprise.com` 和 `www.enterprise.com`。应用程序通过 DNS 服务来获得主机别名对应的 cannonical hostname 以及 IP 地址。
+- 邮件服务器别名 (mail server aliasing)。
+- 负载分配 (load distribution)。繁忙的站点如 `cnn.com` 被分布在多台服务器上，每个都拥有不同的 IP 地址，多个 IP 地址可以映射到同一个规范主机名。DNS 在所有这些服务器之间进行负载分配。
+
+DNS 是一个在因特网上实现分布式数据库的精彩范例。
+
+A Distributed, Hierarchical Database. DNS 使用了大量的 DNS 服务器，它们以层次方式组织，并且分布在全世界范围内。大致上，有 3 种类型的 DNS 服务器。
+
+- Root DNS servers. There are over 400 root name servers scattered all over the world. Root name servers provide the IP addresses of the TLD servers.
+- Top-level domain (TLD) servers. For each of the top-level domains — top-level domains such as com, org, net, edu, and gov, and all of the country top-level domains such as uk, fr, ca, and jp — there is TLD server (or server cluster). TLD servers provide the IP addresses for authoritative DNS servers.
+- Authoritative DNS servers. Every organization with publicly accessible hosts on the Internet must provide publicly accessible DNS records. An organization can choose to implement its own authoritative DNS server to hold these records; alternatively, the organization can pay to have these records stored in an authoritative DNS server of some service provider.
+
+The root, TLD, and authoritative DNS servers all belong to the hierarchy of DNS servers. There is another important type of DNS server called the **local DNS server**. Each ISP—such as a residential ISP or an institutional ISP—has a local DNS server. When a host connects to an ISP, the ISP provides the host with the IP addresses of one or more of its local DNS servers (typically through DHCP). When a host makes a DNS query, the query is sent to the local DNS server, which acts a proxy, forwarding the query into the DNS server hierarchy.
+
+如下图所示，Client 想要访问主机 `gaia.cs.umass.edu`：
+
+1. Client sends a DNS query message to its local DNS server.
+2. The local DNS server forwards the query message to a root DNS server.
+3. The root DNS server takes note of the `edu` suffix and returns a list of IP addresses for TLD servers responsible for `edu`.
+4. The local DNS server then resends the query message to one of these TLD servers.
+5. The TLD server takes note of the `umass.edu` suffix and responds with the IP address of the authoritative DNS server for the University of Massachusetts, namely, `dns.umass.edu`.
+6. Finally, the local DNS server resends the query message directly to `dns.umass.edu`.
+7. Authoritative DNS server responds with the IP address of `gaia.cs.umass.edu`.
+8. Local DNS server responds with the IP address of `gaia.cs.umass.edu` to client.
+
+![img](/assets/images/C1861ADE-9B8A-4D4C-B934-2C06CFBD280B.jpg)
+
+The example shown in Figure 2.19 makes use of both **recursive queries** and **iterative queries**. The query sent from client to local DNS server is a recursive query, since the query asks `dns.nyu.edu` to obtain the mapping on its behalf. But the subsequent three queries are iterative since all of the replies are directly returned to `dns.nyu.edu`. In practice, this is the pattern that queries typically follow: The query from the requesting host to the local DNS server is recursive, and the remaining queries are iterative.
+
+实际上，为了改善时延、减少因特网上到处传输的 DNS 报文数量，DNS 广泛使用了缓存技术。缓存原理十分简单，在一个请求链中，当某 DNS 服务器接收一个响应后，它能将映射缓存在服务器本地存储中。当新的、对相同主机名的查询到达时，就能直接提供 IP 地址。由于主机名和 IP 地址之间的映射不是永久的，DNS 服务器在一段时间后将丢弃缓存的信息。
 
 # TCP 三次握手、四次挥手
 

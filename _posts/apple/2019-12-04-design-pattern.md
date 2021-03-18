@@ -168,14 +168,6 @@ let url = components.url // 建造完成
 
 通过扩展去应对需求变化，就要求我们必须要面向接口编程，或者说面向抽象编程。所有参数类型、引用传递的对象必须使用抽象（接口或者抽象类）的方式定义，不能使用实现类的方式定义。总的来说，开闭原则提高系统的可维护性和代码的重用性。
 
-## 接口隔离原则（Interface Segregation Principle）
-
-使用多个专门的协议、而不是一个庞大臃肿的协议，如 `UITableviewDelegate` 和 `UITableViewDataSource`。
-
-## 依赖倒置原则（Dependence Inversion Principle）
-
-抽象不应该依赖于具体实现、具体实现可以依赖于抽象。（调用接口感觉不到内部是如何操作的）
-
 ## 里氏替换原则（Liskov Substitution Principle）
 
 In a computer program, if S is a subtype of T, then objects of type T may be replaced with objects of type S without altering any of the desirable properties of the program (correctness, task performed, etc.)
@@ -185,6 +177,14 @@ In a computer program, if S is a subtype of T, then objects of type T may be rep
 ## 迪米特法则（Law Of Demeter）
 
 一个对象应当对其他对象尽可能少的了解，实现高聚合、低耦合。
+
+## 接口隔离原则（Interface Segregation Principle）
+
+使用多个专门的协议、而不是一个庞大臃肿的协议，如 `UITableviewDelegate` 和 `UITableViewDataSource`。
+
+## 依赖倒置原则（Dependence Inversion Principle）
+
+抽象不应该依赖于具体实现、具体实现可以依赖于抽象。（调用接口感觉不到内部是如何操作的）
 
 ## 应用
 

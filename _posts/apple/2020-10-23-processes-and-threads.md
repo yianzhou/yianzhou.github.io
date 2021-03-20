@@ -75,15 +75,17 @@ dispatch_sync(任意队列, ^{
 
 `dispatch_barrier_async` The queue you specify should be a concurrent queue that you create yourself using the `dispatch_queue_create` function. If the queue you pass to this function is a serial queue or one of the global concurrent queues, this function behaves like the `dispatch_async` function. 栅栏函数要配合自己创建的并发队列使用！！
 
-# 进程同步
+# Synchronization
 
 ## 竞争情况
 
-多个进程同时访问和操纵相同数据、并且执行结果取决于访问发生的特定顺序的情况称为**竞争情况** (race condition)。 为了防止出现竞争情况，我们要求以某种方式同步进程 (synchronized)。
+多个进程/线程同时操作同一份数据、并且执行结果取决于操作发生的特定顺序的情况，称为**竞争情况** (race condition)。为了防止出现竞争情况，我们要求以某种方式同步 (synchronized) 进程/线程。
+
+每个线程会有自己的栈内存空间，栈空间相互隔离、互不影响；但有时多个线程要访问到共享的堆区内存，此时如果不进行同步，就会出现内存不一致问题。设想这样一个场景，用户的银行账户里有 100 元，此时有 3 个柜员机同时进行存、取、查操作，它们之间就需要进行同步。
 
 ## 临界区
 
-每个进程都有一段称为临界区 (critical section) 的代码，在临界区中，进程可能正在访问（和更新）与至少一个其他进程共享的数据。当一个进程在临界区执行时，不允许其他进程在临界区执行。多个进程必须互斥地对临界资源进行访问。
+进程/线程可以声明称为临界区 (critical section) 的代码。在临界区中，进程/线程可能正在访问或更新与至少一个其他进程/线程共享的数据。当一个进程/线程在临界区执行时，不允许其他进程/线程在临界区执行。多个进程/线程必须互斥地对临界资源进行访问。
 
 ## 公平锁与非公平锁
 
@@ -216,7 +218,7 @@ public:
             mu.unlock();
         }
     }
-    
+
     void run() {
         thread t1(&SolutionA::producer, this);
         thread t2(&SolutionA::consumer, this);
@@ -256,15 +258,15 @@ public:
             ready = true;
             // critical section
             ul.unlock();
-            
+
             cv.notify_one();
-            
+
             ul.lock();
             // The wait operations atomically release the mutex and suspend the execution of the thread.
             cv.wait(ul, [this] {
                 return !this->ready;
             });
-            // When the condition variable is notified, the thread is awakened, and the mutex is atomically reacquired. 
+            // When the condition variable is notified, the thread is awakened, and the mutex is atomically reacquired.
         }
     }
 
@@ -281,7 +283,7 @@ public:
             cv.notify_one();
         }
     }
-    
+
     void run() {
         thread t1(&SolutionB::producer, this);
         thread t2(&SolutionB::consumer, this);

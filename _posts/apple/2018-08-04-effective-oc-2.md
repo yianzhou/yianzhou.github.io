@@ -37,11 +37,13 @@ This is known as the nonfragile Application Binary Interface (ABI). An ABI defin
 
 属性的 attribute 会影响编译器所生成的存取方法：
 
-一、原子性。如果没有声明 nonatomic，那么编译器默认使用同步锁，保证对该属性的操作是原子的。在 iOS 开发中，**所有属性都声明为 nonatomic**，这样做是因为在 iOS 中使用同步锁的开销较大，会带来严重的性能问题。而且 atomic 的属性并不能保证线程安全，要保证线程安全，还需采用更为深层的锁定机制。
+一、原子性。在 iOS 开发中，**所有属性都声明为 nonatomic**，这样做是因为在 iOS 中使用同步锁的开销较大，会带来严重的性能问题。而且 atomic 的属性并不能保证线程安全，要保证线程安全，还需采用更为深层的锁定机制。
 
 Atomic accessors include locks to ensure atomicity. This means that if two threads are reading and writing the same property, the value of the property at any given point in time is valid. Without the locks, or nonatomic, the property value may be read on one thread while another thread is midway through writing to it. If this happens, the value that’s read could be invalid.
 
-If you’ve been developing for iOS at all, you’ll notice that all properties are declared nonatomic. The reason is that, historically, the locking introduces such an overhead on iOS that it becomes a performance problem. Usually, atomicity is not required anyway, since it does not ensure thread safety, which usually requires a deeper level of locking. For example, even with atomicity, a single thread might read a property multiple times immediately after one another and obtain different values if another thread is writing to it at the same time. Therefore, you will usually want to use nonatomic properties on iOS. But on Mac OS X, you don’t usually find that atomic property access is a performance bottleneck.
+If you’ve been developing for iOS at all, you’ll notice that all properties are declared nonatomic. The reason is that, historically, the locking introduces such an overhead on iOS that it becomes a performance problem. Usually, atomicity is not required anyway, since it does not ensure thread safety, which usually requires a deeper level of locking.
+
+通过阅读 objc 的源码得知，当属性被声明为了 `atomic`，对该属性的读、写会使用 `os_unfair_lock` 加锁。这个锁仅仅是在读、写属性时加的，对属性的其它操作都不是线程安全的。例如这样一个属性 `@property(atomic, assign) int money;`，对它进行 `self.money++` 这样的操作就不是线程安全的。
 
 二、读写权限（readwrite 或 readonly）
 

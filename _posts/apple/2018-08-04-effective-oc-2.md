@@ -129,7 +129,7 @@ The default implementations of these methods from the NSObject class itself work
 
 哈希方法是用作计算元素在哈希表中的位置的。如果两个对象相等，其 hash 值必须相同；但两个 hash 值相同的对象不一定相等。两个不同的元素哈希值相同，这种情况称为哈希冲突。
 
-哈希值在对象被加入哈希表时会用到（例如添加至 NSSet、设置为 NSDictionary 的 key 时）。在判断元素是否相等时，会首先判断 hash 值是否相等，hash 值不同的两个对象直接判断不相等；如果相等，再调用 `isEqual:`
+哈希值在对象被加入哈希表时会用到（例如添加至 `NSSet`、设置为 `NSDictionary` 的 key 时）。在判断元素是否相等时，会首先判断 hash 值是否相等，hash 值不同的两个对象直接判断不相等；如果相等，再调用 `isEqual:`
 
 默认的哈希方法直接返回了内存地址，所以总是不同的。如果只实现了 `isEqual:` 而不实现 `hash`，那么即使我们定义了 object a is equals to object b，他们还是可以被放在一个集合里面，这不符合我们的定义。
 
@@ -269,11 +269,25 @@ Using this approach requires the implementation of the method to already be avai
 
 第二次尝试是看有没有替补的消息接受者：`-(id)forwardingTargetForSelector:(SEL)selector`。
 
-使用此方法，可以提供多重继承的某些好处。一个对象可能在内部拥有多个对象，在这个方法中返回实际处理消息的对象，在外部看来好像它自己处理这个消息一样。
+在这个方法中返回实际处理消息的对象，在外部看来好像它自己处理这个消息一样。
 
 ## forwardInvocation
 
-如果以上都不能处理消息，最后一个方法就是通过创建一个 `NSInvocation` 对象，包装着未被处理的消息，然后调用 `-(void)forwardInvocation:(NSInvocation*)invocation` 并向上转发，如果继承关系里的所有父类都没有处理，那么最后，NSObject 的 `doesNotRecognizeSelector:` 方法会抛出一个异常。
+如果以上都不能处理消息，最后一个方法就是完整的消息转发。
+
+通过 `methodSignatureForSelector:` 获取方法签名，然后创建一个 `NSInvocation` 对象，包装着未被处理的消息的全部细节，包括 selector, target, parameters。
+
+然后调用 `forwardInvocation:`，在这个方法的实现中还可以继续向父类转发，如果继承关系里的所有父类都没有处理，那么最后，`NSObject` 的实例方法 `doesNotRecognizeSelector:` 会抛出一个异常。
+
+```objc
+- (void)forwardInvocation:(NSInvocation *)anInvocation {
+    if ([otherObject respondsToSelector:[anInvocation selector]]) {
+        [anInvocation invokeWithTarget:otherObject];
+    } else {
+        [super forwardInvocation:anInvocation];
+    }
+}
+```
 
 ## 例子
 

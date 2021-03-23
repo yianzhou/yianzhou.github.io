@@ -75,7 +75,7 @@ dispatch_sync(任意队列, ^{
 
 ## dispatch_barrier_async
 
-并发读，互斥写！，见 [DemoGCD](https://github.com/yianzhou/ios-demos/)。
+并发读，互斥写！见 [DemoGCD](https://github.com/yianzhou/ios-demos/)。
 
 `dispatch_barrier_async` The queue you specify should be a concurrent queue that you create yourself using the `dispatch_queue_create` function. If the queue you pass to this function is a serial queue or one of the global concurrent queues, this function behaves like the `dispatch_async` function. 栅栏函数要配合自己创建的并发队列使用！！
 

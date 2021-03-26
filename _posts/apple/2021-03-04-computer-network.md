@@ -405,9 +405,9 @@ while True:
 
 # Transport Layer
 
-网络层提供了主机之间的逻辑通信，而运输层为运行在不同主机上的进程之间提供了逻辑通信。
+A network-layer protocol provides logical- communication between hosts. A transport-layer protocol provides for logical communication between application processes running on different hosts.
 
-运输层协议是在端系统中而不是在路由器中实现的。在发送端，运输层将从应用层接收到的 message 转换成 segment，实现的方法（可能）是将 message 划分为较小的块，并为每块加上一个运输层首部。然后，运输层将这些 segments 传递给网络层，网络层将其封装成 datagram 并向目的地发送。在传输中，路由器仅作用于 datagram 的字段，而不会检查 segment 的字段。在接收端，网络层从 datagram 中提取 segment，并向上交给运输层。运输层则处理 segment 中的数据为接收应用进程使用。
+Transport-layer protocols are implemented in the end systems but not in network routers. On the sending side, the transport layer converts the application-layer messages into segments. This is done by (possibly) breaking the application messages into smaller chunks and adding a transport-layer header to each chunk to create the transport-layer segment. The transport layer then passes the segment to the network layer at the sending end system, where the segment is encapsulated within a network-layer packet (a datagram) and sent to the destination. It’s important to note that network routers act only on the network-layer fields of the datagram; that is, they do not examine the fields of the transport-layer segment encapsulated with the datagram. On the receiving side, the network layer extracts the transport-layer segment from the datagram and passes the segment up to the transport layer. The transport layer then processes the received segment, making the data in the segment available to the receiving application.
 
 Before proceeding with our introduction of UDP and TCP, it will be useful to say a few words about the Internet’s network layer. IP, for Internet Protocol, is a best-effort delivery service. This means that IP makes its “best effort” to deliver segments between communicating hosts, but it makes no guarantees.
 
@@ -503,6 +503,14 @@ Recall that TCP is full-duplex, the acknowledgment number that Host A puts in it
 Suppose that Host A has received one segment from Host B containing bytes 0 through 535 and another segment containing bytes 900 through 1,000. For some reason Host A has not yet received bytes 536 through 899. In this example, Host A is still waiting for byte 536 (and beyond) in order to re-create B’s data stream. Thus, A’s next segment to B will contain 536 in the acknowledgment number field. Because TCP only acknowledges bytes up to the first missing byte in the stream, TCP is said to provide **cumulative acknowledgments** 累积确认. The receiver keeps the out-of-order bytes and waits for the missing bytes to fill in the gaps.
 
 在图 3-30 中，我们假设初始序号为 0。实际上，TCP 连接的双方随机地选择初始序号。这样做可以减少将那些仍在网络中存在的、来自两台主机之间先前已终止的连接的报文段，误认为是后来这两台主机之间新建连接所产生的有效报文段的可能性（它碰巧与旧连接使用了相同的端口号）。
+
+We note that many users now prefer to use the SSH proto- col rather than Telnet, since data sent in a Telnet connection (including passwords!) are not encrypted, making Telnet vulnerable to eavesdropping attacks.
+
+### Round-Trip Time Estimation and Timeout
+
+TCP uses a timeout/retransmit mechanism to recover from lost segments. Perhaps the most obvious question is the length of the timeout intervals. Clearly, the timeout should be larger than the connection’s round-trip time (RTT). Otherwise, unnecessary retransmissions would be sent.
+
+Let’s begin our study of TCP timer management by considering how TCP estimates the round-trip time between sender and receiver. The sample RTT, denoted SampleRTT, for a segment is the amount of time between when the segment is sent (that is, passed to IP) and when an acknowledgment for the segment is received.
 
 # TCP 三次握手、四次挥手
 

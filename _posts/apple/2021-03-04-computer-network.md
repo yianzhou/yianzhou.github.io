@@ -403,6 +403,107 @@ while True:
 
 `bind` binds (that is, assigns) the port number 12000 to the server’s socket. In this manner, when anyone sends a packet to port 12000 at the server, that packet will be directed to this socket.
 
+# Transport Layer
+
+网络层提供了主机之间的逻辑通信，而运输层为运行在不同主机上的进程之间提供了逻辑通信。
+
+运输层协议是在端系统中而不是在路由器中实现的。在发送端，运输层将从应用层接收到的 message 转换成 segment，实现的方法（可能）是将 message 划分为较小的块，并为每块加上一个运输层首部。然后，运输层将这些 segments 传递给网络层，网络层将其封装成 datagram 并向目的地发送。在传输中，路由器仅作用于 datagram 的字段，而不会检查 segment 的字段。在接收端，网络层从 datagram 中提取 segment，并向上交给运输层。运输层则处理 segment 中的数据为接收应用进程使用。
+
+Before proceeding with our introduction of UDP and TCP, it will be useful to say a few words about the Internet’s network layer. IP, for Internet Protocol, is a best-effort delivery service. This means that IP makes its “best effort” to deliver segments between communicating hosts, but it makes no guarantees.
+
+Extending host-to-host delivery to process-to-process delivery is called **transport-layer multiplexing and demultiplexing**.（多路复用、多路分解）UDP and TCP also provide integrity checking by including error-detection fields in their segments’ headers. These two minimal transport-layer services—process-to-process data delivery and error checking—are the only two services that UDP provides!
+
+TCP, on the other hand, offers several additional services to applications.
+
+- First and foremost, it provides **reliable data transfer**. Using flow control, sequence numbers, acknowledgments, and timers, TCP ensures that data is delivered from sending process to receiving process, correctly and in order.
+- TCP also provides **congestion control**. Congestion control is not so much a service provided to the invoking application as it is a service for the Internet as a whole.
+
+## Multiplexing and Demultiplexing
+
+This job of delivering the data in a transport-layer segment to the correct socket is called demultiplexing. The job of gathering data chunks at the source host from different sockets, encapsulating each data chunk with header information (that will later be used in demultiplexing) to create segments, and passing the segments to the network layer is called multiplexing.
+
+There are **source port number field** and the **destination port number field** in a transport-layer segment. Each port number is a 16-bit number, ranging from 0 to 65535. The port numbers ranging from 0 to 1023 are called well-known port numbers and are restricted, which means reserved for use by well-known application protocols such as HTTP.
+
+Each socket in the host could be assigned a port number, and when a segment arrives at the host, the transport layer examines the destination port number in the segment and directs the segment to the corresponding socket. The segment’s data then passes through the socket into the attached process. As we’ll see, this is basically how UDP does it.
+
+It is important to note that a UDP socket is fully identified by a two-tuple consisting of a destination IP address and a destination port number. As a consequence, if two UDP segments have different source IP addresses and/or source port numbers, but have the same destination IP address and destination port number, then the two segments will be directed to the same destination process via the same destination socket. In UDP, the source port number serves as part of a “return address”.
+
+TCP socket is identified by a four-tuple: (source IP address, source port number, destination IP address, destination port number). In particular, and in contrast with UDP, two arriving TCP segments with different source IP addresses or source port numbers will (with the exception of a TCP segment carrying the original connection-establishment request) be directed to two different sockets.
+
+Consider a host running a Web server, such as an Apache Web server, on port 80. In particular, both the initial connection-establishment segments and the segments carrying HTTP request messages will have destination port 80. Today’s high-performing Web servers often use only one process, and create a new thread with a new connection socket for each new client connection. For such a server, at any given time there may be many connection sockets (with different identifiers) attached to the same process. If the client and server are using persistent HTTP, then throughout the duration of the persistent connection the client and server exchange HTTP messages via the same server socket.
+
+## UDP
+
+Note that with UDP there is no handshaking between sending and receiving transport-layer entities before sending a segment. For this reason, UDP is said to be **connectionless**.
+
+DNS is an example of an application-layer protocol that typically uses UDP. The DNS application at the querying host then waits for a reply to its query. If it doesn’t receive a reply (possibly because the underlying network lost the query or the reply), it might try resending the query, try sending the query to another name server, or inform the invoking application that it can’t get a reply.
+
+QUIC protocol implements reliability in an application-layer protocol on top of UDP.
+
+The UDP header has only four fields, each consisting of two bytes, totally 8 bytes. The length field specifies the number of bytes in the UDP segment (header plus data). The checksum is used by the receiving host to check whether errors have been introduced into the segment. In truth, the checksum is also calculated over a few of the fields in the IP header in addition to the UDP segment.
+
+![img](/assets/images/3e9abcd9-448d-4b5e-a9c2-f4cffdae7808.jpg)
+
+Although UDP provides error checking, it does not do anything to recover from an error. Some implementations of UDP simply discard the damaged segment; others pass the damaged segment to the application with a warning.
+
+## Principles of Reliable Data Transfer
+
+Before discussing TCP, however, it will be useful to step back and first discuss the underlying principles of reliable data transfer. We now step through a series of protocols, each one becoming more complex, arriving at a flawless, reliable data transfer protocol.
+
+> The sender and receiver FSMs in Figure 3.9 each have just one state.
+>
+> The arrows in the FSM description indicate the transition of the protocol from one state to another.
+>
+> The event causing the transition is shown above the horizontal line labeling the transition, and the actions taken when the event occurs are shown below the horizontal line.
+>
+> When no action is taken on an event, or no event occurs and an action is taken, we’ll use the symbol Λ below or above the horizontal, respectively, to explicitly denote the lack of an action or event.
+>
+> The initial state of the FSM is indicated by the dashed arrow.
+
+## TCP
+
+### TCP Connection
+
+TCP is said to be connection-oriented because before one application process can begin to send data to another, the two processes must first “handshake” with each other. Both sides of the connection will initialize many TCP state variables.
+
+Recall that because the TCP protocol runs only in the end systems and not in the intermediate network elements (routers and link-layer switches), the intermediate network elements do not maintain TCP connection state.
+
+A TCP connection provides a **full-duplex service**: The application-layer data can flow from Process A to Process B **at the same time** as application-layer data flows from Process B to Process A.
+
+Suppose a process running in one host wants to initiate a connection with another process in another host. Recall that the process that is initiating the connection is called the client process, while the other process is called the server process. For now it suffices to know that the client first sends a special TCP segment; the server responds with a second special TCP segment; and finally the client responds again with a third special segment. The first two segments carry no payload, that is, no application-layer data; the third of these segments may carry a payload. Because three segments are sent between the two hosts, this connection-establishment procedure is often referred to as a **three-way handshake**.
+
+The maximum amount of data that can be grabbed and placed in a segment is limited by the **maximum segment size (MSS)**. The MSS is typically set by first determining the length of the largest link-layer frame that can be sent by the local sending host (the so-called **maximum transmission unit, MTU**), and then setting the MSS to ensure that a TCP segment (when encapsulated in an IP datagram) plus the TCP/IP header length (typically 40 bytes) will fit into a single link-layer frame. Both Ethernet and PPP link-layer protocols have an MTU of 1,500 bytes. Thus, a typical value of MSS is **1460 bytes**. Note that the MSS is the maximum amount of application-layer data in the segment, not the maximum size of the TCP segment including headers.
+
+TCP pairs each chunk of client data with a TCP header, thereby forming TCP segments. The segments are passed down to the network layer, where they are separately encapsulated within network-layer IP datagrams. **Each side of the connection has its own send buffer and its own receive buffer**.
+
+![img](/assets/images/3483e571-f865-4200-8eb3-2bf951add260.jpg)
+
+### TCP Segment
+
+The TCP segment consists of header fields and a data field. TCP header is typically 20 bytes. The data field contains a chunk of application data.
+
+As with UDP, the header includes source and destination port numbers, which are used for multiplexing/ demultiplexing data from/to upper-layer applications. Also, as with UDP, the header includes a checksum field. A TCP segment header also contains the following fields:
+
+- The 32-bit sequence number field and the 32-bit acknowledgment number field are used by the TCP sender and receiver in implementing a reliable data transfer service.
+- The 16-bit receive window field is used for flow control.
+- The 4-bit header length field specifies the length of the TCP header in 32-bit words（以 32 比特的字为单位）. The TCP header can be of variable length due to the TCP options field. (Typically, the options field is empty, so that the length of the typical TCP header is 20 bytes.)
+- The optional and variable-length options field is used when a sender and receiver negotiate the maximum segment size (MSS) or as a window scaling factor for use in high-speed networks. A time-stamping option is also defined.
+- The flag field contains 6 bits. The **ACK bit** is used to indicate that the segment contains an acknowledgment for a segment that has been successfully received. The **RST**, **SYN**, and **FIN** bits are used for connection setup and teardown. The CWR and ECE bits are used in explicit congestion notification.
+
+![img-80](/assets/images/e1517d86-1953-4dc1-8bcc-6aa30160c5b5.jpg)
+
+TCP views data as an unstructured, but ordered, stream of bytes. The sequence number for a segment is therefore the byte-stream number of the first byte in the segment.
+
+Suppose that a process in Host A wants to send a stream of data to a process in Host B over a TCP connection. The TCP in Host A will implicitly number each byte in the data stream. Suppose that the data stream consists of a file consisting of 500,000 bytes, that the MSS is 1,000 bytes, and that the first byte of the data stream is numbered 0. As shown in Figure 3.30, TCP constructs 500 segments out of the data stream. The first segment gets assigned sequence number 0, the second segment gets assigned sequence number 1,000, the third segment gets assigned sequence number 2,000, and so on. Each sequence number is inserted in the sequence number field in the header of the appropriate TCP segment.
+
+![img-80](/assets/images/2fa1b7f7-7e91-4476-b7f7-47f20997d923.png)
+
+Recall that TCP is full-duplex, the acknowledgment number that Host A puts in its segment is the sequence number of the next byte Host A is expecting from Host B.
+
+Suppose that Host A has received one segment from Host B containing bytes 0 through 535 and another segment containing bytes 900 through 1,000. For some reason Host A has not yet received bytes 536 through 899. In this example, Host A is still waiting for byte 536 (and beyond) in order to re-create B’s data stream. Thus, A’s next segment to B will contain 536 in the acknowledgment number field. Because TCP only acknowledges bytes up to the first missing byte in the stream, TCP is said to provide **cumulative acknowledgments** 累积确认. The receiver keeps the out-of-order bytes and waits for the missing bytes to fill in the gaps.
+
+在图 3-30 中，我们假设初始序号为 0。实际上，TCP 连接的双方随机地选择初始序号。这样做可以减少将那些仍在网络中存在的、来自两台主机之间先前已终止的连接的报文段，误认为是后来这两台主机之间新建连接所产生的有效报文段的可能性（它碰巧与旧连接使用了相同的端口号）。
+
 # TCP 三次握手、四次挥手
 
 三次握手：

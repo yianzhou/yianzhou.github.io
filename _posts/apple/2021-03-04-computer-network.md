@@ -510,7 +510,7 @@ We note that many users now prefer to use the SSH proto- col rather than Telnet,
 
 TCP uses a timeout/retransmit mechanism to recover from lost segments. Perhaps the most obvious question is the length of the timeout intervals. Clearly, the timeout should be larger than the connection’s round-trip time (RTT). Otherwise, unnecessary retransmissions would be sent.
 
-Let’s begin our study of TCP timer management by considering how TCP estimates the round-trip time between sender and receiver. The sample RTT, denoted SampleRTT, for a segment is the amount of time between when the segment is sent (that is, passed to IP) and when an acknowledgment for the segment is received.
+Let’s begin our study of TCP timer management by considering how TCP estimates the round-trip time between sender and receiver. The sample RTT, denoted `SampleRTT`, for a segment is the amount of time between when the segment is sent (that is, passed to IP) and when an acknowledgment for the segment is received. At any point in time, the `SampleRTT` is being estimated for only one of the transmitted but currently unacknowledged segments, leading to a new value of `SampleRTT` approximately once every RTT. Also, TCP never computes a SampleRTT for a segment that has been retransmitted; it only measures SampleRTT for segments that have been transmitted once [Karn 1987]. (A problem at the end of the chapter asks you to consider why.)
 
 # TCP 三次握手、四次挥手
 

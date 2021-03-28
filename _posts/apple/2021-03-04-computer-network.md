@@ -748,6 +748,10 @@ Either of the two processes participating in a TCP connection can end the connec
 
 > [Nmap](https://nmap.org/) ("Network Mapper") is a free and open source (license) utility for network discovery and security auditing.
 
+## Congestion Control
+
+The TCP congestion-control mechanism operating at the **sender** keeps track of an additional variable, the **congestion window**, denoted `cwnd`. Specifically, the amount of unacknowledged data at a sender may not exceed the minimum of `cwnd` and `rwnd`, that is: `LastByteSent – LastByteAcked <= min{cwnd, rwnd}`.（未经 ACK 确认的数据量不能超过拥塞窗口和接收窗口中的较小值）
+
 # TLS 握手
 
 一、客户端向服务器发出加密通信的请求 (ClientHello)。请求信息包括一个客户端生成的随机数，稍后用于生成"对话密钥"。

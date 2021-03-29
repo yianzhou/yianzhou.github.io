@@ -675,6 +675,8 @@ An initial `TimeoutInterval` value of 1 second is recommended [RFC 6298]. Also, 
 
 ### Reliable Data Transfer
 
+We should keep in mind that reliable data transfer can be provided by link-, network-, transport-, or application-layer protocols.
+
 The TCP timer management procedures use only a single retransmission **timer**, even if there are multiple transmitted but not yet acknowledged segments. It is helpful to think of the timer as being associated with the oldest unacknowledged segment.
 
 Whenever the timeout event occurs, TCP retransmits the not-yet-acknowledged segment with the smallest sequence number, sets the next timeout interval to twice the previous value. Thus, the intervals grow exponentially after each retransmission. However, whenever the timer is started after either of the two other events (that is, data received from application above, and ACK received), the `TimeoutInterval` is derived from the most recent values of `EstimatedRTT` and `DevRTT`.
@@ -793,6 +795,8 @@ More recently, extensions to both IP and TCP [RFC 3168] have been proposed, impl
 
 One setting of the ECN bits is used by a router to indicate that it (the router) is experiencing congestion. A second setting of the ECN bits is used by the sending host to inform routers that the sender and receiver are ECN-capable, and thus capable of taking action in response to ECN-indicated network congestion.
 
+The intuition is that the congestion indication bit can be set to signal the onset of congestion to the sender before loss actually occurs.
+
 As shown in Figure 3.55, when the TCP in the receiving host receives an ECN congestion indication via a received IP datagram, the TCP in the receiving host informs the TCP in the sending host of the congestion indication by setting the ECE (Explicit Congestion Notification Echo) bit in a receiver-to-sender TCP ACK segment. The TCP sender, in turn, reacts by halving the congestion window, as it would react to a lost segment using fast retransmit, and sets the CWR (Congestion Window Reduced) bit in the header of the next transmitted TCP sender-to-receiver segment.
 
 ![img](/assets/images/9f99030c-c50e-41f4-970d-4bd207e00f72.png)
@@ -815,8 +819,7 @@ Indeed, measurements in [Yang 2014] indicate that CUBIC (and its predecessor, BI
 
 QUIC is a new application-layer protocol designed from the ground up to improve the performance of transport-layer services for secure HTTP. QUIC has already been widely deployed, although is still in the process of being standardized as an Internet RFC.
 
-QUIC is an application-layer protocol, using UDP as its underlying transport-layer protocol, and is designed to interface above specifically
-to a simplified but evolved version of HTTP/2. In the near future, HTTP/3 will natively incorporate QUIC.
+QUIC is an application-layer protocol, using UDP as its underlying transport-layer protocol, and is designed to interface above specifically to a simplified but evolved version of HTTP/2. In the near future, HTTP/3 will natively incorporate QUIC.
 
 ![img-80](/assets/images/83a49780-3c9b-45bc-8281-da99bbdbd1fc.png)
 
@@ -827,6 +830,10 @@ Some of QUIC’s major features include:
 - Reliable, TCP-friendly congestion-controlled data transfer. QUIC provides reliable data transfer to each QUIC stream separately. Since QUIC provides a reliable in-order delivery on a per-stream basis, a lost UDP segment only impacts those streams whose data was carried in that segment; HTTP messages in other streams can continue to be received and delivered to the application. QUIC provides reliable data transfer using acknowledgment mechanisms similar to TCP’s, as specified in [RFC 5681].
 
 ![img](/assets/images/1d0a6128-dc02-4e5a-938a-711cb8227694.png)
+
+# Network Layer
+
+Having now covered the application layer and the transport layer, our discussion of the network edge is complete. It is time to explore the network core!
 
 # TLS 握手
 

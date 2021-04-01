@@ -31,7 +31,15 @@ permalink: apple
 
 [App Extension]({% post_url apple/2019-02-21-app-extension %})
 
-[数据结构与算法]({% post_url apple/2020-01-10-algorithm %})，[Leetcode 1]({% post_url apple/2020-06-17-leetcode %})，[Leetcode 2]({% post_url apple/2020-06-17-leetcode2 %})
+[数据结构与算法]({% post_url apple/2020-01-10-algorithm %})
+
+- [Leetcode 1 树、回溯法]({% post_url apple/2020-06-17-leetcode %})
+- [Leetcode 2 动态规划、背包问题]({% post_url apple/2020-06-17-leetcode2 %})
+- [Leetcode 3 链表、图]({% post_url apple/2020-06-17-leetcode3 %})
+- [Leetcode 4 排序、查找]({% post_url apple/2020-06-17-leetcode4 %})
+- [Leetcode 5 字符串]({% post_url apple/2020-06-17-leetcode5 %})
+- [Leetcode 6 设计题]({% post_url apple/2020-06-17-leetcode6 %})
+- [Leetcode 7 代数、几何、随机数]({% post_url apple/2020-06-17-leetcode7 %})
 
 [计算机网络]({% post_url apple/2021-03-04-computer-network %})，[WebView]({% post_url apple/2020-11-2-webview %})
 

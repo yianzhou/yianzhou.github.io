@@ -320,11 +320,30 @@ In addition to breaking down each HTTP message into independent frames, the fram
 
 > [How does HTTP/2 solve the Head of Line blocking (HOL) issue](https://community.akamai.com/customers/s/article/How-does-HTTP-2-solve-the-Head-of-Line-blocking-HOL-issue?language=en_US)
 
-HTTP/1.1 introduced a feature called "Pipelining" which allowed a client sending several HTTP requests back-to-back over the same TCP connection. However HTTP/1.1 still required the responses to arrive in order so it didn't really solved the HOL issue and as of today it is not widely adopted.
+HTTP/1.1 introduced a feature called "Pipelining" which allowed a client sending several HTTP requests back-to-back over the same TCP connection. However HTTP/1.1 still required the responses to arrive in order so it didn't really solved the HOL issue and as of today it is not widely adopted. **In fact, it’s disabled on most popular desktop web browsers**.
 
 HTTP/2 solves the HOL issue by means of multiplexing requests over the same TCP connection, so a client can make multiple requests to a server without having to wait for the previous ones to complete as the responses can arrive in any order.
 
 HTTP/2 does however still suffer from another type of HOL, as it runs over a TCP connection; and due to TCP's congestion control, one lost packet in a TCP stream makes all streams wait until that package is re-transmitted and received. This HOL is being addressed with the QUIC protocol.
+
+![img](/assets/images/2dcd5341-c392-49b1-b2ee-3eb7e357af2f.png)
+
+### Header compression (HPACK)
+
+HPACK, a compression format for efficiently representing HTTP header fields, to be used in HTTP/2.
+
+HPACK header compression is based on two tables, a static table and a dynamic table. The static table contains the most used HTTP headers and is unchangeable. The headers, which are not included in the static table, can be added to the dynamic table. The headers from the tables can be referenced by index.
+
+![img](/assets/images/b36ec106-6902-449e-a5af-962988445beb.png)
+
+In this example, we need three bytes for the first three headers, plus an additional byte, which tells that we want to add the authority header to the dynamic table and the value of the authority with its length.
+And this is what is going to be sent to the server plus additional overhead for the header frame.
+
+Now with the second request,（当我们再次请求时）HTTP/1.1 would send the same headers over and over again (textual protocol overhead). But you see that, in HTTP/2 case, the authority header goes in the dynamic table, we can reference all the headers using the static and the dynamic table. We are using only one byte for each header.
+
+![img](/assets/images/e1531839-a9e8-43b6-aeeb-6743e1f210ed.png)
+
+It is a huge savings of the bandwidth and it's remarkable how few bytes are needed to encode a request or response header in HTTP/2.
 
 ### Response Message Prioritization
 

@@ -871,9 +871,9 @@ Having now covered the application layer and the transport layer, our discussion
 
 The network layer is arguably the most complex layer in the protocol stack. We’ll see that the network layer can be decomposed into two interacting parts, the **data plane** and the **control plane**.
 
-In Chapter 4, we’ll first cover the data plane functions—the per-router functions in the network layer that determine how a datagram arriving on one of a router’s input links is forwarded to one of that router’s output links. We’ll study the IPv4 and IPv6 protocols and addressing in detail.
+In Chapter 4, we’ll first cover the data plane functions—the **per-router** functions that determine how a datagram arriving on one of a router’s input links is forwarded to one of that router’s output links.
 
-In Chapter 5, we’ll cover the control plane functions—the network-wide logic that controls how a datagram is routed among routers along an end-to-end path from the source host to the destination host. We’ll cover routing algorithms, as well as routing protocols, such as OSPF and BGP.
+In Chapter 5, we’ll cover the control plane functions—the **network-wide** logic that controls how a datagram is routed among routers along an end-to-end path from the source host to the destination host, also, how network-layer components and services are configured and managed.
 
 **Forwarding** refers to the router-local action of transferring a packet from an input link interface to the appropriate output link interface. Forwarding takes place at very short timescales (typically a few nanoseconds), and thus is typically implemented in hardware.
 
@@ -881,7 +881,9 @@ In Chapter 5, we’ll cover the control plane functions—the network-wide logic
 
 Some packet switches, called **link-layer switches**, base their forwarding decision on values in the fields of the link-layer frame; switches are thus referred to as link-layer (layer 2) devices. Other packet switches, called **routers**, base their forwarding decision on header field values in the network-layer datagram. Routers are thus network-layer (layer 3) devices.
 
-## Router
+## Data Plane
+
+### Router
 
 一台路由器的组成：（注意这里的端口指的是物理硬件端口，而非软件端口）
 
@@ -894,13 +896,11 @@ A router’s input ports, output ports, and switching fabric are almost always i
 
 ![img](/assets/images/b03d7bc1-becf-419c-9aa5-fb0b0d5ed702.png)
 
-We’ll initially assume in this section that forwarding decisions are based only on the packet’s destination address, rather than on a generalized set of packet header fields.
-
 The lookup performed in the input port is central to the router’s operation—it is here that the router uses the forwarding table to look up the output port to which an arriving packet will be forwarded via the switching fabric.
 
 The forwarding table is either computed and updated by the routing processor (using a routing protocol to interact with the routing processors in other network routers, the traditional approach) or is received from a remote SDN controller (The SDN approach).
 
-The router matches a **prefix** of the packet’s destination address with the entries in the table; When there are multiple matches, the router uses the **longest prefix matching** rule.
+We’ll initially assume in this section that forwarding decisions are based only on the packet’s destination address, rather than on a generalized set of packet header fields. The router matches a **prefix** of the packet’s destination address with the entries in the table; When there are multiple matches, the router uses the **longest prefix matching** rule.
 
 | Prefix                     | Link Interface |
 | -------------------------- | -------------- |
@@ -917,19 +917,19 @@ If the switch fabric is not fast enough (relative to the input line speeds) to t
 
 Output port processing takes packets that have been stored in the output port’s memory and transmits them over the output link. This includes selecting and de-queueing packets for transmission, and performing the needed link-layer and physical-layer transmission functions.
 
-## IPv4
+### IPv4
 
 Note that an IP datagram has a total of 20 bytes of header (assuming no options). If the datagram carries a TCP segment, then each datagram carries a total of 40 bytes of header (20 bytes of IP header plus 20 bytes of TCP header) along with the application-layer message.
 
-A host typically has only a single link into the network; when IP in the host wants to send a datagram, it does so over this link. The boundary between the host and the physical link is called an **interface**. The boundary between the router and any one of its links is also called an interface. A router thus has multiple interfaces, one for each of its links. Because every host and router is capable of sending and receiving IP datagrams, IP requires each host and router interface to have its own IP address. Thus, **an IP address is technically associated with an interface, rather than with the host or router containing that interface**.
+A host typically has only a single link into the network. The boundary between the host and the physical link is called an **interface**. The boundary between the router and any one of its links is also called an interface. A router thus has multiple interfaces, one for each of its links. Because every host and router is capable of sending and receiving IP datagrams, IP requires each host and router interface to have its own IP address. Thus, **an IP address is technically associated with an interface, rather than with the host or router containing that interface**.
 
-Each IP address is 32 bits long (equivalently, 4 bytes), and there are thus a total of 2^32 (or approximately 4 billion) possible IP addresses.
+Each IP address is 32 bits long (4 bytes), and there are thus a total of `2 ^ 32` (or approximately 4 billion) possible IP addresses.
 
 Each interface on every host and router in the global Internet must have an IP address that is globally unique (except for interfaces behind NATs).
 
 Figure 4.18 provides an example of IP addressing and interfaces.
 
-![img](/assets/images/e48ac656-d67a-4c0a-a481-11ced61796e0.png)
+![img-70](/assets/images/e48ac656-d67a-4c0a-a481-11ced61796e0.png)
 
 The three hosts in the upper-left portion of Figure 4.18, and the router interface to which they are connected, all have an IP address of the form 223.1.1.xxx. In IP terms, this network interconnecting three host interfaces and one router interface forms a **subnet**. IP addressing assigns an address to this subnet: 223.1.1.0/24, where the /24 notation, sometimes known as a **subnet mask** 子网掩码, indicates that the leftmost 24 bits of the 32-bit quantity define the subnet address. Any additional hosts attached to the 223.1.1.0/24 subnet would be required to have an address of the form 223.1.1.xxx.
 
@@ -941,7 +941,7 @@ An organization is typically assigned a block of contiguous addresses, that is, 
 
 The remaining `32 - x` bits of an address can be thought of as distinguishing among the devices within the organization, all of which have the same network prefix. These are the bits that will be considered only when forwarding packets at routers within the organization. These lower-order bits may (or may not) have an additional subnetting structure. （组织内部又可以分割成更多的子网）
 
-IP broadcast address: When a host sends a datagram with destination address 255.255.255.255, the message is delivered to all hosts on the same subnet.
+IP broadcast address: When a host sends a datagram with destination address 255.255.255.255, the message is delivered to all hosts on the same subnet (e.g. using in DHCP).
 
 Let’s begin looking at how an organization gets a block of addresses for its devices, and then look at how a device (such as a host) is assigned an address from within the organization’s block of addresses.
 
@@ -949,27 +949,25 @@ In order to obtain a block of IP addresses for use within an organization’s su
 
 Is there a global authority that has ultimate responsibility for managing the IP address space and allocating address blocks to ISPs and other organizations? IP addresses are managed under the authority of the ICANN. The role of the nonprofit ICANN organization is not only to allocate IP addresses, but also to manage the DNS root servers.
 
-Once an organization has obtained a block of addresses, it can assign individual IP addresses to the host and router interfaces in its organization. A system admin- istrator will typically manually configure the IP addresses into the router. Host addresses can also be config- ured manually, but typically this is done using the **Dynamic Host Configuration Protocol (DHCP)**. DHCP allows a host to obtain (be allocated) an IP address automatically. A network administrator can configure DHCP so that a given host receives the same IP address each time it connects to the network, or a host may be assigned a temporary IP address that will be different each time the host connects to the network. In addition to host IP address assignment, DHCP also allows a host to learn additional information, such as its subnet mask, the address of its first-hop router (often called the default gateway), and the address of its local DNS server.
+Once an organization has obtained a block of addresses, it can assign individual IP addresses to the host and router interfaces in its organization. Typically this is done using the **Dynamic Host Configuration Protocol (DHCP)**. DHCP allows a host to obtain (be allocated) an IP address automatically. A network administrator can configure DHCP so that a given host receives the same IP address each time it connects to the network, or a host may be assigned a temporary IP address that will be different each time the host connects to the network. In addition to host IP address assignment, DHCP also allows a host to learn additional information, such as its subnet mask, the address of its first-hop router (often called the default gateway), and the address of its local DNS server.
 
 DHCP is a client-server protocol. A client is typically a newly arriving host wanting to obtain network configuration information, including an IP address for itself. In the simplest case, each subnet will have a DHCP server. If no server is present on the subnet, a DHCP relay agent (typically a router) that knows the address of a DHCP server for that network is needed.
 
 For a newly arriving host, the DHCP protocol is a four-step process: DHCP server discovery; DHCP server offer(s); DHCP request; DHCP ACK.
 
-## NAT
+### NAT
 
-The address space 10.0.0.0/8 is one of three portions of the IP address space that is reserved in [RFC 1918] for a private network.
+The address space 10.0.0.0/8 is one of three portions of the IP address space that is reserved in [RFC 1918] for a private network. The other two are 172.16.0.0/12, 192.168.0.0/16.
 
 Figure 4.25 shows the operation of **Network Address Translation (NAT)**. The NAT-enabled router, residing in the home, has an interface that is part of the home network on the right of Figure 4.25.
 
 ![img](/assets/images/27f2f9fa-0491-4e4e-b151-31aa972c1ef5.png)
 
-All four interfaces in the home network have the same subnet address of 10.0.0.0/24. That is, the 10.0.0.0/24 addresses can only have meaning within the given home network. But if private addresses only have meaning within a given network, how is addressing handled when packets are sent to or received from the global Internet, where addresses are necessarily unique?
-
 The NAT router behaves to the outside world as a single device with a single IP address. The router gets its address from the ISP’s DHCP server, and the router runs a DHCP server to provide addresses to computers within the NAT-DHCP-router-controlled home network’s address space.
 
 If all datagrams arriving at the NAT router from the WAN (Wide area network) have the same destination IP address, then how does the router know the internal host to which it should forward a given datagram? The trick is to use a **NAT translation table** at the NAT router, and to include port numbers as well as IP addresses in the table entries.
 
-## IPv6
+### IPv6
 
 In the early 1990s, the Internet Engineering Task Force began an effort to develop a successor to the IPv4 protocol. A prime motivation for this effort was the realization that the 32-bit IPv4 address space was beginning to be used up.
 
@@ -979,11 +977,180 @@ How will the public Internet, which is based on IPv4, be transitioned to IPv6? T
 
 The approach to IPv4-to-IPv6 transition that has been most widely adopted in practice involves **tunneling**.
 
-![img](/assets/images/41cf63cf-9758-4b6b-9759-6ce8b8585df8.png)
+![img-80](/assets/images/41cf63cf-9758-4b6b-9759-6ce8b8585df8.png)
 
 Suppose two IPv6 nodes (in this example, B and E in Figure 4.27) want to interoperate using IPv6 datagrams but are connected to each other by intervening IPv4 routers. We refer to the intervening set of IPv4 routers between two IPv6 routers as a tunnel. With tunneling, the IPv6 node on the sending side of the tunnel (in this example, B) takes the entire IPv6 datagram and puts it in the data (payload) field of an IPv4 datagram. This IPv4 datagram is then addressed to the IPv6 node on the receiving side of the tunnel (in this example, E) and sent to the first node in the tunnel (in this example, C). The intervening IPv4 routers in the tunnel route this IPv4 datagram among themselves, just as they would any other datagram. The IPv6 node on the receiving side determines that the payload is a IPv6 datagram, extracts the IPv6 datagram, and then routes the IPv6 datagram exactly as it would if it had received the IPv6 datagram from a directly connected IPv6 neighbor.
 
-## Generalized Forwarding and SDN
+## Control Plane
+
+We saw that the forwarding table (in the case of destination-based forwarding) and the flow table (in the case of generalized forwarding) were the principal elements that linked the network layer’s data and control planes. We saw that in the case of generalized forwarding, the actions taken could include not only forwarding a packet to a router’s output port, but also dropping a packet, replicating a packet, and/or rewriting layer 2, 3 or 4 packet-header fields.
+
+In this chapter, we’ll study how those forwarding and flow tables are computed, maintained and installed. We learned that there are two possible approaches for doing so:
+
+- Per-router control: Each router has a routing component that communicates with the routing components in other routers to compute the values for its forwarding table. This per-router control approach has been used in the Internet for decades. The OSPF and BGP are based on this per-router approach to control.
+- Software-defined networking (SDN) control: A logically centralized controller computes and distributes the forwarding tables to be used by each and every router.
+
+### Routing Algorithms
+
+The goal of routing algorithms is to determine the least cost paths (equivalently, routes), from senders to receivers, through the network of routers. A **graph** is used to formulate routing problems. The least-cost problem is therefore clear: Find a path between the source and destination that has least cost. Note that if all edges in the graph have the same cost, the **least-cost path** is also the shortest path (that is, the path with the smallest number of links between the source and the destination).
+
+A centralized routing algorithm computes the least-cost path using complete, global knowledge about the network. Algorithms with global state information are often referred to as **link-state (LS) algorithms**, since the algorithm must be aware of the cost of each link in the network. In practice, this is accomplished by having each node broadcast link-state packets to all other nodes in the network, with each link-state packet containing the identities and costs of its attached links. In practice (for example, with the Internet’s OSPF routing protocol), this is often accomplished by a link-state broadcast algorithm. The result of the nodes’ broadcast is that all nodes have an identical and complete view of the network. Each node can then run the LS algorithm and compute the same set of least-cost paths as every other node.
+
+In a decentralized routing algorithm, the calculation of the least-cost path is carried out in an iterative, distributed manner by the routers. No node has complete information about the costs of all network links. Instead, each node begins with only the knowledge of the costs of its own directly attached links. Then, through an iterative process of calculation and exchange of information with its neighboring nodes, a node gradually calculates the least-cost path to a destination or set of destinations. The decentralized routing algorithm we’ll study is called a **distance-vector (DV) algorithm**, because each node maintains a vector of estimates of the costs (distances) to all other nodes in the network. Such decentralized algorithms, with interactive message exchange between neighboring routers is perhaps more naturally suited to control planes where the routers interact directly with each other.
+
+Neither algorithm is an obvious winner over the other; indeed, both algorithms are used in the Internet. These two algorithms are the basis for two widely deployed Internet routing protocols, OSPF and BGP.
+
+### OSPF and BGP
+
+In our study of routing algorithms, we’ve viewed the network simply as a collection of interconnected routers. In practice, this model is simplistic for two important reasons: First, today’s Internet consists of hundreds of millions of routers. Storing routing information for possible destinations at each of these routers would clearly require enormous amounts of memory. The overhead required to broadcast connectivity and link cost updates among all of the routers would be huge! A distance-vector algorithm that iterated among such a large number of routers would surely never converge. Clearly, something must be done to reduce the complexity of route computation in a network as large as the Internet. Second, the Internet is a network of ISPs, with each ISP consisting of its own network of routers. An ISP generally desires to operate its network as it pleases or to hide aspects of its network’s internal organization from the outside. Ideally, an organization should be able to operate and administer its network as it wishes, while still being able to connect its network to other outside networks.
+
+Both of these problems can be solved by organizing routers into **autonomous systems (ASs)**, with each AS consisting of a group of routers that are under the same administrative control. An autonomous system is identified by its globally unique autonomous system number (ASN). AS numbers, like IP addresses, are assigned by ICANN regional registries.
+
+Routers within the same AS all run the same routing algorithm and have infor- mation about each other. The routing algorithm running within an autonomous sys- tem is called an intra-autonomous system routing protocol. OSPF routing and its closely related cousin, IS-IS, are widely used for intra-AS routing in the Internet.
+
+Since an inter-AS routing protocol involves coordination among multiple ASs, communicating ASs must run the same inter-AS routing protocol. In fact, in the Internet, all ASs run the same inter-AS routing protocol, called the Border Gateway Protocol, more commonly known as **BGP**.
+
+### SDN
+
+The OpenFlow protocol operates between an SDN controller and an SDN-controlled switch or other device implementing the OpenFlow API. The OpenFlow protocol operates over TCP, with a default port number of 6653.
+
+### Managing the IP Network
+
+The Internet Control Message Protocol (ICMP), specified in [RFC 792], is used by hosts and routers to communicate network-layer information to each other.
+
+In practice, there are three commonly used ways in a network operator can manage the network:
+
+- CLI. A network operator may issue direct Command Line Interface (CLI) commands to the device. These commands can be typed directly on a managed device’s console (if the operator is physically present at the device), or over a Telnet or secure shell (SSH) connection, possibly via scripting, between the managing server/controller and the managed device.
+- SNMP/MIB. In this approach, the network operator can query/set the data contained in a device’s Management Information Base (MIB) objects using the Simple Network Management Protocol (SNMP).
+- NETCONF/YANG. The NETCONF/YANG approach takes a more abstract, network-wide, and holistic view toward network management, with a much stronger emphasis on configuration management, including specifying correctness constraints and providing atomic management operations over multiple controlled devices. YANG [RFC 6020] is a data modeling language used to model configuration and operational data. The NETCONF protocol [RFC 6241] is used to communicate YANG-compatible actions and data to/from/among remote devices.
+
+# Link Layer
+
+We refer to any device that runs a link-layer protocol as a **node**. Nodes include hosts, routers, switches, and WiFi access points. We will also refer to the communication channels that connect adjacent nodes along the communication path as **links**.
+
+The basic service of the link layer is to move a network-layer datagram from one node to an adjacent node.
+
+In order for a datagram to be transferred from source host to destination host, it must be moved over each of the individual links in the end-to-end path. Over a given link, a transmitting node encapsulates the datagram in a **link-layer frame** and transmits the frame into the link.
+
+There are two types of network links: point-to-point links and broadcast links.
+
+A point-to-point link consists of a single sender at one end of the link and a single receiver at the other end of the link. The point-to-point protocol (PPP) and high-level data link control (HDLC) are two protocols designed for point-to-point links.
+
+A broadcast link, can have multiple sending and receiving nodes all connected to the same, single, shared broadcast channel. The term broadcast is used here because when any one node transmits a frame, the channel broadcasts the frame and each of the other nodes receives a copy. Ethernet and wireless LANs are examples of broadcast link-layer technologies.
+
+## Multiple Access Protocols
+
+A problem of central importance to the link layer: how to coordinate the access of multiple sending and receiving nodes to a shared broadcast channel—the **multiple access problem**. Computer have so-called **multiple access protocols** by which nodes regulate their transmission into the shared broadcast channel. We can classify them to one of three categories: channel partitioning protocols, random access protocols, and taking-turns protocols.
+
+### Channel Partitioning Protocols
+
+**Time-division multiplexing (TDM)** divides time into time frames and further divides each time frame into N time slots. Each time slot is then assigned to one of the N nodes. Whenever a node has a packet to send, it transmits the packet’s bits during its assigned time slot in the revolving TDM frame. TDM is appealing because it eliminates collisions and is perfectly fair. However, it has two major drawbacks. First, a node is limited to an average rate of R/N bps even when it is the only node with packets to send. A second drawback is that a node must always wait for its turn in the transmission sequence—again, even when it is the only node with a frame to send.
+
+**Frequency-division multiplexing (FDM)** divides the R bps channel into different frequencies (each with a bandwidth of R/N) and assigns each frequency to one of the N nodes. It avoids collisions and divides the bandwidth fairly among the N nodes. However, FDM also shares a principal disadvantage with TDM—a node is limited to a bandwidth of R/N, even when it is the only node with packets to send.
+
+**Code division multiple access (CDMA)** assigns a different code to each node. Each node then uses its unique code to encode the data bits it sends. If the codes are chosen carefully, CDMA networks have the wonderful property that different nodes can transmit simultaneously.
+
+### Random Access protocols
+
+In a random access protocol, a transmitting node always transmits at the full rate of the channel, namely, R bps. When there is a collision, each node involved in the collision repeatedly retransmits its frame (that is, packet) until its frame gets through without a collision. But when a node experiences a collision, it doesn’t necessarily retransmit the frame right away. Instead it waits a random delay before retransmitting the frame. Each node involved in a collision chooses independent random delays. Because the random delays are independently chosen, it is possible that one of the nodes will pick a delay that is sufficiently less than the delays of the other colliding nodes and will therefore be able to sneak its frame into the channel without a collision.
+
+A few of the most commonly used random access protocols—the ALOHA protocols and the carrier sense multiple access (CSMA) protocols. Ethernet is a popular and widely deployed CSMA protocol.
+
+### Taking-Turns Protocols
+
+The first one is the **polling protocol**. The polling protocol requires one of the nodes to be designated as a master node. The master node polls each of the nodes in a round-robin fashion. In particular, the master node first sends a message to node 1, saying that it (node 1) can transmit up to some maximum number of frames. After node 1 transmits some frames, the master node tells node 2 it (node 2) can transmit up to the maximum number of frames. (The master node can determine when a node has finished sending its frames by observing the lack of a signal on the channel.) The procedure continues in this manner, with the master node polling each of the nodes in a cyclic manner. The Bluetooth protocol is an example of a polling protocol.
+
+The second one is the **token-passing protocol**. A small, special-purpose frame known as a token is exchanged among the nodes in some fixed order. When a node receives a token, it holds onto the token only if it has some frames to transmit; otherwise, it immediately forwards the token to the next node. If a node does have frames to transmit when it receives the token, it sends up to a maximum number of frames and then forwards the token to the next node. Token passing is decentralized and highly efficient. But it has its problems as well. For example, the failure of one node can crash the entire channel. Or if a node accidentally neglects to release the token, then some recovery procedure must be invoked to get the token back in circulation. Over the years many token-passing protocols have been developed, including the fiber distributed data interface (FDDI) protocol and the IEEE 802.5 token ring protocol, and each one had to address these as well as other sticky issues.
+
+### DOCSIS
+
+A cable access network will make for an excellent case study here, as we’ll find aspects of each of these three classes of multiple access protocols with the cable access network! The Data-Over-Cable Service Interface Specifications (DOCSIS) specifies the cable data network architecture and its protocols.
+
+## Switched Local Area Networks
+
+![img](/assets/images/fe4477ef-50b4-46a3-ad40-997a187b7833.png)
+
+Figure 6.15 shows a switched local network connecting three departments, two servers and a router with four switches. Because these switches operate at the link layer, they switch link-layer frames (rather than network-layer datagrams), don’t recognize network-layer addresses, and don’t use routing algorithms like OSPF to determine paths through the network of layer-2 switches. Instead of using IP addresses, we will soon see that they use link-layer addresses to forward link-layer frames through the network of switches.
+
+We’ll begin our study of switched LANs by first covering link-layer addressing. We then examine the celebrated Ethernet protocol. After examining link-layer addressing and Ethernet, we’ll look at how link-layer switches operate, and then see how these switches are often used to build large-scale LANs.
+
+### Link-Layer Addressing and ARP
+
+In truth, it is not hosts and routers that have link-layer addresses but rather their adapters (that is, network interfaces) that have link-layer addresses. Link-layer switches do not have link-layer addresses associated with their interfaces that connect to hosts and routers. A link-layer address is variously called a LAN address, a physical address, or a **MAC address**. For most LANs (including Ethernet and 802.11 wireless LANs), the MAC address is 6 bytes long, giving `2 ^ 48` possible MAC addresses.
+
+Although MAC addresses were designed to be permanent, it is now possible to change an adapter’s MAC address via software. For the rest of this section, however, we’ll assume that an adapter’s MAC address is fixed. One interesting property of MAC addresses is that no two adapters have the same address. The IEEE manages the MAC address space. In particular, when a company wants to manufacture adapters, it purchases a chunk of the address space consisting of 224 addresses for a nominal fee. IEEE allocates the chunk of 224 addresses by fixing the first 24 bits of a MAC address and letting the company create unique combinations of the last 24 bits for each adapter.
+
+When an adapter wants to send a frame to some destination adapter, the sending adapter inserts the destination adapter’s MAC address into the frame and then sends the frame into the LAN. As we will soon see, a switch occasionally broadcasts an incoming frame onto all of its interfaces. 802.11 also broadcasts frames. Thus, an adapter may receive a frame that isn’t addressed to it. Thus, when an adapter receives a frame, it will check to see whether the destination MAC address in the frame matches its own MAC address. If there is a match, the adapter extracts the enclosed datagram and passes the datagram up the protocol stack. If there isn’t a match, the adapter discards the frame, without passing the network-layer datagram up.
+
+However, sometimes a sending adapter does want all the other adapters on the LAN to receive and process the frame it is about to send. In this case, the sending adapter inserts a special MAC broadcast address into the destination address field of the frame. For LANs that use 6-byte addresses (such as Ethernet and 802.11), the broadcast address is a string of 48 consecutive 1s (that is, FF-FF-FF-FF-FF-FF in hexadecimal notation).
+
+Because there are both network-layer addresses (for example, Internet IP addresses) and link-layer addresses (that is, MAC addresses), there is a need to translate between them. For the Internet, this is the job of the **Address Resolution Protocol (ARP)**.
+
+Each host and router has an ARP table in its memory, which contains mappings of IP addresses to MAC addresses. But what if the ARP table doesn’t currently have an entry for the destination? In this case, the sender uses the ARP protocol to resolve the address.
+
+### Ethernet
+
+Today, Ethernet is by far the most prevalent wired LAN technology, and it is likely to remain so for the foreseeable future. One might say that Ethernet has been to local area networking what the Internet has been to global networking.
+
+![img](/assets/images/f5a8f2be-2251-46ac-8285-048cc0776700.png)
+
+We can learn a lot about Ethernet by examining the Ethernet frame:
+
+- Data field (46 to 1,500 bytes). This field carries the IP datagram. The maximum transmission unit (MTU) of Ethernet is 1,500 bytes. This means that if the IP datagram exceeds 1,500 bytes, then the host has to fragment the datagram, as discussed in Section 4.3.2. The minimum size of the data field is 46 bytes. This means that if the IP datagram is less than 46 bytes, the data field has to be “stuffed” to fill it out to 46 bytes. When stuffing is used, the data passed to the network layer contains the stuffing as well as an IP datagram. The network layer uses the length field in the IP datagram header to remove the stuffing.
+- Destination address (6 bytes). This field contains the MAC address of the destination adapter. When destination adapter receives an Ethernet frame whose destination address is its or the MAC broadcast address, it passes the contents of the frame’s data field to the network layer; if it receives a frame with any other MAC address, it discards the frame.
+- Source address (6 bytes). This field contains the MAC address of the adapter that transmits the frame onto the LAN.
+- Type field (2 bytes). The type field permits Ethernet to multiplex network-layer protocols. To understand this, we need to keep in mind that hosts can use other network-layer protocols besides IP (e.g. ARP).
+- Cyclic redundancy check (CRC) (4 bytes). As discussed in Section 6.2.3, the purpose of the CRC field is to allow the receiving adapter to detect bit errors in the frame.
+- Preamble (8 bytes).
+
+Many Ethernet technologies have been standardized over the years by the IEEE 802.3 CSMA/CD (Ethernet) working group. Ethernet is both a link-layer and a physical-layer specification and is carried over a variety of physical media including coaxial cable, copper wire, and fiber.
+
+In a switch-based Ethernet LAN there are no collisions and, therefore, there is no need for a MAC protocol!
+
+### Link-Layer Switches
+
+The role of the switch is to receive incoming link-layer frames and forward them onto outgoing links; we’ll study this forwarding function in detail in this subsection. We’ll see that the switch itself is transparent to the hosts and routers in the subnet; that is, a host/router addresses a frame to another host/router (rather than addressing the frame to the switch) and happily sends the frame into the LAN, unaware that a switch will be receiving the frame and forward- ing it.
+
+Filtering is the switch function that determines whether a frame should be for- warded to some interface or should just be dropped. Forwarding is the switch function that determines the interfaces to which a frame should be directed, and then moves the frame to those interfaces. Switch filtering and forwarding are done with a switch table. As long as the switch table is complete and accurate, the switch forwards frames toward destinations without any broadcasting.
+
+As we learned in Chapter 4, routers are store-and-forward packet switches that for- ward packets using network-layer addresses. Although a switch is also a store-and- forward packet switch, it is fundamentally different from a router in that it forwards packets using MAC addresses. Whereas a router is a layer-3 packet switch, a switch is a layer-2 packet switch. Recall, however, that we learned in Section 4.4 that mod- ern switches using the “match plus action” operation can be used to forward a layer-2 frame based on the frame's destination MAC address, as well as a layer-3 datagram using the datagram's destination IP address. Indeed, we saw that switches using the OpenFlow standard can perform generalized packet forwarding based on any of eleven different frame, datagram, and transport-layer header fields.
+
+Even though switches and routers are fundamentally different, network admin- istrators must often choose between them when installing an interconnection device. What are the pros and cons of the two approaches?
+
+First consider the pros and cons of switches. As mentioned above, switches are plug-and-play, a property that is cherished by all the overworked network adminis- trators of the world. Switches can also have relatively high filtering and forwarding rates—as shown in Figure 6.24, switches have to process frames only up through layer 2, whereas routers have to process datagrams up through layer 3. On the other hand, to prevent the cycling of broadcast frames, the active topology of a switched network is restricted to a spanning tree. Also, a large switched network would require large ARP tables in the hosts and routers and would generate substantial ARP traffic and processing. Furthermore, switches are susceptible to broadcast storms—if one host goes haywire and transmits an endless stream of Ethernet broadcast frames, the switches will forward all of these frames, causing the entire network to collapse.
+
+Now consider the pros and cons of routers. Because network addressing is often hierarchical (and not flat, as is MAC addressing), packets do not normally cycle through routers even when the network has redundant paths. (However, packets can cycle when router tables are misconfigured; but as we learned in Chapter 4, IP uses a special datagram header field to limit the cycling.) Thus, packets are not restricted to a spanning tree and can use the best path between source and destination. Because routers do not have the spanning tree restriction, they have allowed the Internet to be built with a rich topology that includes, for example, multiple active links between Europe and North America. Another feature of routers is that they provide firewall protection against layer-2 broadcast storms. Perhaps the most significant drawback of routers, though, is that they are not plug-and-play—they and the hosts that connect to them need their IP addresses to be configured. Also, routers often have a larger per-packet processing time than switches, because they have to process up through the layer-3 fields.
+
+## A Day in the Life of a Web Page Request
+
+A student, Bob, connects his laptop to an Ethernet cable connected to the school’s Ethernet switch and downloads a Web page.
+
+![img](/assets/images/c2a1a1a5-7c35-49aa-95ad-cb9b82cb3490.png)
+
+1. The operating system on Bob’s laptop creates a DHCP request message (Section 4.3.3) and puts this message within a UDP segment (Section 3.3) with destination port 67 (DHCP server) and source port 68 (DHCP client). The UDP segment is then placed within an IP datagram (Section 4.3.1) with a broadcast IP destination address (255.255.255.255) and a source IP address of 0.0.0.0, since Bob’s laptop doesn’t yet have an IP address.
+2. The IP datagram containing the DHCP request message is then placed within an Ethernet frame (Section 6.4.2). The Ethernet frame has a destination MAC addresses of FF:FF:FF:FF:FF:FF so that the frame will be broadcast to all devices connected to the switch (hopefully including a DHCP server); the frame’s source MAC address is that of Bob’s laptop, 00:16:D3:23:68:8A.
+3. The broadcast Ethernet frame containing the DHCP request is the first frame sent by Bob’s laptop to the Ethernet switch. The switch broadcasts the incoming frame on all outgoing ports, including the port connected to the router.
+4. The router receives the broadcast Ethernet frame containing the DHCP request on its interface with MAC address 00:22:6B:45:1F:1B and the IP datagram is extracted from the Ethernet frame. The datagram’s broadcast IP destination address indicates that this IP datagram should be processed by upper layer protocols at this node, so the datagram’s payload (a UDP segment) is thus demultiplexed (Section 3.2) up to UDP, and the DHCP request message is extracted from the UDP segment. The DHCP server now has the DHCP request message.
+5. Let’s suppose that the DHCP server running within the router can allocate IP addresses in the CIDR (Section 4.3.3) block 68.85.2.0/24. In this example, all IP addresses used within the school are thus within Comcast’s address block. Let’s suppose the DHCP server allocates address 68.85.2.101 to Bob’s laptop. The DHCP server creates a DHCP ACK message (Section 4.3.3) containing this IP address, as well as the IP address of the DNS server (68.87.71.226), the IP address for the default gateway router (68.85.2.1), and the subnet block (68.85.2.0/24) (equivalently, the “network mask”). The DHCP message is put inside a UDP segment, which is put inside an IP datagram, which is put inside an Ethernet frame. The Ethernet frame has a source MAC address of the router’s interface to the home network (00:22:6B:45:1F:1B) and a destination MAC address of Bob’s laptop (00:16:D3:23:68:8A).
+6. The Ethernet frame containing the DHCP ACK is sent (unicast) by the router to the switch. Because the switch is self-learning (Section 6.4.3) and previously received an Ethernet frame (containing the DHCP request) from Bob’s laptop, the switch knows to forward a frame addressed to 00:16:D3:23:68:8A only to the output port leading to Bob’s laptop.
+7. Bob’s laptop receives the Ethernet frame containing the DHCP ACK, extracts the IP datagram from the Ethernet frame, extracts the UDP segment from the IP datagram, and extracts the DHCP ACK message from the UDP segment. Bob’s DHCP client then records its IP address and the IP address of its DNS server. It also installs the address of the default gateway into its IP forward- ing table (Section 4.1). Bob’s laptop will send all datagrams with destination address outside of its subnet 68.85.2.0/24 to the default gateway. At this point, Bob’s laptop has initialized its networking components and is ready to begin processing the Web page fetch.
+8. The operating system on Bob’s laptop thus creates a DNS query message (Section 2.5.3), putting the string "www.google.com" in the question section of the DNS message. This DNS message is then placed within a UDP segment with a destination port of 53 (DNS server). The UDP segment is then placed within an IP datagram with an IP destination address of 68.87.71.226 (the address of the DNS server returned in the DHCP ACK in step 5) and a source IP address of 68.85.2.101.
+9. Bob’s laptop then places the datagram containing the DNS query message in an Ethernet frame. This frame will be sent (addressed, at the link layer) to the gateway router in Bob’s school’s network. However, even though Bob’s laptop knows the IP address of the school’s gateway router (68.85.2.1) via the DHCP ACK message in step 5 above, it doesn’t know the gateway router’s MAC address. In order to obtain the MAC address of the gateway router, Bob’s laptop will need to use the ARP protocol (Section 6.4.1).
+10. Bob’s laptop creates an ARP query message with a target IP address of 68.85.2.1 (the default gateway), places the ARP message within an Ethernet frame with a broadcast destination address (FF:FF:FF:FF:FF:FF) and sends the Ethernet frame to the switch, which delivers the frame to all connected devices, including the gateway router.
+11. ThegatewayrouterreceivestheframecontainingtheARPquerymessageonthe interface to the school network, and finds that the target IP address of 68.85.2.1 in the ARP message matches the IP address of its interface. The gateway router thus prepares an ARP reply, indicating that its MAC address of 00:22:6B:45:1F:1B corresponds to IP address 68.85.2.1. It places the ARP reply message in an Ethernet frame, with a destination address of 00:16:D3:23:68:8A (Bob’s laptop) and sends the frame to the switch, which delivers the frame to Bob’s laptop.
+12. Bob’s laptop receives the frame containing the ARP reply message and extracts the MAC address of the gateway router (00:22:6B:45:1F:1B) from the ARP reply message.
+13. Bob’s laptop can now (finally!) address the Ethernet frame containing the DNS query to the gateway router’s MAC address. Note that the IP datagram in this frame has an IP destination address of 68.87.71.226 (the DNS server), while the frame has a destination address of 00:22:6B:45:1F:1B (the gateway router). Bob’s laptop sends this frame to the switch, which delivers the frame to the gateway router.
+14. The gateway router receives the frame and extracts the IP datagram containing the DNS query. The router looks up the destination address of this datagram (68.87.71.226) and determines from its forwarding table that the datagram should be sent to the leftmost router in the Comcast network in Figure 6.32. The IP datagram is placed inside a link-layer frame appropriate for the link connecting the school’s router to the leftmost Comcast router and the frame is sent over this link.
+15. The leftmost router in the Comcast network receives the frame, extracts the IP datagram, examines the datagram’s destination address (68.87.71.226) and determines the outgoing interface on which to forward the datagram toward the DNS server from its forwarding table, which has been filled in by Comcast’s intra-domain protocol (such as RIP, OSPF or IS-IS, Section 5.3) as well as the Internet’s inter-domain protocol, BGP (Section 5.4).
+16. Eventually the IP datagram containing the DNS query arrives at the DNS server. The DNS server extracts the DNS query message, looks up the name www.google.com in its DNS database (Section 2.5), and finds the DNS resource record that contains the IP address (64.233.169.105) for www.google.com. (assuming that it is currently cached in the DNS server). Recall that this cached data originated in the authoritative DNS server (Section 2.5.2) for google.com. The DNS server forms a DNS reply message containing this hostname-to-IP-address mapping, and places the DNS reply message in a UDP segment, and the segment within an IP datagram addressed to Bob’s laptop (68.85.2.101). This datagram will be forwarded back through the Comcast network to the school’s router and from there, via the Ethernet switch to Bob’s laptop.
+17. Bob’s laptop extracts the IP address of the server www.google.com from the DNS message. Finally, after a lot of work, Bob’s laptop is now ready to contact the www.google.com server!
+18. Now that Bob’s laptop has the IP address of www.google.com, it can create the TCP socket (Section 2.7) that will be used to send the HTTP GET message (Section 2.2.3) to www.google.com. When Bob creates the TCP socket, the TCP in Bob’s laptop must first perform a three-way handshake (Section 3.5.6) with the TCP in www.google.com. Bob’s laptop thus first creates a TCP SYN segment with destination port 80 (for HTTP), places the TCP segment inside an IP datagram with a destination IP address of 64.233.169.105 (www.google.com), places the datagram inside a frame with a destination MAC address of 00:22:6B:45:1F:1B (the gateway router) and sends the frame to the switch.
+19. The routers in the school network, Comcast’s network, and Google’s network forward the datagram containing the TCP SYN toward www.google.com, using the forwarding table in each router, as in steps 14–16 above. Recall that the router forwarding table entries governing forwarding of packets over the inter-domain link between the Comcast and Google networks are determined by the BGP protocol (Chapter 5).
+20. Eventually, the datagram containing the TCP SYN arrives atwww.google.com. The TCP SYN message is extracted from the datagram and demultiplexed to the welcome socket associated with port 80. A connection socket (Section 2.7) is created for the TCP connection between the Google HTTP server and Bob’s laptop. A TCP SYNACK (Section 3.5.6) segment is generated, placed inside a datagram addressed to Bob’s laptop, and finally placed inside a link-layer frame appropriate for the link connecting www.google.com to its first-hop router.
+21. The datagram containing the TCP SYNACK segment is forwarded through the Google, Comcast, and school networks, eventually arriving at the Ethernet controller in Bob’s laptop. The datagram is demultiplexed within the operating system to the TCP socket created in step 18, which enters the connected state.
+22. With the socket on Bob’s laptop now (finally!) ready to send bytes to www.google.com, Bob’s browser creates the HTTP GET message (Section 2.2.3) containing the URL to be fetched. The HTTP GET message is then written into the socket, with the GET message becoming the payload of a TCP segment. The TCP segment is placed in a datagram and sent and delivered to www.google.com as in steps 18–20 above.
+23. The HTTP server at www.google.com reads the HTTP GET message from the TCP socket, creates an HTTP response message (Section 2.2), places the requested Web page content in the body of the HTTP response message, and sends the message into the TCP socket.
+24. The datagram containing the HTTP reply message is forwarded through the Google, Comcast, and school networks, and arrives at Bob’s laptop. Bob’s Web browser program reads the HTTP response from the socket, extracts the html for the Web page from the body of the HTTP response, and finally (finally!) displays the Web page!
 
 # TLS 握手
 

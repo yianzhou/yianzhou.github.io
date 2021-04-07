@@ -46,7 +46,17 @@ UNNotificationTrigger is an abstract class, concrete trigger classes include the
 
 调试工具：[Knuff](https://github.com/KnuffApp/Knuff)、[SmartPush](https://github.com/shaojiankui/SmartPush)
 
-一、App 启动时，向 APNS 请求 deviceToken。
+1\. 成为代理
+
+```objc
+@interface AppDelegate () <UNUserNotificationCenterDelegate>
+@end
+
+UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+center.delegate = self;
+```
+
+2\. App 启动时，向 APNS 请求 deviceToken。
 
 ```objc
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
@@ -62,7 +72,7 @@ UNNotificationTrigger is an abstract class, concrete trigger classes include the
 }
 ```
 
-二、收到通知、点击通知、冷启动 App。
+3\. 收到通知、点击通知、冷启动 App。
 
 ```objc
 #import <UserNotifications/UserNotifications.h>
@@ -77,7 +87,7 @@ UNNotificationTrigger is an abstract class, concrete trigger classes include the
 }
 ```
 
-三、App 在后台、收到通知、点击通知、热启动 App；或者 App 在前台、`willPresentNotification` 调用系统方法在前台展示了消息，点击也会执行以下这个方法。
+4\. App 在后台、收到通知、点击通知、热启动 App；或者 App 在前台、`willPresentNotification` 调用系统方法在前台展示了消息，点击也会执行以下这个方法。
 
 ```objc
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center didReceiveNotificationResponse:(UNNotificationResponse *)response withCompletionHandler:(void (^)(void))completionHandler {
@@ -89,7 +99,7 @@ UNNotificationTrigger is an abstract class, concrete trigger classes include the
 }
 ```
 
-四、App 在前台时收到通知：
+5\. App 在前台时收到通知：
 
 ```objc
 - (void)userNotificationCenter:(UNUserNotificationCenter *)center willPresentNotification:(UNNotification *)notification withCompletionHandler:(void (^)(UNNotificationPresentationOptions))completionHandler {
@@ -97,13 +107,13 @@ UNNotificationTrigger is an abstract class, concrete trigger classes include the
 }
 ```
 
-`- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo;`
-
-`- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification;`
-
 这两个方法在 iOS 10+ deprecated 并被上述方法替代。
 
-五、静默推送
+~~`- (void)application:(UIApplication *)application didReceiveRemoteNotification:(NSDictionary *)userInfo;`~~
+
+~~`- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification;`~~
+
+6\. 静默推送
 
 当 payload 包含参数 content-available=1 时，该推送就是静默推送，静默推送不会显示任何推送消息。系统会将在后台静默启动 app、或者从挂起状态唤醒它。开发者有 30s 的时间内在该回调方法中处理一些业务逻辑，并在处理完成后调用 fetchCompletionHandler。
 

@@ -17,11 +17,9 @@ categories: [Apple]
 
 [WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
 
-# 统计冷启动时机
+# 统计冷启动时长
 
-方法：Xcode -> Edit Scheme -> Arguments -> Environment Variables
-
-设置 `DYLD_PRINT_STATISTICS` 和 `DYLD_PRINT_STATISTICS_DETAILS` 两个值为 1。
+Xcode -> Edit Scheme -> Arguments -> Environment Variables，设置 `DYLD_PRINT_STATISTICS` 和 `DYLD_PRINT_STATISTICS_DETAILS` 两个值为 1。
 
 ```log
 Total pre-main time: 1.3 seconds (100.0%)
@@ -57,12 +55,12 @@ Total pre-main time: 1.3 seconds (100.0%)
                                     Charts :   3.29 milliseconds (0.1%)
                               FBSDKCoreKit :   6.85 milliseconds (0.2%)
                                    Flutter :  79.66 milliseconds (3.2%)
-                                GBDNetwork :   2.85 milliseconds (0.1%)
+                                 xxNetwork :   2.85 milliseconds (0.1%)
                                  HandyJSON :   2.61 milliseconds (0.1%)
                                 MoyaMapper :   2.59 milliseconds (0.1%)
                                    RxSwift :   4.43 milliseconds (0.1%)
                                    RxCocoa :   7.06 milliseconds (0.2%)
-                               LisPonOrbit :  18.68 milliseconds (0.7%)
+                                        xx :  18.68 milliseconds (0.7%)
 total symbol trie searches:    86758
 total symbol table binary searches:    0
 total images defining weak symbols:  70

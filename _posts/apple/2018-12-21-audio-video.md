@@ -167,16 +167,6 @@ B 帧：双向预测帧。参考前后的帧来生成一个完整的画面。几
 
 GOP (Group of Pictures)：每一组 IPB 的序列包含了多少帧。同码率下，GOP 值越大，B 帧和 P 帧越多，视频质量越高。
 
-# 流媒体开发
-
-网络层：ST/Socket 负责传输
-
-协议层：RTMP/HLS 负责网络打包
-
-封装层：FLV/TS 负责编解码数据的封装
-
-不同的码流（360P、720P、1080P 等）如何无缝切换：主流的方案是两个播放器，切换时，旧播放器保持播放，新播放器缓冲并解码完成后，在旧播放器即将播放下一个 I 帧时，切换的新播放器对应位置的 I 帧上，实现无缝连接。
-
 # FFmpeg
 
 The [FFmpeg project](https://ffmpeg.org/about.html) tries to provide the best technically possible solution for developers of applications and end users alike. 为终端用户和开发人员，提供相同程度的，最佳的技术方案。（也就是说，这个项目既有提供给开发者的 API 框架，也有提供给用户的终端工具）

@@ -21,7 +21,7 @@ permalink: apple
 
 [Auto Layout]({% post_url apple/2020-10-27-auto-layout %})，[Core Animation]({% post_url apple/2018-07-28-core-animation %})，[图形渲染]({% post_url apple/2020-04-22-graphics %})，[Metal]({% post_url apple/2019-01-10-Metal %})，[ARKit]({% post_url apple/2018-12-20-ARKit %})
 
-[音视频基础知识]({% post_url apple/2018-12-21-audio-video %})，[AVFoundation]({% post_url apple/2018-12-21-avfoundation %})
+[音视频基础知识]({% post_url apple/2018-12-21-audio-video %})，[AVFoundation]({% post_url apple/2018-12-21-avfoundation %})，[音视频直播开发]({% post_url apple/2021-04-09-live-streaming %})
 
 [设计模式]({% post_url apple/2019-12-04-design-pattern %})
 
@@ -41,7 +41,7 @@ permalink: apple
 - [Leetcode 6 设计题]({% post_url apple/2020-06-17-leetcode6 %})
 - [Leetcode 7 代数、几何、随机数]({% post_url apple/2020-06-17-leetcode7 %})
 
-[计算机网络]({% post_url apple/2021-03-04-computer-network %})，[WebView]({% post_url apple/2020-11-2-webview %})
+[计算机网络]({% post_url apple/2021-03-04-computer-network %})，[Networking]({% post_url apple/2020-11-2-networking %})
 
 [代码签名]({% post_url apple/2020-10-10-signing %})
 

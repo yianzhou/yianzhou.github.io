@@ -13,7 +13,9 @@ categories: [Apple]
 >
 > [WWDC 2015 - Networking with NSURLSession](https://developer.apple.com/videos/play/wwdc2015/711/)
 
-`NSURLSession` kick-off: init a configuration, init a session, init a task. Best practice: one session to support many (many!) tasks!
+`NSURLSession` kick-off: init a configuration, init a session, init a task.
+
+Best practice: one session to support many (many!) tasks!
 
 `NSURLSessionConfiguration`:
 

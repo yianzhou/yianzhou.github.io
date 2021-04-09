@@ -304,6 +304,8 @@ Message prioritization allows developers to customize the relative priority of r
 
 Another feature of HTTP/2 is the ability for a server to send multiple responses for a single client request. That is, in addition to the response to the original request, the server can push additional objects to the client, without the client having to request each one. This is possible since the HTML base page indicates the objects that will be needed to fully render the Web page. So instead of waiting for the HTTP requests for these objects, the server can analyze the HTML page, identify the objects that are needed, and send them to the client before receiving explicit requests for these objects. Server push eliminates the extra latency due to waiting for the requests.
 
+![img](/assets/images/137c36ad-e563-4db2-a3e5-4d0a8675b59e.png)
+
 ## HTTP/3
 
 Both HTTP/1.1 and HTTP/2 use TCP as their transport.

@@ -179,7 +179,6 @@ Last-Modified: Tue, 18 Aug 2015 15:11:03 GMT
 Content-Length: 6821
 ETag: "526c3-f22-a88a4c80"
 Accept-Ranges: bytes
-Content-Length: 3874
 Keep-Alive: timeout=max=100
 Connection: Keep-Alive
 Content-Type: text/html; charset=ISO-8859-1
@@ -220,7 +219,7 @@ The entity body is the meat of the message—it contains the requested object it
 
 We mentioned above that an HTTP server is stateless. This simplifies server design and has permitted engineers to develop high-performance Web servers that can handle thousands of simultaneous TCP connections. However, it is often desirable for a Web site to identify users, because it wants to serve content as a function of the user identity. For this purpose, HTTP uses cookies. Cookies allow sites to keep track of users.
 
-Cookie 有四个部分：
+Cookie technology has four components:
 
 1. A cookie header line in the HTTP response message;
 2. A cookie header line in the HTTP request message;
@@ -229,7 +228,9 @@ Cookie 有四个部分：
 
 ![img](/assets/images/AD027E75-A0DC-49C4-ADCF-611BD0BE7459.jpg)
 
-从上面例子我们可以看到，在用户首次访问一个网站时，服务器为它创建一个标识附带在响应报文中，后续的会话会在请求报文中带上这个标识。因此，cookie 可以在无状态的 HTTP 之上建立一个用户会话层。
+When Susan’s browser receives the HTTP response message, it sees the `Set-cookie:` header. The browser then appends a line to the special cookie file that it manages. This line includes the hostname of the server and the identification number in the `Set-cookie:` header.
+
+We see that cookies can be used to identify a user. The first time a user visits a site, the user can provide a user identification. During the subsequent sessions, the browser passes a cookie header to the server, thereby identifying the user to the server. Cookies can thus be used to create a user session layer on top of stateless HTTP.
 
 ## Web Caching and The Conditional GET
 
@@ -1200,6 +1201,26 @@ Another broad class of security threats are known as **denial-of-service (DoS)**
 A passive receiver that records a copy of every packet that flies by is called a **packet sniffer**.
 
 It is surprisingly easy to create a packet with an arbitrary source address, packet content, and destination address and then transmit this hand-crafted packet into the Internet, which will dutifully forward the packet to its destination. Imagine the unsuspecting receiver (say an Internet router) who receives such a packet, takes the (false) source address as being truthful, and then performs some command embedded in the packet’s contents (say modifies its forwarding table). The ability to inject packets into the Internet with a false source address is known as **IP spoofing**, and is but one of many ways in which one user can masquerade as another user.
+
+## Symmetric Key Cryptography
+
+Prefer: AES-GCM, ChaCha20/Poly1305.
+
+Deprecated: RC4, 3DES-CBC, AES-CBC.
+
+## Public Key Encryption
+
+Prefer: >= 2048-bit RSA, Elliptic Curves
+
+## Cryptographic Hash Functions
+
+Prefer: SHA-2 Family.
+
+Deprecated: MD5, SHA-1.
+
+## Digital Signatures
+
+An important application of digital signatures is public key certification, that is, certifying that a public key belongs to a specific entity.
 
 ## Transport Layer Security (TLS)
 

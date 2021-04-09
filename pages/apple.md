@@ -7,6 +7,8 @@ permalink: apple
 
 [开发及调试]({% post_url apple/2020-08-07-dev %})，[macOS]({% post_url apple/2018-12-18-macOS %})，[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})，[通知]({% post_url apple/2021-01-25-user-notification %})
 
+[App's Life Cycle]({% post_url apple/2021-04-10-app's-life-cycle %})
+
 # 计算机科学
 
 [iOS 进阶]({% post_url apple/2020-08-07-advanced %})，[Swift 底层]({% post_url apple/2019-06-24-swift %})

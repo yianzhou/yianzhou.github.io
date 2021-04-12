@@ -74,6 +74,8 @@ private lazy var urlSession: URLSession = {
 
 You create download tasks from this session. With background sessions, **the actual transfer is performed by a process that is separate from your app’s process**.
 
+These tasks use system intelligence to decide when to start and when to stop a download based on various factors like battery, CPU, Wi-Fi, etc.
+
 If your app is in the background, the system may suspend your app. In this case, when the download finishes, the system resumes the app and calls the delegate method:
 
 ```swift

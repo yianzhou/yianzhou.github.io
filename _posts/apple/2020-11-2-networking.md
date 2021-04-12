@@ -7,13 +7,13 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
-# NSURLSession
+# URLSession
 
 > [WWDC 2016 - NSURLSession: New Features and Best Practices](https://developer.apple.com/videos/play/wwdc2016/711)
 >
 > [WWDC 2015 - Networking with NSURLSession](https://developer.apple.com/videos/play/wwdc2015/711/)
 
-`NSURLSession` kick-off: init a configuration, init a session, init a task, resume.
+`URLSession` kick-off: init a configuration, init a session, init a task, resume.
 
 Best practice: one session to support many (many!) tasks!
 
@@ -25,9 +25,9 @@ Most apps can just have one statically-allocated `URLSession`, and that's fine. 
 
 Delegate callbacks give you detailed step-by-step progress information on the state of your task. The convenience methods, by comparison, are a quick and easy way of using the API that you don't get all the intermediate delegate callbacks, you just get the final result reported to the completion handler. Don't mix and match both on the same `URLSession`, pick one style and be consistent.
 
-## NSURLSessionConfiguration
+## URLSessionConfiguration
 
-`NSURLSessionConfiguration`:
+`URLSessionConfiguration`:
 
 - TLS version
 - Prohibit cellular usage (`allowsCellularAccess`)
@@ -60,7 +60,9 @@ This API only has an effect for non-background sessions, it's not necessary for 
 
 ### networkServiceType
 
-Starting in iOS 5 we had the [`networkServiceType`](https://developer.apple.com/documentation/foundation/nsurlrequest/networkservicetype) API, and that lets you express your needs to the network.
+You might be familiar with five QoS classes associated with dispatch queues and NSOperation objects. `URLSession` is QoS-aware which means it will capture the QoS off the queue on which you call `task.resume()`. And all the messages that it sends to your delegates will respect this QoS. For example, if your app wants to fetch some data which is not time critical, consider resuming that task on a queue which has background QoS to make sure this task does not contend for CPU with other higher priority work that your app might be doing.
+
+Starting in iOS 5 we had the [`networkServiceType`](https://developer.apple.com/documentation/foundation/nsurlrequest/networkservicetype) API. Network service type is the property on the `URLSessionConfiguration` object that allows you to classify your network traffic that helps the system prioritize the data leaving the device.
 
 | Service Type   | Availability | Description                                                                                                                                                                                               |
 | -------------- | ------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
@@ -73,15 +75,17 @@ Starting in iOS 5 we had the [`networkServiceType`](https://developer.apple.com/
 | callSignaling  | iOS 10.0+    | network traffic that establishes, maintains, or tears down a VoIP call                                                                                                                                    |
 | responsiveData | iOS 12.0+    | This service type’s priority is higher than 'default'. Use this service type for interactive situations where the user is anticipating a quick response, like instant messaging or completing a purchase. |
 
-For developers writing apps like Skype and Facetime using UDP, you need to be using BSD sockets. So we [now](https://developer.apple.com/videos/play/wwdc2016/714/) have a socket option that exposes the same functionality so your UDP clients can benefit from this.
+voice > callSignaling > video > responsiveData > default > background
 
 Remember, network service type is not a priority level. There isn't a ranked ordering here of high priority to low priority. It's a way expressing whether you want low throughput and low latency or high throughput and moderate latency.
 
-想法：对应用内的不同网络请求区分服务类型。例如，对需要长时间保持连接的“心跳”服务，设置一个低延时低吞吐量的服务类型，操作系统在网络层、链路层做了一系列的工作，提供我们想要的服务。
+想法：对应用内的不同网络请求区分服务类型。大部分的网络请求都可以归类到 `default` 和 `background`。其它的情况例如，对需要长时间保持连接的“心跳”服务，可以设置一个低延时低吞吐量的服务类型，操作系统在网络层、链路层做了一系列的工作，提供我们想要的服务。
 
-IP-Layer DSCP QoS Marking: In August of 2015, Apple and Cisco announced a partnership to create a fast lane for iOS business apps. With iOS 10 we are introducing new Quality of Service features to optimize enterprise iOS apps with Cisco networks. Recognizes Cisco fast lane network and sets Differentiated Services Code Point (DSCP) marking appropriately. Useful for: Telephony apps; Backup and other bulk upload apps.
+IP-Layer DSCP QoS Marking: In August of 2015, Apple and Cisco announced a partnership to create a fast lane for iOS business apps. With iOS 10 we are introducing new Quality of Service features to optimize enterprise iOS apps with Cisco networks. Traffic marked with the network service type property will maintain this tag across all the hops when on a Cisco Fast Lane network. Recognizes Cisco fast lane network and sets Differentiated Services Code Point (DSCP) marking appropriately. Useful for: Telephony apps; Backup and other bulk upload apps.
 
 Link-Layer QoS Marking: Controls packet queuing and scheduling on network interface. When you set these options, a couple of things happen. On the device itself, there are multiple outband queues, and the type of service you set for your traffic controls which queue it uses. On Wi-Fi interfaces, it will also set the wireless multi-media access category.
+
+For developers writing apps like Skype and Facetime using UDP, you need to be using BSD sockets. So we [now](https://developer.apple.com/videos/play/wwdc2016/714/) have a socket option that exposes the same functionality so your UDP clients can benefit from this.
 
 ## Statistics
 
@@ -111,7 +115,7 @@ There is a command line tool on macOS called `nscurl`.
 
 ## HTTP/2
 
-`NSURLSession` supports HTTP/2 protocol only over an encrypted connection. And that your HTTP/2 server requires to support ALPN for protocol negotiation.
+`URLSession` supports HTTP/2 protocol only over an encrypted connection. And that your HTTP/2 server requires to support ALPN for protocol negotiation.
 
 `URLSession` 运行在 HTTP/1.1 时，对同一个 IP 地址的请求，会创建多个并行的 TCP 连接，每个连接的建立都会带来资源消耗；而在 HTTP/2，由于分帧和多路复用，一个 TCP 连接就可以处理多个请求。
 
@@ -121,9 +125,9 @@ In [iOS 12](https://developer.apple.com/videos/play/wwdc2018/714), we have somet
 
 The first certificate presented to us covers all the subdomains under example.com. Also notice that delivery.example.com, it results to the same IP address as the first connection. It's safe to assume we're talking to the same endpoint and reuse the connection instead of opening a new one when we want to fetch the second resource.
 
-Two to three times faster if you configure the **Server Push** on your HTTP/2 server! And you don't even have to change any code in your app! The data for your `NSURLSessionDataTask` will be delivered out of the Server Push storage directly to your application.
+Two to three times faster if you configure the **Server Push** on your HTTP/2 server! And you don't even have to change any code in your app! The data for your `URLSessionDataTask` will be delivered out of the Server Push storage directly to your application.
 
-## NSHTTPCookieStorage
+## HTTPCookieStorage
 
 `HTTPCookieStorage` is a container that manages the storage of cookies. The persistent cookie storage returned by `sharedHTTPCookieStorage` may be available to app extensions or other apps.
 
@@ -135,7 +139,7 @@ Two to three times faster if you configure the **Server Push** on your HTTP/2 se
 
 **Security**: One thing we don't want to allow is for a website to set a cookie on the .com domain, which is then accessible to any other .com company. `URLSession` can now receive [Public Suffix List](https://publicsuffix.org/) updates over the air. This is important for determining where administrative boundaries occur in the namespace of the Internet. Better_security for users against cookie attacks.
 
-## NSURLSessionStreamTask
+## URLSessionStreamTask
 
 There are some cases where you need a protocol other than HTTP or HTTPS, and you want to do something custom directly on top of TCP/IP networking. `NSURLSessionStreamTask` is a Foundation extraction, directly over a TCP connection.
 
@@ -194,6 +198,74 @@ The binding between a `URLSessionTask` and the progress object is bidirectional.
 Brotli compression algorithm is about 15% better than gzip.
 
 HTTPS response header `Content-Encoding: br` supported in `URLSession`. Requires HTTPS (TLS).
+
+## Caching
+
+> [WWDC 2018 - Optimizing Your App for Today’s Internet](https://developer.apple.com/videos/play/wwdc2018/)
+
+The URL Loading System caches responses both in memory and on disk, improving performance and reducing network traffic.
+
+`URLSessionConfiguration` has a property called `requestCachePolicy`; Each `URLRequest` instance contains a `URLRequest.CachePolicy` object to indicate if and how caching should be performed.
+
+Currently, only HTTP and HTTPS responses are cached.
+
+Caching is a great way of reducing latency but it's important to note that caching might result in disk IO. Also, `usePrococolCachePolicy` caches HTTPS responses to disk, which may be undesirable for securing user data. Consider adopting the delegate method to decide what resources should be cached:
+
+```swift
+func urlSession(_ session: URLSession, dataTask: URLSessionDataTask,
+                willCacheResponse proposedResponse: CachedURLResponse,
+                completionHandler: @escaping (CachedURLResponse?) -> Void) {
+    if proposedResponse.response.url?.scheme == "https" {
+        let updatedResponse = CachedURLResponse(response: proposedResponse.response,
+                                                data: proposedResponse.data,
+                                                userInfo: proposedResponse.userInfo,
+                                                storagePolicy: .allowedInMemoryOnly)
+        completionHandler(updatedResponse)
+    } else {
+        completionHandler(proposedResponse)
+    }
+}
+```
+
+For servers, please consider using cache control headers `Cache-Control: no-store` to decide what resources should be cacheable.
+
+## WebSocket
+
+> [WWDC 2019 - Advances in Networking, Part 1](https://developer.apple.com/videos/play/wwdc2019/712/?time=1614)
+
+**WebSocket** allows bidirectional communication over a single HTTP connection. This enables developers to write applications like chat, multiplayer games, and other real-time applications.
+
+Web applications were originally developed around a client/server model, where the Web client is always the initiator of transactions, requesting data from the server. Thus, there was no mechanism for the server to independently send, or push, data to the client without the client first making a request.
+
+To overcome this deficiency, Web app developers can implement a technique called **HTTP Long-Polling**. When a client wants to receive a response from the server, it sends out a request. The server responds with a 200 status code immediately, but it does not send out the response body because it doesn't have one at this point. Sometime in the future, once the server has a response ready for the client, it sends it out to the client. At which point, the client sends a new request, indicating that it wants to receive the next message.
+
+![img-80](/assets/images/5d80151f-22f5-4462-9546-450c1ac1c887.png)
+
+There are some disadvantages associated with long polling. Both the end points when they want to send messages have to either send an HTTP request or an HTTP response, which is a lot of overhead. Additionally, complexity has to be maintained at the server to enable long polling.
+
+Let's see how WebSockets can solve this problem. The first step of the WebSocket handshake, the client sends out a request to the server, indicating that it wants to upgrade this connection to WebSocket. The server responds with the 101 switching protocol to response, at which point we have a bidirectional stream between the two end points. Both the end points are now free to send messages in either direction without any HTTP overhead.
+
+![img-80](/assets/images/2f6c1e53-c6d0-45ab-bd75-efbfa0c8dac2.png)
+
+WebSocket works over the well-known HTTP ports and is fully compatible with the existing web infrastructure, allowing you to connect to proxies, CDNs, and firewalls.
+
+Historically, the WebSocket protocol has been available as a JavaScript API in web browsers, now we've decided to extend this API to our networking framework. This year we are excited to announce new `URLSessionWebSocketTask` API!
+
+```swift
+// Create with URL
+let task = URLSession.shared.webSocketTask(with: URL(string: "wss://websocket.example")!)
+task.resume()
+// Send a message
+task.send(.string("Hello")) { error in /* Handle error */ }
+// Receive a message
+task.receive { result in /* Handle result */ }
+```
+
+You can send data or string messages on the task. You can also receive messages on the task by passing a completion handler, which will be called asynchronously once we receive the entire message from the server.
+
+The APIs available for you to add WebSockets to your apps today:
+
+![img-80](/assets/images/8ebabd99-dc14-4136-91f6-0d8892a53af3.png)
 
 # Network Extension
 
@@ -287,6 +359,16 @@ The best solution for schools is to filter the network content on the device. Be
 # Network.framework
 
 > [WWDC 2018 - Introducing Network.framework: A modern alternative to Sockets](https://developer.apple.com/videos/play/wwdc2018/715/)
+
+Thirty years ago we had BSD Sockets. It was a great API. But now the Internet has become a lot more complicated.
+
+You may have assumed that `URLSession` is also just a wrap around Sockets. Not quite. `URLSession` is actually built using Apple's user space networking code Network.framework.
+
+And starting now, in iOS 12, we are exposing that same API that URLSession uses so that your apps can directly use that for making TCP connections and other appropriate use cases.
+
+And if you're the developer of third-party libraries that are built on BSD Sockets, we encourage you to look at the Network.framework APIs.
+
+![img-60](/assets/images/2f20c9f3-ce1c-48f5-942c-31d8b00126df.png)
 
 Use this framework when you need direct access to protocols like TLS, TCP, and UDP for your custom application protocols. Continue to use `URLSession`, which is built upon this framework, for loading HTTP- and URL-based resources.
 
@@ -406,6 +488,10 @@ When a certificate authority issues a certificate to a server, it also records t
 
 In iOS 12.1, certificates issued after October 15, 2018, from a system-trusted root certificate must be logged in a trusted Certificate Transparency log to be allowed for TLS connections.
 
+# [WWDC 2019 - Advances in Networking, Part 1](https://developer.apple.com/videos/play/wwdc2019/712/)
+
+# [WWDC 2019 - Advances in Networking, Part 2](https://developer.apple.com/videos/play/wwdc2019/713/)
+
 # [WWDC 2020 - Boost performance and security with modern networking](https://developer.apple.com/videos/play/wwdc2020/10111/)
 
 # [WWDC 2020 - Build local push connectivity for restricted networks](https://developer.apple.com/videos/play/wwdc2020/10113/)
@@ -414,13 +500,7 @@ In iOS 12.1, certificates issued after October 15, 2018, from a system-trusted r
 
 # [WWDC 2020 - Support local network privacy in your app](https://developer.apple.com/videos/play/wwdc2020/10110/)
 
-# [WWDC 2019 - Advances in Networking, Part 1](https://developer.apple.com/videos/play/wwdc2019/712/)
-
-# [WWDC 2019 - Advances in Networking, Part 2](https://developer.apple.com/videos/play/wwdc2019/713/)
-
 # [WWDC 2019 - Designing for Adverse Network and Temperature Conditions](https://developer.apple.com/videos/play/wwdc2019/422/)
-
-# [WWDC 2019 - Introducing Low-Latency HLS](https://developer.apple.com/videos/play/wwdc2019/502/)
 
 # WebKit
 

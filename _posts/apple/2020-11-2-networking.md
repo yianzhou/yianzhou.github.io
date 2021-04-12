@@ -98,10 +98,12 @@ Another evolution to the `NSURLSession` API is the addition of network statistic
 - `taskInterval: DateInterval`
 - `redirectCount: Int`
 - `transactionMetrics: [URLSessionTaskTransactionMetrics]`
-  - 1 - Request and Response
-  - 2 - Protocol and Connection
-  - 3 - Load Info
-  - 4 - Connection Establishment and Transmission
+  - Request and Response
+  - Protocol and Connection
+  - Load Info
+  - Connection Establishment and Transmission
+  - Address and port
+  - TLS version
 
 ![img](https://docs-assets.developer.apple.com/published/573ade75c6/77f6bef0-3201-49ab-bed8-33ce7ec1072f.png)
 
@@ -149,7 +151,9 @@ What we have new for you in iOS 11 is automatic navigation of authenticating pro
 
 We have Wi-Fi assist since iOS 9 (2015). Wi-Fi Assist is triggered whenever we are in a marginal Wi-Fi scenario, which means the signal strength of Wi-Fi is very low. Whenever iOS is detecting this, it will play a contest between Wi-Fi and cellular data. So when you are creating a new connection, we will first attempt to create the connection on Wi-Fi. And shortly after that where if this connection hasn't been established, we will go on and create a connection over cell so that if cellular data wins, we will start using the cellular link.
 
-You get automatic reliable network fallback if you use NSURLSession and CFNetwork-layer APIs. Suppose you're at the fringe of Wi-Fi and your TCP connection not succeeding, the OS automatically initiates parallel connection over mobile data. And the first to complete wins. What you can do is pay attention to the better route notification so that you migrate back to Wi-Fi when it's available.
+In [iOS 13](https://developer.apple.com/videos/play/wwdc2019/712), even when a flow has already been established on Wi-Fi and has started to exchange data, if later on the signal quality is reducing, we are able to move the next request over to cell.
+
+You get automatic reliable network fallback if you use `URLSession` and CFNetwork-layer APIs. Suppose you're at the fringe of Wi-Fi and your TCP connection not succeeding, the OS automatically initiates parallel connection over mobile data. And the first to complete wins. What you can do is pay attention to the better route notification so that you migrate back to Wi-Fi when it's available.
 
 ```swift
 func urlSession(_ session: URLSession, betterRouteDiscoveredFor streamTask: URLSessionStreamTask) {
@@ -474,7 +478,9 @@ In iOS 12.2, TLS 1.3 is enabled by default for Network.framework (low-level, iOS
 
 ![img](/assets/images/e35da8fc-1047-41c4-8e39-77ac7488905e.png)
 
-Strong cryptography and Forward Secrecy by default.
+- One round trip (almost always) connection setup
+- Strong cryptography AEAD with Forward Secrecy by default
+- Privacy: certificates and most handshake fields are encrypted
 
 # [WWDC 2018 - Optimizing Your App for Today’s Internet](https://developer.apple.com/videos/play/wwdc2018/714/)
 
@@ -488,9 +494,31 @@ When a certificate authority issues a certificate to a server, it also records t
 
 In iOS 12.1, certificates issued after October 15, 2018, from a system-trusted root certificate must be logged in a trusted Certificate Transparency log to be allowed for TLS connections.
 
-# [WWDC 2019 - Advances in Networking, Part 1](https://developer.apple.com/videos/play/wwdc2019/712/)
-
 # [WWDC 2019 - Advances in Networking, Part 2](https://developer.apple.com/videos/play/wwdc2019/713/)
+
+## Bonjour
+
+Bonjour 是苹果为基于组播域名服务 (multicast DNS) 的开放性零设置网络标准所起的名字，能自动发现 IP 网络上的设备自动发现彼此，而不需输入 IP 地址或配置 DNS 服务器。使用 Bonjour 的设备在网络中自动传播自己的服务信息、并聆听其它设备的服务信息，设备之间就像在打招呼，这也是其命名为 Bonjour（法语：你好）的原因。
+
+Bonjour is how you advertise and discover services on the network. It's used anytime you print with AirPrint, anytime you are connecting to something without typing in an IP address or a host name. Bonjour is now available on every major platform.
+
+We can make peer-to-peer connections and use wide-area discovery.
+
+## Optimistic DNS
+
+> [WWDC 2018 - Optimizing Your App for Today’s Internet](https://developer.apple.com/videos/play/wwdc2018/)
+
+Many servers have a very short time to live configured on their DNS records. And they do this such that if a server goes down or the server wants to load balance over another IP address, it can quickly change the IP address record and have clients adjust and start using the new address.
+
+The downside, though, is that this really can hurt client performance. With a short time to live, a client will almost always have to take the round trip to do DNS, to request the address for the host name that you are connecting to. Most of the time, the server address has not changed at all, and so this is a wasted round trip.
+
+So, optimistic DNS is a solution that we released last year that solves this problem. Optimistic DNS allows your connection to optimistically connect to the last known good IP address for that host name, in parallel with issuing a new query for the host name's current address. If nothing has changed, which is almost always the case, the connection will just establish to the old IP address. But if something has changed you'll still get the new IP address and connect to it instead.
+
+It is on by default for connections using Network.framework and `URLSession`.
+
+## Network Link Conditioner
+
+![img](/assets/images/844258d8-8216-490f-9fc9-add0f0644ebb.png)
 
 # [WWDC 2020 - Boost performance and security with modern networking](https://developer.apple.com/videos/play/wwdc2020/10111/)
 

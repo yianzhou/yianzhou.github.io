@@ -102,7 +102,8 @@ There is a command line tool on macOS called `nscurl`.
 
 ## HTTP/2
 
-`URLSession` supports HTTP/2 protocol only over an encrypted connection. And your HTTP/2 server requires to support ALPN for protocol negotiation.
+Using `URLSession` on the client will negotiate HTTP/2 by default if it is enabled on the server.
+So double-check your server settings to make sure HTTP/2 is enabled. By the way, `URLSession` supports HTTP/2 protocol only over an encrypted connection.
 
 `URLSession` 运行在 HTTP/1.1 时，对同一个 IP 地址的请求，会创建多个并行的 TCP 连接，每个连接的建立都会带来资源消耗（见 [`httpMaximumConnectionsPerHost`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration/1407597-httpmaximumconnectionsperhost)）；而在 HTTP/2，由于分帧和多路复用，一个 TCP 连接就可以处理多个资源请求。
 
@@ -111,6 +112,8 @@ In [iOS 12](https://developer.apple.com/videos/play/wwdc2018/714), we have somet
 ![img-80](/assets/images/d674106b-2614-47f4-b46b-f82733aa799b.png)
 
 The first certificate presented to us covers all the subdomains under example.com. Also notice that delivery.example.com, it results to the same IP address as the first connection. It's safe to assume we're talking to the same endpoint and reuse the connection instead of opening a new one when we want to fetch the second resource.
+
+**Header compression** support allows for better bandwidth utilization as extraneous bytes can be eliminated on both request and response headers.
 
 Two to three times faster if you configure the **Server Push** on your HTTP/2 server! And you don't even have to change any code in your app! The data for your `URLSessionDataTask` will be delivered out of the Server Push storage directly to your application.
 
@@ -465,7 +468,7 @@ In cryptography, forward secrecy (FS), also known as perfect forward secrecy (PF
 
 ## TLS 1.3
 
-In iOS 12.2, TLS 1.3 is enabled by default for Network.framework and `URLSession` APIs.
+TLS 1.3 is enabled by default for Network.framework and `URLSession` APIs.
 
 ![img](/assets/images/e35da8fc-1047-41c4-8e39-77ac7488905e.png)
 
@@ -511,13 +514,68 @@ It is on by default for connections using Network.framework and `URLSession`.
 
 ![img](/assets/images/844258d8-8216-490f-9fc9-add0f0644ebb.png)
 
-# [WWDC 2020 - Boost performance and security with modern networking](https://developer.apple.com/videos/play/wwdc2020/10111/)
-
-# [WWDC 2020 - Build local push connectivity for restricted networks](https://developer.apple.com/videos/play/wwdc2020/10113/)
-
-# [WWDC 2020 - Support local network privacy in your app](https://developer.apple.com/videos/play/wwdc2020/10110/)
-
 # [WWDC 2019 - Designing for Adverse Network and Temperature Conditions](https://developer.apple.com/videos/play/wwdc2019/422/)
+
+## Designing for Adverse Temperature Conditions
+
+Register for `ProcessInfo.thermalStateDidChangeNotification`, use the `ProcessInfo.ThermalState` cases to react to thermal state changes.
+
+```swift
+NotificationCenter.default.addObserver(self, selector: #selector(reactToThermalStateChange(_:)),
+                                       name: ProcessInfo.thermalStateDidChangeNotification,
+                                       object: nil
+)
+
+@objc func reactToThermalStateChange(_ notification : Notification) {
+    thermalState = ProcessInfo.processInfo.thermalState
+}
+```
+
+New device conditions in Xcode 11 lets to you quickly and easily put your test devices in adverse network or temperature states.
+
+![img](/assets/images/a0f5bbcd-bd34-4f42-aa87-4fefde8471ab.png)
+
+![img](/assets/images/f9a91fba-56b4-45e8-8e86-56682986b25f.png)
+
+# WWDC 2020
+
+> [WWDC 2020 - Boost performance and security with modern networking](https://developer.apple.com/videos/play/wwdc2020/10111/)
+>
+> [WWDC 2020 - Build local push connectivity for restricted networks](https://developer.apple.com/videos/play/wwdc2020/10113/)
+>
+> [WWDC 2020 - Support local network privacy in your app](https://developer.apple.com/videos/play/wwdc2020/10110/)
+
+## Encrypted DNS
+
+> [WWDC 2020 - Enable encrypted DNS](https://developer.apple.com/videos/play/wwdc2020/10047)
+
+Encrypted DNS is a key technology for improving internet privacy. The privacy concern is that DNS requests and responses are sent over an unencrypted transport, UDP. That means that other devices on the network can not only see what names you're looking up, but they can even interfere with the responses.
+
+Starting this year, Apple platforms natively support encrypted DNS. There are two supported protocols. DNS over TLS, also called DoT, and DNS over HTTPS, also called DoH.
+
+There are two ways that encrypted DNS can be enabled:
+
+- The first way is to choose a single DNS server as the default resolver for all apps on the system. If you provide a public DNS server, you can now write a NetworkExtension app that configures the system to use your server. Or, if you use mobile device management, MDM, to configure enterprise settings on devices, you can push down a profile to configure encrypted DNS settings for your networks.
+- The second way is to select a specific server to use for some or all of your app's connections.
+
+To use encrypted DNS throughout your app:
+
+```swift
+import Network
+
+if let url = URL(string: "https://dnsserver.example.net/dns-query") {
+    let address = NWEndpoint.hostPort(host: "2001:db8::2", port: 443)
+    NWParameters.PrivacyContext.default.requireEncryptedNameResolution(true, 
+        fallbackResolver: .http(url, serverAddresses: [ address ]))
+}
+
+let task = URLSession.shared.dataTask(with: ...)
+task.resume()
+
+getaddrinfo(...)
+```
+
+This applies your configuration to every DNS resolution initiated by your app, either when you use `URLSessionTask`, or when you use lower-layer APIs like `getaddrinfo`.
 
 # WebKit
 

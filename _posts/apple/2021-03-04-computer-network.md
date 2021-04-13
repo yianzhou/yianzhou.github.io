@@ -309,11 +309,15 @@ Another feature of HTTP/2 is the ability for a server to send multiple responses
 
 ## HTTP/3
 
-Both HTTP/1.1 and HTTP/2 use TCP as their transport.
+Both HTTP/1.1 and HTTP/2 use TCP as their transport. QUIC, is a new protocol that is implemented in the application layer over the bare-bones UDP protocol. QUIC has several features that are desirable for HTTP, such as message multiplexing (interleaving), per-stream flow control, and low-latency connection establishment. QUIC is implemented over UDP where each stream is independent so that a lost packet only halts the particular stream to which the lost packet belongs, while the other streams can go on.
 
-QUIC, is a new “transport” protocol that is implemented in the application layer over the bare-bones UDP protocol. QUIC has several features that are desirable for HTTP, such as message multiplexing (interleaving), per-stream flow control, and low-latency connection establishment.HTTP/3 is yet a new HTTP protocol that is designed to operate over QUIC. Many of the HTTP/2 features (such as message interleaving) are subsumed by QUIC, allowing for a simpler, streamlined design for HTTP/3.
+HTTP/3 is yet a new HTTP protocol that is designed to operate over QUIC. Many of the HTTP/2 features (such as message interleaving) are subsumed by QUIC, allowing for a simpler, streamlined design for HTTP/3.
 
-QUIC is implemented over UDP where each stream is independent so that a lost packet only halts the particular stream to which the lost packet belongs, while the other streams can go on.
+HTTP/3 has TLS 1.3 security built right in and provides all the same multiplexed stream support as HTTP/2, but with further reductions to head-of-line blocking so that losses of any individual request or response won't hold up other potentially unrelated messages.
+
+HTTP/3 also has higher fidelity information to provide improved congestion control and recovery of lost packets.
+
+HTTP/3 also brings built-in mobility support such that network transitions don't cause in-progress operations to fail. They can instead seamlessly continue on the new network without interruption.
 
 ## Email
 

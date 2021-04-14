@@ -10,6 +10,14 @@
   font-size: 20px;
 }
 
+ul li {
+  margin-bottom: 2.4pt;
+}
+
+ul#markdown-toc li {
+  margin-bottom: 0pt;
+}
+
 @media screen and (min-width: 800px) {
   .wrapper {
     /* max-width: calc(800px - (30px * 2)); */

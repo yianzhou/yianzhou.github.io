@@ -19,7 +19,7 @@ There are two types of push notifications: Alert notifications and background no
 
 **Background notifications** allow your application to fetch data from the background upon receiving push notifications. These should be used to keep your application up-to-date even if the application isn't running. The system will launch your application and give you necessary runtime in order to perform your background update.
 
-# 请求通知权限
+# Request Authorization
 
 ```swift
 /// 是否询问过通知权限
@@ -45,16 +45,45 @@ UNUserNotificationCenter.current().requestAuthorization(options: [.alert, .badge
 
 `registerUserNotificationSettings(_:)` 已废弃。
 
-# UNNotificationTrigger
+# Notification Payload
 
-UNNotificationTrigger is an abstract class, concrete trigger classes include the following:
+This is an example payload for an alert notification:
 
-- UNTimeIntervalNotificationTrigger 时间间隔触发（本地）
-- UNCalendarNotificationTrigger 日期触发（本地）
-- UNLocationNotificationTrigger 地点触发（本地）
-- UNPushNotificationTrigger 服务端推送（远程）
+```json
+{
+  "Simulator Target Bundle": "com.yianzhou.demo",
+  "aps": {
+    "alert": {
+      "title": "测试标题",
+      "subtitle": "测试副标题",
+      "body": "测试内容"
+    },
+    "sound": "default",
+    "badge": 1
+  },
+  // 附加信息，通过 `response.notification.request.content.userInfo` 取到
+  "payloads": {
+    "url": "demo://playerv2?id=769"
+  }
+}
+```
 
-# Step by step
+创建 json 文件、添加上面的内容，通过命令行可以推送到模拟器：`xcrun simctl push booted ./1605665134.json`
+
+An example of background notification payload:
+
+```json
+{
+  "aps": {
+    "content-available": 1
+  },
+  "myCustomKey": "myCustomData"
+}
+```
+
+The only field required for background notifications is the `content-available` field inside of the aps dictionary. This field tells the system that this is a background notification and that your application should be launched to perform your updates.
+
+# Alert Notification
 
 调试工具：[Knuff](https://github.com/KnuffApp/Knuff)、[SmartPush](https://github.com/shaojiankui/SmartPush)
 
@@ -126,7 +155,7 @@ center.delegate = self;
 
 ~~`- (void)application:(UIApplication *)application didReceiveLocalNotification:(UILocalNotification *)notification;`~~
 
-6\. 静默推送
+# Background Notification
 
 静默推送不会显示任何推送消息。系统会将在后台静默启动 app、或者从挂起状态唤醒它。开发者有 30s 的时间内在该回调方法中处理一些业务逻辑，并在处理完成后调用 `fetchCompletionHandler`。
 
@@ -140,40 +169,11 @@ center.delegate = self;
 
 The system calls this method when your app is running in the foreground or background. In addition, if you enabled the remote notifications background mode, the system launches your app (or wakes it from the suspended state) and puts it in the background state when a remote notification arrives. However, the system does not automatically launch your app if the user has force-quit it. In that situation, the user must relaunch your app or restart the device before the system attempts to launch your app automatically again.
 
-# Notification Payload
+# UNNotificationTrigger
 
-This is an example payload for an alert notification:
+UNNotificationTrigger is an abstract class, concrete trigger classes include the following:
 
-```json
-{
-  "Simulator Target Bundle": "com.yianzhou.demo",
-  "aps": {
-    "alert": {
-      "title": "测试标题",
-      "subtitle": "测试副标题",
-      "body": "测试内容"
-    },
-    "sound": "default",
-    "badge": 1
-  },
-  // 附加信息，通过 `response.notification.request.content.userInfo` 取到
-  "payloads": {
-    "url": "demo://playerv2?id=769"
-  }
-}
-```
-
-创建 json 文件、添加上面的内容，通过命令行可以推送到模拟器：`xcrun simctl push booted ./1605665134.json`
-
-An example of background notification payload:
-
-```json
-{
-  "aps": {
-    "content-available": 1
-  },
-  "myCustomKey": "myCustomData"
-}
-```
-
-The only field required for background notifications is the `content-available` field inside of the aps dictionary. This field tells the system that this is a background notification and that your application should be launched to perform your updates.
+- UNTimeIntervalNotificationTrigger 时间间隔触发（本地）
+- UNCalendarNotificationTrigger 日期触发（本地）
+- UNLocationNotificationTrigger 地点触发（本地）
+- UNPushNotificationTrigger 服务端推送（远程）

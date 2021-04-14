@@ -5,9 +5,9 @@ permalink: apple
 
 # 日常开发
 
-[开发及调试]({% post_url apple/2020-08-07-dev %})，[macOS]({% post_url apple/2018-12-18-macOS %})，[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})，[通知]({% post_url apple/2021-01-25-user-notification %})
+[开发及调试]({% post_url apple/2020-08-07-dev %})，[macOS]({% post_url apple/2018-12-18-macOS %})，[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})
 
-[App's Life Cycle]({% post_url apple/2021-04-10-app's-life-cycle %})
+[User Notification]({% post_url apple/2021-01-25-user-notification %})，[App in the Background]({% post_url apple/2021-04-10-app-in-the-background %})
 
 [Uniform Type Identifiers]({% post_url apple/2021-04-14-uniform-type-identifiers %})
 

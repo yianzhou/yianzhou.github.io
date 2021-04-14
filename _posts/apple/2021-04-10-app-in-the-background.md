@@ -1,11 +1,27 @@
 ---
-title: "App's Life Cycle"
+title: "App in the Background"
 categories: [Apple]
 ---
 
 <!-- prettier-ignore -->
 * Do not remove this line (it will not be displayed)
 {:toc}
+
+> [WWDC 2019 - Advances in App Background Execution](https://developer.apple.com/videos/play/wwdc2019/707/)
+>
+> [WWDC 2020 - Background execution demystified](https://developer.apple.com/videos/play/wwdc2020/10063/)
+
+# What's affecting Background Execution?
+
+Top seven factors that are likely to affect:
+
+- Critically low battery (iPhone battery <= 20%)
+- Low Power Mode: `ProcessInfo.processInfo.isLowPowerModeEnabled`, `NSProcessInfoPowerStateDidChange`
+- App usage: There is an on-device predictive engine that learns which apps people will use and when.
+- App switcher: Users can stop transfers by swiping to kill the app in the App Switcher. When the system determines which apps to run, it constrains to the set of apps that are still visible in the App Switcher, so as to prevent the app from running unexpectedly against user intent.
+- Background App Refresh switch
+- System budgets
+- Rate limiting
 
 # Background Modes
 
@@ -33,6 +49,10 @@ For most apps, five seconds is enough to perform any crucial tasks, but if you n
 
 # Background App Refresh
 
+Check the status: `UIApplication.shared.backgroundRefreshStatus`
+
+Observe the notification: `UIApplication.backgroundRefreshStatusDidChangeNotification`
+
 Background App Refresh lets your app run periodically in the background so that it can update its content.
 
 1\. Enable at: Xcode - Capabilities - Background Modes - Background fetch
@@ -55,22 +75,32 @@ func application(_ application: UIApplication,
 }
 ```
 
+# Background Notification
+
+See [Background Notification]({% post_url apple/2021-01-25-user-notification %}#background-notification).
+
+![img](/assets/images/cbfea2f0-a85b-41e3-8cce-69803c19941e.png)
+
+Instead of running upon every push, the system delays the delivery of some pushes to limit the amount of execution while maintaining a frequent launch cadence. The time interval between runs was just 15 minutes, meaning we had many times per hour, and the app will be up-to-date before the user launches it.
+
 # Background URLSession
 
 You can create tasks that run in the background. **These tasks continue to run even when your app is suspended.**
 
-You don’t have to do all background network activity with background sessions. Apps that declare appropriate background modes can use default URL sessions and data tasks, just as if they were in the foreground.
+_You don’t have to do all background network activity with background sessions. Apps that declare appropriate background modes can use default URL sessions and data tasks, just as if they were in the foreground._
 
 > Listing 1
 
 ```swift
 private lazy var urlSession: URLSession = {
     let config = URLSessionConfiguration.background(withIdentifier: "MySession")
-    config.isDiscretionary = true // for time-insensitive tasks
+    config.isDiscretionary = true // [1]
     config.sessionSendsLaunchEvents = true // to have the system to wake up your app when a task completes
     return URLSession(configuration: config, delegate: self, delegateQueue: nil)
 }()
 ```
+
+[1] The system will perform **discretionary** transfers when conditions are optimal, perhaps when the phone is plugged in and on Wi-Fi. If you enqueue a transfer while the app is in the background, the system will ignore the `isDiscretionary` property and treat it as true. From the foreground, you can optionally request discretionary.
 
 You create download tasks from this session. With background sessions, **the actual transfer is performed by a process that is separate from your app’s process**.
 
@@ -145,3 +175,7 @@ func urlSession(_ session: URLSession,
 如果实现了这个代理方法，将会回到原来两次后台启动的工作流。开发者需考虑，应用的网络请求是否会变得“过时”而不再需要。如果应用内可以做出这个判断，那么在请求发生前、通过这个回调修改或取消请求，将是有价值的。因为一个过时的、不被需要的请求造成的开销，比多一次后台启动更大。
 
 `countOfBytesClientExpectsToSend`, `countOfBytesClientExpectsToReceive` are used by the system to optimize the background task scheduling. Developers are strongly encouraged to provide an approximate upper bound, or an exact byte count, if possible, rather than accept the default.
+
+# Background Processing
+
+Background processing tasks give your app several minutes runtime to do maintenance work, like indexing a database, on-device Core ML training. The system will wait to run these tasks until the user is not actively using the device, such as when it's charging at night. As long as the user plugs in every day, your background processing tasks should be able to run daily.

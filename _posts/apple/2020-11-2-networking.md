@@ -1,5 +1,5 @@
 ---
-title: "WWDC - Networking"
+title: "Networking in Apple Platforms"
 categories: [Apple]
 ---
 

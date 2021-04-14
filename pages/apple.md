@@ -9,6 +9,8 @@ permalink: apple
 
 [App's Life Cycle]({% post_url apple/2021-04-10-app's-life-cycle %})
 
+[Uniform Type Identifiers]({% post_url apple/2021-04-14-uniform-type-identifiers %})
+
 # 计算机科学
 
 [iOS 进阶]({% post_url apple/2020-08-07-advanced %})，[Swift 底层]({% post_url apple/2019-06-24-swift %})

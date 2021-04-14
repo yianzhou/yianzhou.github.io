@@ -11,6 +11,8 @@ permalink: apple
 
 [Uniform Type Identifiers]({% post_url apple/2021-04-14-uniform-type-identifiers %})
 
+[Apple Silicons]({% post_url apple/2021-04-14-apple-silicons %})
+
 # 计算机科学
 
 [iOS 进阶]({% post_url apple/2020-08-07-advanced %})，[Swift 底层]({% post_url apple/2019-06-24-swift %})

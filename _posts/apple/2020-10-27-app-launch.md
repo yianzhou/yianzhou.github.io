@@ -7,9 +7,9 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
-# Mach-O
-
 > [WWDC 2016 - Optimizing App Startup Time](https://developer.apple.com/videos/play/wwdc2016/406/)
+
+# Mach-O
 
 **Image**: An executable, dylib, or bundle.
 
@@ -49,23 +49,49 @@ There are two security things that have impacted dyld, ASLR and code signing. Fo
 
 # exec() to main()
 
-`exec()` is a system call. When you trap into the kernel, you basically say I want to replace this process with this new program. The kernel wipes the entire address space and maps in your executable.
+`exec()` is a system call. When you trap into the kernel, you basically say I want to replace this process with this new program. The kernel wipes the entire address space and maps-in your executable.
 
-For ASLR the system maps it in at a random address. From that address, back down to zero, it marks that whole region inaccessible (**PAGEZERO**). The size of that region is at least 4GB for 64 bit processes. This catches any NULL pointer references and pointer truncation errors.
+For ASLR the system maps your executable in at a random address. From that address, back down to zero, it marks that whole region (**PAGEZERO**) inaccessible. The size of that region is at least 4GB for 64 bit processes. This catches any NULL pointer references and pointer truncation errors.
 
-When the kernel's done mapping a process, it now maps another Mach-O called **dyld** into that process at another random address, sets the PC (**program counter**) into dyld and let dyld finish launching the process. So now dyld is running in process and its job is to load all the dylibs that you depend on and get everything prepared and running.
+When the kernel's done mapping a process, it now maps another Mach-O called **dyld** into that process at another random address, sets the PC (**program counter**) into dyld and let dyld load all the dylibs and get everything prepared.
 
-# WWDC
+![img](/assets/images/59ab22bd-6bf5-47b8-a758-0f54334aa35c.png)
 
-[WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
+First, dyld has to map all the dependent dylibs. To find those dylibs, it first reads the header of the main executable that the kernel already mapped in. That header has a list of all the dependent libraries. Once dyld found each dylib, it validate it, register that code signature to the kernel, then mmap each segment in that dylib. Each of the dylibs may depend on something that's already loaded or something need to load. Apps typically load 100 to 400 dylibs! Luckily most of those are OS dylibs which load very quickly because the OS do a lot of pre-calculate and pre-cache works.
 
-[WWDC 2017 - App Startup Time: Past, Present, and Future](https://developer.apple.com/videos/play/wwdc2017/413)
+![img-40](/assets/images/3def0897-d699-4017-8410-b9bd7676c6b4.png)
 
-[WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
+Eventually, it has everything loaded, but now they're all independent of each other, we have to bind them together. But, because of code signing we can't actually alter instructions. So how does one dylib call into another dylib if you can't change the instructions? Modern code-gen is dynamic PIC (Position Independent Code), means code can run loaded at any address and is never altered. Actually, the co-gen creates pointers in the `__DATA` segment that point to implementation. The dyld is going to **fix up** pointers and data (in `__DATA` sengment).
 
-# 统计冷启动时长
+There're two main categories of fix-ups, **rebasing** and **binding**.
 
-Xcode -> Edit Scheme -> Arguments -> Environment Variables，设置 `DYLD_PRINT_STATISTICS` 和 `DYLD_PRINT_STATISTICS_DETAILS` 两个值为 1。
+Rebasing is adjusting pointers to within an image. It means going through all your data pointers and adding a slide to them (because of ASLR). Location of **rebase locations** is encoded in `__LINKEDIT`. So, we page-in all the `__DATA` pages and changing them.（这就解释了为什么 `__DATA` sengment 在内存中是脏分页）
+
+Binding is setting pointers to outside image. All references to something in another dylib are symbolic. So dyld needs to find the implementation of that **symbol** by looking through symbol tables. Once it's found, that values is stored in that data pointer. This is more computationally complex than rebasing is. But there's very little IO because rebasing has done most of the IO already.
+
+> To see fix-ups: `> xcrun dyldinfo -rebase -bind -lazy_bind myapp.app/myapp`
+
+Next, a few extra things that **ObjC Runtime** requires:
+
+- All ObjC class definitions are registered with a global table.
+- Non-fragile ivars offsets updated.
+- Categories are inserted into method lists, including those not in your executable but in other dylibs.
+- `objc_msgSend` is based on selectors being unique so we need unique selectors.
+
+Finally, before jumping to `main`, we have to run initializers:
+
+- C++ compiler generates initializer for statically allocated objects
+- ObjC `+load` methods
+
+# Practice
+
+400 milliseconds is a good launch time. Don’t ever take longer than 20 seconds, in that case app will be killed.
+
+After call `main`, we have to call `UIApplicationMain`, that does some other things including running the framework initializers and loading your nibs. And then finally you'll get a call back `applicationWillFinishLaunching`. These last two functions are counted in that 400 milliseconds.
+
+A **warm launch** is an app where the application is already in memory, either because it's been launched and quit previously, and it's still sitting in the discache in the kernel, or because you just copied it over. A **cold launch** is a launch where it's not in the discache, when your user is launching an app after rebooting the phone, or for the first time in a long time.
+
+We have a built-in measurement in dyld, you can access it through setting an environment variable. (Xcode -> Edit Scheme -> Arguments -> Environment Variables, `DYLD_PRINT_STATISTICS=1`, `DYLD_PRINT_STATISTICS_DETAILS=1`)
 
 ```log
 Total pre-main time: 1.3 seconds (100.0%)
@@ -113,21 +139,17 @@ total images defining weak symbols:  70
 total images using weak symbols:  157
 ```
 
+# WWDC
+
+[WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
+
+[WWDC 2017 - App Startup Time: Past, Present, and Future](https://developer.apple.com/videos/play/wwdc2017/413)
+
+[WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
+
 # 冷启动的各个阶段
 
-## main() 函数执行前
-
-在 main() 函数执行前，系统主要会做下面几件事情：
-
-1\. 加载可执行文件，包括应用程序二进制文件和动态库，动态库又会依赖其它的动态库，系统会设置一个共享缓存来解决加载的递归依赖问题。
-
-2\. 进行 rebase 指针调整、符号与地址的绑定。Rebase 是在镜像内部调整指针的指向，由于 ASLR，需要根据随机的地址偏移量进行指向修正。
-
-3\. Runtime 初始化，包括 objc 相关类的注册、category 注册、selector 唯一性检查等。
-
-4\. Initializers：ObjC `+load()` 方法；`attribute((constructor))` C++ 构造函数属性函数；C++ 静态全局变量等。
-
-相应地，这个阶段对于启动速度优化来说，可以做的事情包括：
+`main` 函数执行前：
 
 - 和优化包体积的思路一样，清理无用的类和代码，减小可执行文件的体积。
 - 减少加载启动后不会去使用的类或者方法。
@@ -135,13 +157,13 @@ total images using weak symbols:  157
 - `+load()` 方法里的内容可以放到首屏渲染完成后再执行，或使用 `+initialize()` 方法替换掉。因为，在一个 `+load()` 方法里，进行运行时方法替换操作会带来 4 毫秒的消耗。不要小看这 4 毫秒，积少成多，执行 +load() 方法对启动速度的影响会越来越大。
 - 控制 C++ 全局变量的数量。
 
-## main() 函数执行后
+`main` 函数执行后：
 
-main() 函数执行后的阶段，指的是从 main() 函数执行开始，到 `application(_:didFinishLaunchingWithOptions:)` 方法里首屏渲染相关方法执行完成。主要包括了：首屏初始化所需配置文件的读写操作、首屏数据模型的读取、首屏渲染的计算等。
+指的是从 main() 函数执行开始，到 `application(_:didFinishLaunchingWithOptions:)` 方法里首屏渲染相关方法执行完成。主要包括了：首屏初始化所需配置文件的读写操作、首屏数据模型的读取、首屏渲染的计算等。
 
 优化方式是，排查业务代码，与首屏渲染无关的代码全部延后执行。例如类的初始化、监听注册等。
 
-## 首屏渲染完成后
+首屏渲染完成后：
 
 从函数上来看，这个阶段指的是 `application(_:didFinishLaunchingWithOptions:)` 方法作用域内，执行首屏渲染之后的所有方法执行完成。这个阶段用户已经能够看到 App 的首页了，所以优化的优先级排在最后。但是，那些会卡住主线程的方法还是需要最优先处理的，不然还是会影响到用户后面的交互操作。
 
@@ -155,7 +177,7 @@ main() 函数执行后的阶段，指的是从 main() 函数执行开始，到 `
 
 # 检查、监控方法耗时情况
 
-一、Instruments 的分析工具 "App Launch"、"Time Profiler"，Time Profiler 定时抓取主线程上的方法调用堆栈，计算一段时间里各个方法的耗时。
+一、Instruments 的分析工具 App Launch, Time Profiler
 
 二、对 objc_msgSend 方法进行 hook 来掌握所有方法的执行耗时。利用开源库 [fishhook](https://github.com/facebook/fishhook) 和汇编实现。可参考戴铭的开源项目 [GCDFetchFeed](https://github.com/ming1016/GCDFetchFeed)，在需要检测耗时的地方调用 `[SMCallTrace start]`，结束时调用 stop 和 save 就可以打印出方法的调用层级和耗时了。
 

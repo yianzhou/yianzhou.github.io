@@ -21,9 +21,9 @@ permalink: apple
 
 [进程与线程]({% post_url apple/2020-10-23-processes-and-threads %})，[信号量]({% post_url apple/2019-12-29-semaphore %})
 
-[编译过程]({% post_url apple/2020-04-28-compile %})，[获取函数调用栈及符号化]({% post_url apple/2020-10-30-symbol %})
+[编译过程]({% post_url apple/2020-04-28-compile %})，[获取函数调用栈及符号化]({% post_url apple/2020-10-30-symbol %})，[卡顿监测]({% post_url apple/2020-07-04-lag %})，[崩溃监控]({% post_url apple/2020-10-30-crash %})
 
-[卡顿监测]({% post_url apple/2020-07-04-performance %})，[包体大小]({% post_url apple/2020-11-2-app-size %})，[内存优化]({% post_url apple/2020-10-31-memory %})，[启动时长优化]({% post_url apple/2020-10-27-app-launch %})，[崩溃监控]({% post_url apple/2020-10-30-crash %})
+[性能优化]({% post_url apple/2021-04-19-performance %})，[包体大小]({% post_url apple/2020-11-2-app-size %})，[内存优化]({% post_url apple/2020-10-31-memory %})，[启动时长优化]({% post_url apple/2020-10-27-app-launch %})
 
 [Auto Layout]({% post_url apple/2020-10-27-auto-layout %})，[Core Animation]({% post_url apple/2018-07-28-core-animation %})，[图形渲染]({% post_url apple/2020-04-22-graphics %})，[Metal]({% post_url apple/2019-01-10-Metal %})，[ARKit]({% post_url apple/2018-12-20-ARKit %})
 

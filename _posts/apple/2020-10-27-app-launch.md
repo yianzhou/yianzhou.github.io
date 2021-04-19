@@ -7,13 +7,59 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
+# Mach-O
+
+> [WWDC 2016 - Optimizing App Startup Time](https://developer.apple.com/videos/play/wwdc2016/406/)
+
+**Image**: An executable, dylib, or bundle.
+
+- Executable: Main binary for application
+- Dylib: Dynamic library
+- Bundle: Dylib that cannot be linked, only `dlopen()`, used on macOS
+
+**Framework**: Dylib with directory for resources and headers.
+
+A Mach-O image is divided into segments. Each segment is always a multiple of the page size. The page size is determined by the hardware, for arm64, the page size is 16KB, everything else it's 4KB.
+
+The most common segment names are `__TEXT`, `__DATA`, `__LINKEDIT`:
+
+- `__TEXT` contains the Mach header, machine instructions and read-only constants such as C strings
+- `__DATA` segment is read-write and contains global variables, static variables, etc
+- `__LINKEDIT` contains information about your functions and variables such as their names and addresses, the "meta data" about how to load the program
+
+Mach-O Universal Files: merged Mach-O images for different architectures.
+
+Every process has a logical address space which gets mapped to some physical page of RAM.
+
+File backed mapping: rather than actually read an entire file into RAM you can tell the VM system through the `mmap` call, that I want this slice of this file mapped to this address range in my process. Each time you access an address that hasn't been accessed before it will cause a **page fault**, the kernel will read just that one page. And that gives you lazy reading of your file.
+
+The `__TEXT` segment of any images can be mapped into VM, it will be read lazily, and all those pages can be shared between processes.
+
+As soon as one process actually tries to write to `__DATA` segment page, the **Copy-On-Write** (COW) happens. The Copy-On-Write causes the kernel to make a copy of that page into another physical RAM and redirect the mapping to go to that. So that one process now has its own copy of that page, which brings us to clean versus dirty pages. That copy is considered a dirty page.
+
+A **dirty page** is something that contains process specific information. A **clean page** is something that the kernel could regenerate later if needed such as re-reading from disk. So dirty pages are much more expensive than clean pages.
+
+`__LINKEDIT` is only needed while dyld is doing its operations. Once it's done, it doesn't need these `__LINKEDIT` pages anymore, the kernal can reclaim them when someone else needs RAM.
+
+You can mark a page readable, writable, or executable, or any combination of those.
+
+![img](/assets/images/0cd353b5-de0f-4150-88d1-d8ce30f960b4.png)
+
+There are two security things that have impacted dyld, ASLR and code signing. For code signing, at build time, every single page of your Mach-O file gets its own individual cryptographic hash. And all those hashes are stored in the `__LINKEDIT`. This allows each page to be validated that it hasn't been tampered with.
+
+# exec() to main()
+
+`exec()` is a system call. When you trap into the kernel, you basically say I want to replace this process with this new program. The kernel wipes the entire address space and maps in your executable.
+
+For ASLR the system maps it in at a random address. From that address, back down to zero, it marks that whole region inaccessible (**PAGEZERO**). The size of that region is at least 4GB for 64 bit processes. This catches any NULL pointer references and pointer truncation errors.
+
+When the kernel's done mapping a process, it now maps another Mach-O called **dyld** into that process at another random address, sets the PC (**program counter**) into dyld and let dyld finish launching the process. So now dyld is running in process and its job is to load all the dylibs that you depend on and get everything prepared and running.
+
 # WWDC
 
 [WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
 
 [WWDC 2017 - App Startup Time: Past, Present, and Future](https://developer.apple.com/videos/play/wwdc2017/413)
-
-[WWDC 2016 - Optimizing App Startup Time](https://developer.apple.com/videos/play/wwdc2016/406/)
 
 [WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
 

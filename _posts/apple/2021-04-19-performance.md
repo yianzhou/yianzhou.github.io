@@ -88,8 +88,6 @@ Code Instrumentation: (Profiling in release builds but don't ship your instrumen
 
 [Love at First Launch](https://developer.apple.com/videos/play/wwdc2017/816)
 
-[Optimizing App Startup Time](https://developer.apple.com/videos/play/wwdc2016/406/)
-
 [Unified Logging and Activity Tracing](https://developer.apple.com/videos/play/wwdc2016/721)
 
 [System Trace in Depth](https://developer.apple.com/videos/play/wwdc2016/411)

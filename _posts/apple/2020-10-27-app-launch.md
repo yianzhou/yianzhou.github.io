@@ -65,9 +65,9 @@ Eventually, it has everything loaded, but now they're all independent of each ot
 
 There're two main categories of fix-ups, **rebasing** and **binding**.
 
-Rebasing is adjusting pointers to within an image. It means going through all your data pointers and adding a slide to them (because of ASLR). Location of **rebase locations** is encoded in `__LINKEDIT`. So, we page-in all the `__DATA` pages and changing them.（这就解释了为什么 `__DATA` sengment 在内存中是脏分页）
+Rebasing is adjusting pointers to within an image. It means going through all your data pointers and adding a slide to them (because of ASLR). Location of those **rebase locations** is encoded in `__LINKEDIT`. When we start doing rebasing, we're actually causing page faults to page in all the `__DATA` pages. And then we cause copy and write as we're changing them. So rebasing can sometimes be expensive because of all the I/O.（这就解释了为什么 `__DATA` sengment 在内存中是脏分页）
 
-Binding is setting pointers to outside image. All references to something in another dylib are symbolic. So dyld needs to find the implementation of that **symbol** by looking through symbol tables. Once it's found, that values is stored in that data pointer. This is more computationally complex than rebasing is. But there's very little IO because rebasing has done most of the IO already.
+Binding is setting pointers to outside image. All references to something in another dylib are symbolic. So dyld needs to find the implementation of that **symbol** by looking through symbol tables. Once it's found, that values is stored in that data pointer. This is more computationally complex than rebasing is. But there's very little I/O because rebasing has done most of the I/O already.
 
 > To see fix-ups: `> xcrun dyldinfo -rebase -bind -lazy_bind myapp.app/myapp`
 
@@ -83,15 +83,17 @@ Finally, before jumping to `main`, we have to run initializers:
 - C++ compiler generates initializer for statically allocated objects
 - ObjC `+load` methods
 
-# Practice
+# Warn vs Cold Launch
+
+A **warm launch** is an app where the application is already in memory, either because it's been launched and quit previously, and it's still sitting in the discache in the kernel, or because you just copied it over. A **cold launch** is a launch where it's not in the discache, when your user is launching an app after rebooting the phone, or for the first time in a long time.
+
+# Best Practices
 
 400 milliseconds is a good launch time. Don’t ever take longer than 20 seconds, in that case app will be killed.
 
 After call `main`, we have to call `UIApplicationMain`, that does some other things including running the framework initializers and loading your nibs. And then finally you'll get a call back `applicationWillFinishLaunching`. These last two functions are counted in that 400 milliseconds.
 
-A **warm launch** is an app where the application is already in memory, either because it's been launched and quit previously, and it's still sitting in the discache in the kernel, or because you just copied it over. A **cold launch** is a launch where it's not in the discache, when your user is launching an app after rebooting the phone, or for the first time in a long time.
-
-We have a built-in measurement in dyld, you can access it through setting an environment variable. (Xcode -> Edit Scheme -> Arguments -> Environment Variables, `DYLD_PRINT_STATISTICS=1`, `DYLD_PRINT_STATISTICS_DETAILS=1`)
+We have a built-in measurement in dyld, you can access it through setting an environment variable. (Xcode - Edit Scheme - Arguments - Environment Variables, `DYLD_PRINT_STATISTICS=1`, `DYLD_PRINT_STATISTICS_DETAILS=1`)
 
 ```log
 Total pre-main time: 1.3 seconds (100.0%)
@@ -139,47 +141,67 @@ total images defining weak symbols:  70
 total images using weak symbols:  157
 ```
 
+> The debugger has to pause launch on every single dylib load in order to parse the symbols from your app and load your break points, over a USB cable that can be very time consuming. But dyld knows about that and it subtracts the debugger time.
+
+Use fewer dylibs, a good target is about 6:
+
+- you can merge existing dylibs
+- use static libraries
+
+I/O is for both of rebasing and binding. All that is fixing up pointers in the `__DATA` section. So fixing up fewer pointers can help:
+
+- Reduce Objective-C metadata (classes, selectors, and categories). There are a number of coding styles that are encouraging very small classes, that maybe only have one or two functions. Those particular patterns may result in gradual slowdowns of your applications as you add more and more of small classes. Having 100 or 1,000 classes isn't a problem, but 10,000 or 20,000 classes is.
+- Reduce C++ virtual functions which create V-tables, that are the same as ObjC metadata. They create structures in the `__DATA` section that have to be fixed up.
+- Use Swift structs. Swift tends to use less data that has pointers for fix-ups of this sort. Swift is more inlinable and can better co-gen to avoid a lot of that, so migrating to Swift is a great way to improve this.
+- Be careful about machine generated codes. You may describe some structures in terms of a DSL (domain-specific language) and then have a program that generates other code from it. And if those generated programs have a lot of pointers in them, they can become very expensive.
+
+For ObjC setup, we solved by less fix-up before.
+
+Initilizers:
+
+- Replacing `+load` with `+initialize`, which will cause the ObjC runtime to initialize your code when the classes were substantiated instead of when the file is loaded.
+- Don't use C/C++ `__attribute__((constructor))`. Replace with call site initializers, means things like `dispatch_once()`.
+- C++ statics with non-trivial constructors:
+  - replace those with call site initilizers
+  - Only set simple values (PODs)
+  - Use `-Wglobal-constructors` compiler flag to identify those initilizers
+  - Rewrite in Swift
+- Do not call `dlopen` in initializers
+- Do not create threads in initializers
+
+New in iOS 11, we've added Static Initializer Tracing to Instruments. This is pretty exciting stuff because initializers are code that have to run before main to setup objects for you, and you haven't had much visibility into what happens before main. See [WWDC 2017 - App Startup Time: Past, Present, and Future](https://developer.apple.com/videos/play/wwdc2017/413).
+
+# dyld3
+
+> [WWDC 2017 - App Startup Time: Past, Present, and Future](https://developer.apple.com/videos/play/wwdc2017/413)
+
+dyld 3 has 3 components:
+
+- An out of process MachO parser/compiler
+- An in-process engine that runs launch closures
+- A launch closure caching service
+
 # WWDC
 
 [WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
 
-[WWDC 2017 - App Startup Time: Past, Present, and Future](https://developer.apple.com/videos/play/wwdc2017/413)
-
 [WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
 
-# 冷启动的各个阶段
-
-`main` 函数执行前：
-
-- 和优化包体积的思路一样，清理无用的类和代码，减小可执行文件的体积。
-- 减少加载启动后不会去使用的类或者方法。
-- 减少动态库的数量。苹果建议最多使用 6 个非系统动态库。
-- `+load()` 方法里的内容可以放到首屏渲染完成后再执行，或使用 `+initialize()` 方法替换掉。因为，在一个 `+load()` 方法里，进行运行时方法替换操作会带来 4 毫秒的消耗。不要小看这 4 毫秒，积少成多，执行 +load() 方法对启动速度的影响会越来越大。
-- 控制 C++ 全局变量的数量。
+# 实战
 
 `main` 函数执行后：
 
-指的是从 main() 函数执行开始，到 `application(_:didFinishLaunchingWithOptions:)` 方法里首屏渲染相关方法执行完成。主要包括了：首屏初始化所需配置文件的读写操作、首屏数据模型的读取、首屏渲染的计算等。
+指的是从 `main` 函数执行开始，到 `application(_:didFinishLaunchingWithOptions:)` 方法里首屏渲染相关方法执行完成。主要包括了：首屏初始化所需配置文件的读写操作、首屏数据模型的读取、首屏渲染的计算等。
 
-优化方式是，排查业务代码，与首屏渲染无关的代码全部延后执行。例如类的初始化、监听注册等。
+优化方式是，排查业务代码，与首屏渲染无关的代码全部延后执行，例如类的初始化、监听注册等；首屏视图根据功能逻辑，暂时不需显示的采用懒加载；涉及文件或路径的操作，如检查文件夹是否存在，新建、复制、移动、删除文件等等操作，不要放在主线程。
 
 首屏渲染完成后：
 
 从函数上来看，这个阶段指的是 `application(_:didFinishLaunchingWithOptions:)` 方法作用域内，执行首屏渲染之后的所有方法执行完成。这个阶段用户已经能够看到 App 的首页了，所以优化的优先级排在最后。但是，那些会卡住主线程的方法还是需要最优先处理的，不然还是会影响到用户后面的交互操作。
 
-# 实战
+检查、监控方法耗时情况：
 
-键盘里没有 StatusBar，将系统创建 StatusBar 的私有方法替换掉，优化了 8 ms；
-
-首屏视图根据功能逻辑，暂时不需显示的采用懒加载，优化了 7 ms。
-
-涉及文件或路径的操作，如检查文件夹是否存在，新建、复制、移动、删除文件等等操作，不要放在主线程。
-
-# 检查、监控方法耗时情况
-
-一、Instruments 的分析工具 App Launch, Time Profiler
-
-二、对 objc_msgSend 方法进行 hook 来掌握所有方法的执行耗时。利用开源库 [fishhook](https://github.com/facebook/fishhook) 和汇编实现。可参考戴铭的开源项目 [GCDFetchFeed](https://github.com/ming1016/GCDFetchFeed)，在需要检测耗时的地方调用 `[SMCallTrace start]`，结束时调用 stop 和 save 就可以打印出方法的调用层级和耗时了。
+对 objc_msgSend 方法进行 hook 来掌握所有方法的执行耗时。利用开源库 [fishhook](https://github.com/facebook/fishhook) 和汇编实现。可参考戴铭的开源项目 [GCDFetchFeed](https://github.com/ming1016/GCDFetchFeed)，在需要检测耗时的地方调用 `[SMCallTrace start]`，结束时调用 stop 和 save 就可以打印出方法的调用层级和耗时了。
 
 # 二进制重排
 

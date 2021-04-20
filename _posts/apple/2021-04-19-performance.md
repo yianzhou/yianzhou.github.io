@@ -11,12 +11,15 @@ categories: [Apple]
 
 > [WWDC 2015 - Profiling in Depth](https://developer.apple.com/videos/play/wwdc2015/412/)
 
+> [WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
+
 You should do your time profiling on **release builds** to take advantage of the compiler optimizations. 其中一项编译器优化就是尾调用消除，下面会详细介绍。
 
 使用技巧：
 
 - 按住 option 键可展开至最深层调用栈
 - 按 CPU 查看、按线程查看，可以检查我们的代码是否真正利用了多线程并发
+- Self Weight: the amount of time that was spent within that method itself, and not some other method that it called
 
 ## How does Time Profiler works?
 
@@ -30,9 +33,13 @@ Next the code starts to run and we come down to `CGContextDrawPath` and it does 
 
 The way time profiler works, it uses a service in the kernel that will sample what the CPUs are doing at about 1000 times per second.
 
-In this case, if we take a sample, we see that we're running inside of `CGContextDrawPath`. Then the kernal looks at the frame pointer register to see where the base of that function's frame is and find the return address of who called it. We can use the frame pointers that were pushed on the stack to find the base of `drawRect:` and then continuously go back through the stack until we hit the bottom. This is called **backtrace**.
+In this case, if we take a sample, we see that we're running inside of `CGContextDrawPath`. Then the kernal looks at the frame pointer register to see where the base of that function's frame is and find the return address of who called it. We can use the frame pointers that were pushed on the stack to find the base of `drawRect:` and then continuously go back through the stack until we hit the bottom. This is called **backtrace**. If we take enough of these and put them in the call tree view you can get a pretty good picture of what's going on inside of your application.
 
-If we take enough of these and put them in the call tree view you can get a pretty good picture of what's going on inside of your application.
+![img](/assets/images/b0a15964-67cd-4478-8c23-9645a58ac3bc.png)
+
+Time Profiler's not actually measuring duration. It's not recording when the method starts, and then when it exits. It's aggregating the **samples** into a useful summary. So when you see time values in Time Profiler, that's the number of samples multiplied by the time between samples, which is 1 millisecond in most cases.
+
+This does have some side effects. First, it doesn't distinguish between long running methods, and much faster methods that are called repetitively. Second, it doesn't necessarily capture everything. If you have really fast functions that aren't called very often, they won't appear in your call tree. But this is actually okay because they're not having an impact in how much work I have to be doing over time.
 
 ## Tail Call Elimination
 
@@ -69,6 +76,14 @@ Code Instrumentation: (Profiling in release builds but don't ship your instrumen
 #endif
 }
 ```
+
+# Responsiveness
+
+> [WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
+
+The way your application works, is the main thread that does all the user interface work. It's responsible for responding to user input, and then updating your views. The main thread has a runloop that's just watching a queue called an Event Queue and waiting for events to appear on it. When an event appears, it sends it to your UIApplication instance, which then passes the event down through the responder chain in your application.
+
+When busy, the main thread can't process the queue. And then as a result, you get stuttering and hiccups. So it's really important to keep your main thread free, so it's able to respond to the user input in a very quick manner.
 
 # Ref
 

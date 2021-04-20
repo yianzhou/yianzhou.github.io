@@ -83,9 +83,18 @@ Finally, before jumping to `main`, we have to run initializers:
 - C++ compiler generates initializer for statically allocated objects
 - ObjC `+load` methods
 
-# Warn vs Cold Launch
+# Launch Types
+
+> [WWDC 2016 - Optimizing App Startup Time](https://developer.apple.com/videos/play/wwdc2016/406/)
 
 A **warm launch** is an app where the application is already in memory, either because it's been launched and quit previously, and it's still sitting in the discache in the kernel, or because you just copied it over. A **cold launch** is a launch where it's not in the discache, when your user is launching an app after rebooting the phone, or for the first time in a long time.
+![img](/assets/images/45cd0914-f19b-4404-a5ea-05fd3c3963f3.png)
+
+> [WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
+
+- Cold launch: In order to launcher app, we need to bring it from disk into memory, startup system-side services that support your app, and then spawn your process.
+- Warm launch: Your app still needs to be spawned, but we've already brought your app into memory and started up some of those system-side services. So, this will be a little bit faster and more consistent.
+- Resume: occurs when a user reenters your app from either the home screen or the app switcher.
 
 # Best Practices
 
@@ -181,11 +190,51 @@ dyld 3 has 3 components:
 - An in-process engine that runs launch closures
 - A launch closure caching service
 
-# WWDC
+# Launch Phases
 
-[WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
+> [WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
 
-[WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
+![img](/assets/images/c603c294-5ef9-4077-baa2-013f7d9d439c.png)
+
+These six phases cover everything from system initialization to the app initialization to view creation and layout, and then depending on your app, potentially a asynchronous loading phase for your data, the extended phase.
+
+The first half of system interface is dyld. A **dynamic linker** (dyld) loads your shared libraries and frameworks. DYLD3 introduces caching of runtime dependencies to improve warm launch.
+
+- Avoid linking unused frameworks
+- Avoid dynamic library loading during launch, e.g. `dlopen`, `NSBundle -load`
+- Hard link all your dependencies
+
+The second half of system interface is libSystem Init. This is when we initialize the low-level system components within your application. This is mostly system-side work with a fixed cost.
+Developers don't need to focus on the section.
+
+Static Runtime initialization: This is when the system initializes your Objective-C and Swift runtimes and invokes all class static load methods.
+
+- Don't use static initialization. If you own a framework which uses static initialization, consider exposing API to initialize your stack early.
+- Reduce impact to launch by avoiding `+[Class load]`.
+- Use `+[Class initialize]` to lazily conduct static initialization.
+
+UIKit Initialization: This is when the system instantiates your `UIApplication` and `UIApplicationDelegate`.
+
+- Minimize work in `UIApplication` subclass
+- Minimize work in `UIApplicationDelegate` initialization
+
+Application Initialization: This is where you get callbacks of the delegate methods.
+
+![img](/assets/images/d3ddf60d-93c9-4b23-9eb2-ef64298eccf7.png)
+
+- You should be deferring any unrelated work not necessary to commit your first frame, by either pushing it to the background queues or just doing it later entirely.
+- If you did adopt `UIScene`, make sure that you're sharing resources between scenes.
+
+First Frame Render: Creates, performs layout for, and draws views. `loadView`, `viewDidLoad`, `layoutSubviews`.
+
+- Flatten view hierarchies and lazily load views
+- Optimize auto layout usage, reduce the number of constraints you're using
+
+Extended phase: This is the app-specific period from the first frame to the final frame. To displays asynchronously loaded data.
+
+- Leverage `os_signpost` to measure work
+
+**Minimize, Prioritize, Optimize.**
 
 # 实战
 

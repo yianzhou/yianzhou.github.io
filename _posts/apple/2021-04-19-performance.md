@@ -10,7 +10,7 @@ categories: [Apple]
 # Time Profiler
 
 > [WWDC 2015 - Profiling in Depth](https://developer.apple.com/videos/play/wwdc2015/412/)
-
+>
 > [WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
 
 You should do your time profiling on **release builds** to take advantage of the compiler optimizations. 其中一项编译器优化就是尾调用消除，下面会详细介绍。
@@ -93,16 +93,10 @@ When busy, the main thread can't process the queue. And then as a result, you ge
 
 [Improving Battery Life and Performance](https://developer.apple.com/videos/play/wwdc2019/417/)
 
-[Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
-
 [Practical Approaches to Great App Performance](https://developer.apple.com/videos/play/wwdc2018/407/)
 
 [Measuring Performance Using Logging](https://developer.apple.com/videos/play/wwdc2018/405)
 
-[App Startup Time: Past, Present, and Future](https://developer.apple.com/videos/play/wwdc2017/413)
-
 [Love at First Launch](https://developer.apple.com/videos/play/wwdc2017/816)
 
 [Unified Logging and Activity Tracing](https://developer.apple.com/videos/play/wwdc2016/721)
-
-[System Trace in Depth](https://developer.apple.com/videos/play/wwdc2016/411)

@@ -83,24 +83,7 @@ Finally, before jumping to `main`, we have to run initializers:
 - C++ compiler generates initializer for statically allocated objects
 - ObjC `+load` methods
 
-# Launch Types
-
-> [WWDC 2016 - Optimizing App Startup Time](https://developer.apple.com/videos/play/wwdc2016/406/)
-
-A **warm launch** is an app where the application is already in memory, either because it's been launched and quit previously, and it's still sitting in the discache in the kernel, or because you just copied it over. A **cold launch** is a launch where it's not in the discache, when your user is launching an app after rebooting the phone, or for the first time in a long time.
-![img](/assets/images/45cd0914-f19b-4404-a5ea-05fd3c3963f3.png)
-
-> [WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
-
-- Cold launch: In order to launcher app, we need to bring it from disk into memory, startup system-side services that support your app, and then spawn your process.
-- Warm launch: Your app still needs to be spawned, but we've already brought your app into memory and started up some of those system-side services. So, this will be a little bit faster and more consistent.
-- Resume: occurs when a user reenters your app from either the home screen or the app switcher.
-
-# Best Practices
-
-400 milliseconds is a good launch time. Don’t ever take longer than 20 seconds, in that case app will be killed.
-
-After call `main`, we have to call `UIApplicationMain`, that does some other things including running the framework initializers and loading your nibs. And then finally you'll get a call back `applicationWillFinishLaunching`. These last two functions are counted in that 400 milliseconds.
+# Measurement
 
 We have a built-in measurement in dyld, you can access it through setting an environment variable. (Xcode - Edit Scheme - Arguments - Environment Variables, `DYLD_PRINT_STATISTICS=1`, `DYLD_PRINT_STATISTICS_DETAILS=1`)
 
@@ -152,6 +135,25 @@ total images using weak symbols:  157
 
 > The debugger has to pause launch on every single dylib load in order to parse the symbols from your app and load your break points, over a USB cable that can be very time consuming. But dyld knows about that and it subtracts the debugger time.
 
+# Launch Types
+
+> [WWDC 2016 - Optimizing App Startup Time](https://developer.apple.com/videos/play/wwdc2016/406/)
+
+A **warm launch** is an app where the application is already in memory, either because it's been launched and quit previously, and it's still sitting in the discache in the kernel, or because you just copied it over. A **cold launch** is a launch where it's not in the discache, when your user is launching an app after rebooting the phone, or for the first time in a long time.
+![img](/assets/images/45cd0914-f19b-4404-a5ea-05fd3c3963f3.png)
+
+> [WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
+
+- Cold launch: In order to launcher app, we need to bring it from disk into memory, startup system-side services that support your app, and then spawn your process.
+- Warm launch: Your app still needs to be spawned, but we've already brought your app into memory and started up some of those system-side services. So, this will be a little bit faster and more consistent.
+- Resume: occurs when a user reenters your app from either the home screen or the app switcher.
+
+# Best Practices
+
+400 milliseconds is a good launch time. Don’t ever take longer than 20 seconds, in that case app will be killed.
+
+After call `main`, we have to call `UIApplicationMain`, that does some other things including running the framework initializers and loading your nibs. And then finally you'll get a call back `applicationWillFinishLaunching`. These last two functions are counted in that 400 milliseconds.
+
 Use fewer dylibs, a good target is about 6:
 
 - you can merge existing dylibs
@@ -190,13 +192,13 @@ dyld 3 has 3 components:
 - An in-process engine that runs launch closures
 - A launch closure caching service
 
-# Launch Phases
+# Using the App Launch Template
 
 > [WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
 
 ![img](/assets/images/c603c294-5ef9-4077-baa2-013f7d9d439c.png)
 
-These six phases cover everything from system initialization to the app initialization to view creation and layout, and then depending on your app, potentially a asynchronous loading phase for your data, the extended phase.
+These six phases came from the new **App Launch template** in Instruments since Xcode 11. They cover everything from system initialization to the app initialization to view creation and layout, and then depending on your app, potentially a asynchronous loading phase for your data, the extended phase.
 
 The first half of system interface is dyld. A **dynamic linker** (dyld) loads your shared libraries and frameworks. DYLD3 introduces caching of runtime dependencies to improve warm launch.
 
@@ -235,6 +237,18 @@ Extended phase: This is the app-specific period from the first frame to the fina
 - Leverage `os_signpost` to measure work
 
 **Minimize, Prioritize, Optimize.**
+
+# XCTest
+
+Utilize the new XCTest app launch measurements on a variety of devices and possibly integrate this with **continuous integration**.
+
+```swift
+func testApplicationLaunchTime() {
+    measure(metrics: [.applicationLaunch]) {
+        XCUIApplication(bundleIdentifier: "com.yianzhou.demo").launch()
+    }
+}
+```
 
 # 实战
 

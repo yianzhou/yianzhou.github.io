@@ -10,20 +10,16 @@
   font-size: 20px;
 }
 
-ul li {
-  margin-bottom: 2pt;
+#markdown-toc {
+  margin-bottom: 50px;
 }
 
-ul#markdown-toc li {
-  margin-bottom: 0pt;
+.post-content h1 {
+  margin-top: 50px;
 }
 
-@media screen and (min-width: 800px) {
-  .wrapper {
-    /* max-width: calc(800px - (30px * 2)); */
-    padding-right: 30px;
-    padding-left: 30px;
-  }
+h1 {
+  margin-bottom: 25px;
 }
 
 .wrapper {

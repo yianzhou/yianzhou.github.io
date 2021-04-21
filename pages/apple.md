@@ -31,7 +31,9 @@ permalink: apple
 
 [设计模式]({% post_url apple/2019-12-04-design-pattern %})
 
-[CocoaPods]({% post_url apple/2019-07-10-cocoapods %})，[第三方库]({% post_url apple/2020-05-06-frameworks %})，[SDWebImage]({% post_url apple/2020-10-14-SDWebImage %})，[Alamofire]({% post_url apple/2020-10-19-Alamofire %})，[Matrix]({% post_url apple/2020-11-1-matrix %})，[响应式编程]({% post_url apple/2020-11-1-reactive-rx %})，[埋点]({% post_url apple/2020-10-30-event-log %})，[Aspects]({% post_url apple/2020-11-13-aspects %})
+[埋点]({% post_url apple/2020-10-30-event-log %})，[Unified Logging]({% post_url apple/2021-04-21-unified-logging %})
+
+[CocoaPods]({% post_url apple/2019-07-10-cocoapods %})，[第三方库]({% post_url apple/2020-05-06-frameworks %})，[SDWebImage]({% post_url apple/2020-10-14-SDWebImage %})，[Alamofire]({% post_url apple/2020-10-19-Alamofire %})，[Matrix]({% post_url apple/2020-11-1-matrix %})，[响应式编程]({% post_url apple/2020-11-1-reactive-rx %})，[Aspects]({% post_url apple/2020-11-13-aspects %})
 
 [iOS 重要更新]({% post_url apple/2020-10-08-iOS-update-notes %})，[App Store 相关]({% post_url apple/2019-01-18-appstore-connect %})
 

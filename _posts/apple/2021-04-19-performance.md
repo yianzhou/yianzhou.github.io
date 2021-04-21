@@ -77,6 +77,10 @@ Code Instrumentation: (Profiling in release builds but don't ship your instrumen
 }
 ```
 
+> [WWDC 2018 - Practical Approaches to Great App Performance](https://developer.apple.com/videos/play/wwdc2018/407/)
+
+All performance work should be based on measurement. Before you start solving a performance problem, you should measure, to establish a baseline so you know where you stand. As you iterate on solving a performance problem, you should measure it each step of the way to ensure that your performance changes are having the impact that you expect. When you're done solving a performance problem, you should measure again, so that you can compare to your original baseline, and make a quantified claim about just how much you've improved the performance of your application.
+
 # Responsiveness
 
 > [WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
@@ -93,10 +97,4 @@ When busy, the main thread can't process the queue. And then as a result, you ge
 
 [Improving Battery Life and Performance](https://developer.apple.com/videos/play/wwdc2019/417/)
 
-[Practical Approaches to Great App Performance](https://developer.apple.com/videos/play/wwdc2018/407/)
-
 [Measuring Performance Using Logging](https://developer.apple.com/videos/play/wwdc2018/405)
-
-[Love at First Launch](https://developer.apple.com/videos/play/wwdc2017/816)
-
-[Unified Logging and Activity Tracing](https://developer.apple.com/videos/play/wwdc2016/721)

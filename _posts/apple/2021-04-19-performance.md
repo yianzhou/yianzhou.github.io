@@ -89,12 +89,38 @@ The way your application works, is the main thread that does all the user interf
 
 When busy, the main thread can't process the queue. And then as a result, you get stuttering and hiccups. So it's really important to keep your main thread free, so it's able to respond to the user input in a very quick manner.
 
-# Ref
+# XCTest Metrics
 
-[Advancements in the Objective-C runtime](https://developer.apple.com/videos/play/wwdc2020/10163/)
+> [WWDC 2019 - Improving Battery Life and Performance](https://developer.apple.com/videos/play/wwdc2019/417/)
 
-[Identify trends with the Power and Performance API](https://developer.apple.com/videos/play/wwdc2020/10057/)
+CPU, memory, storage, clock and OSSignpost.
 
-[Improving Battery Life and Performance](https://developer.apple.com/videos/play/wwdc2019/417/)
+Because XCTest works so well with both Xcode and Xcode server, you could use this performance test both in your development and testing phase and also as part of your continuous integration system and ensure that your app doesn't regress on the performance.
 
-[Measuring Performance Using Logging](https://developer.apple.com/videos/play/wwdc2018/405)
+# MetricKit
+
+> [WWDC 2019 - Improving Battery Life and Performance](https://developer.apple.com/videos/play/wwdc2019/417/)
+
+With MetricKit, you can receive on-device app diagnostics and power and performance metrics captured by the system. A registered app receives reports containing data about the previous 24 hours at most once per day.
+
+It's up to you to take any actions once you receive this payload on the device. For example, you can choose to save it to a file, or you can also upload to your server so you can collect this from the field for multiple users.
+
+# App Store Connect API
+
+[WWDC 2020 - Identify trends with the Power and Performance API](https://developer.apple.com/videos/play/wwdc2020/10057/)
+
+We introduced our new **App Store Connect API** for power and performance. With this new API, you can programmatically access the same metrics and diagnostics data as Xcode Organizer, and build customized data analytics and monitoring systems around power and performance metrics. We also introduced **smart insights** that can help you identify key trends and regression in metrics.
+
+Four API resources:
+
+- metrics and insights for recent app versions: `GET /v1/apps/{id}/perfPowerMetrics`
+- metrics for specific app version
+- diagnostic signatures for specific app version: `GET /v1/builds/{id}/diagnosticSignatures`
+- diagnostic logs per signature: `GET /v1/diagnosticSignatures/{id}/logs`
+
+There are two parts to power and performance diagnostics.
+
+First, we use **diagnostic signatures** to group similar problems together. For instance, similar disk writes exceptions are aggregated to generate disk writes signatures. Using diagnostic signatures, we can do root cause analysis by problem group. The API returns most prevalent top signatures for your app version, and given a top signature and its ID, you can get related diagnostic logs with more details.
+
+The second part is **diagnostic log**. It contains anonymized diagnostic details from individual devices.
+And this includes metadata information, such as platform, OS version and device type. And also, the log contains function call stack trees, which can be extremely helpful to understand what is causing the power and performance hotspots. The diagnostic call stack JSON structure is also **shared with MetricKit**.

@@ -137,8 +137,6 @@ total images using weak symbols:  157
 
 # Launch Types
 
-> [WWDC 2016 - Optimizing App Startup Time](https://developer.apple.com/videos/play/wwdc2016/406/)
-
 A **warm launch** is an app where the application is already in memory, either because it's been launched and quit previously, and it's still sitting in the discache in the kernel, or because you just copied it over. A **cold launch** is a launch where it's not in the discache, when your user is launching an app after rebooting the phone, or for the first time in a long time.
 ![img](/assets/images/45cd0914-f19b-4404-a5ea-05fd3c3963f3.png)
 
@@ -147,6 +145,8 @@ A **warm launch** is an app where the application is already in memory, either b
 - Cold launch: In order to launcher app, we need to bring it from disk into memory, startup system-side services that support your app, and then spawn your process.
 - Warm launch: Your app still needs to be spawned, but we've already brought your app into memory and started up some of those system-side services. So, this will be a little bit faster and more consistent.
 - Resume: occurs when a user reenters your app from either the home screen or the app switcher.
+
+If you kill an app, it might not trigger a cold launch, because the system decides when the resources should be paged out. If you relaunch it a few second later, it's almost guaranteed that you'll hit a warm launch. We call it warm, because the resources or the dependents are still in the cache, so it's faster to launch. See [WWDC 2018 - Practical Approaches to Great App Performance](https://developer.apple.com/videos/play/wwdc2018/407/?time=2086).
 
 # Best Practices
 
@@ -239,6 +239,10 @@ Extended phase: This is the app-specific period from the first frame to the fina
 **Minimize, Prioritize, Optimize.**
 
 # XCTest
+
+> [WWDC 2019 - Improving Battery Life and Performance](https://developer.apple.com/videos/play/wwdc2019/417/)
+>
+> [WWDC 2019 - Optimizing App Launch](https://developer.apple.com/videos/play/wwdc2019/423/)
 
 Utilize the new XCTest app launch measurements on a variety of devices and possibly integrate this with **continuous integration**.
 

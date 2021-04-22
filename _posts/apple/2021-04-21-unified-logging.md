@@ -104,6 +104,39 @@ Activities associates log messages with user actions or other app-defined events
 
 ![img-70](/assets/images/497bdb80-9347-40f9-95d4-4e4e0113a390.png)
 
+# Signpost Events
+
+> [WWDC 2018 - Measuring Performance Using Logging](https://developer.apple.com/videos/play/wwdc2018/405)
+
+Signposts extend the `OSLog` API, but they do it for the performance use case. That means they are conveying performance related information. You can annotate your code with signposts and find them in Instruments.
+
+Instruments - Template: Blank - Add Library: os_signpost
+
+```objc
+if (@available(iOS 12.0, *)) {
+    NSURL *url = [NSURL URLWithString:@"https://www.baidu.com/"];
+    os_log_t server_log = os_log_create("com.yianzhou.DemoOSLog", "Network");
+    // If two operations overlap but they have different signpost IDs, the system will know that they're two different intervals.
+    //  os_signpost_id_t signpostID = os_signpost_id_generate(server_log);
+    os_signpost_id_t signpostID = os_signpost_id_make_with_pointer(server_log, (__bridge const void * _Nullable)(url));
+    os_signpost_interval_begin(server_log, signpostID, "server request");
+    [[[NSURLSession sharedSession]dataTaskWithURL:url completionHandler:^(NSData * _Nullable data, NSURLResponse * _Nullable response, NSError * _Nullable error) {
+        os_signpost_event_emit(server_log, signpostID, "data fetched");
+        if (response != nil) {
+            os_log_debug(server_log, "%@", [response description]);
+        }
+        os_signpost_interval_end(server_log, signpostID, "server request");
+    }] resume];
+}
+```
+
+Points of interest with Time Profiler:
+
+```objc
+os_log_t poi_log = os_log_create("com.yianzhou.DemoOSLog", OS_LOG_CATEGORY_POINTS_OF_INTEREST);
+os_signpost_event_emit(poi_log, signpostID, "data fetched");
+```
+
 # Architecture
 
 ![img](/assets/images/0de8c040-4be7-48a8-9a13-ab20e3231a3b.png)

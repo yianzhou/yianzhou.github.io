@@ -7,7 +7,9 @@ permalink: apple
 
 [开发及调试]({% post_url apple/2020-08-07-dev %})，[macOS]({% post_url apple/2018-12-18-macOS %})，[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})
 
-[User Notification]({% post_url apple/2021-01-25-user-notification %})，[App in the Background]({% post_url apple/2021-04-10-app-in-the-background %})
+[User Notification]({% post_url apple/2021-01-25-user-notification %})
+
+[App in the Background]({% post_url apple/2021-04-10-app-in-the-background %})
 
 [Uniform Type Identifiers]({% post_url apple/2021-04-14-uniform-type-identifiers %})
 
@@ -23,7 +25,7 @@ permalink: apple
 
 [编译过程]({% post_url apple/2020-04-28-compile %})，[获取函数调用栈及符号化]({% post_url apple/2020-10-30-symbol %})，[卡顿监测]({% post_url apple/2020-07-04-lag %})，[崩溃监控]({% post_url apple/2020-10-30-crash %})
 
-[性能优化]({% post_url apple/2021-04-19-performance %})，[包体大小]({% post_url apple/2020-11-2-app-size %})，[内存优化]({% post_url apple/2020-10-31-memory %})，[启动时长优化]({% post_url apple/2020-10-27-app-launch %})
+[性能优化]({% post_url apple/2021-04-19-performance %})，[启动时长优化]({% post_url apple/2020-10-27-app-launch %})，[内存优化]({% post_url apple/2020-10-31-memory %})，[包体大小]({% post_url apple/2020-11-2-app-size %})
 
 [Auto Layout]({% post_url apple/2020-10-27-auto-layout %})，[Core Animation]({% post_url apple/2018-07-28-core-animation %})，[图形渲染]({% post_url apple/2020-04-22-graphics %})，[Metal]({% post_url apple/2019-01-10-Metal %})，[ARKit]({% post_url apple/2018-12-20-ARKit %})
 

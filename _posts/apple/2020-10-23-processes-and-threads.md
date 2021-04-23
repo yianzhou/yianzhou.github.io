@@ -27,8 +27,6 @@ Quality of Service Classes:
 - Utility: long running tasks that don't prevent the user from continuing to use your app. (For example, download a magazine with a progress bar showing to user)
 - Background: The user is not actively watching. Any kind of maintenance task, cleanup work, database vacuuming would all be background.
 
-As I mentioned in the previous slide, dispatch async does automatic propagation of Quality...
-
 Dispatch queues 都是 FIFO 队列！串行队列，按 FIFO 原则出列，一个接一个执行；并行队列，按 FIFO 原则出列，可以并发执行，返回顺序无法预计。
 
 When designing tasks for concurrent execution, **do not call methods that block the current thread of execution**. When a task scheduled by a concurrent dispatch queue blocks a thread, the system creates additional threads to run other queued concurrent tasks. If too many tasks block, the system may run out of threads for your app. 需注意，不要调用会阻塞线程的方法，这样会导致系统创建过多的线程，占用大量内存和资源、甚至耗尽。
@@ -94,6 +92,10 @@ dispatch_sync(任意队列, ^{
 并发读，互斥写！见 [DemoGCD](https://github.com/yianzhou/ios-demos/)。
 
 `dispatch_barrier_async` The queue you specify should be a concurrent queue that you create yourself using the `dispatch_queue_create` function. If the queue you pass to this function is a serial queue or one of the global concurrent queues, this function behaves like the `dispatch_async` function. 栅栏函数要配合自己创建的并发队列使用！！
+
+# DispatchGroup
+
+You attach multiple work items to a group and schedule them for asynchronous execution **on the same queue or different queues**. When all work items finish executing, the group executes its completion handler. You can also wait synchronously for all tasks in the group to finish executing.
 
 # Synchronization
 

@@ -85,9 +85,14 @@ All performance work should be based on measurement. Before you start solving a 
 
 > [WWDC 2016 - Using Time Profiler in Instruments](https://developer.apple.com/videos/play/wwdc2016/418/)
 
-The way your application works, is the main thread that does all the user interface work. It's responsible for responding to user input, and then updating your views. The main thread has a runloop that's just watching a queue called an Event Queue and waiting for events to appear on it. When an event appears, it sends it to your UIApplication instance, which then passes the event down through the responder chain in your application.
+The way your application works, is the main thread that does all the user interface work. It's responsible for responding to user input, and then updating your views. The main thread has a runloop that's just watching a queue called an Event Queue and waiting for events to appear on it. When an event appears, it sends it to your `UIApplication` instance, which then passes the event down through the responder chain in your application.
 
 When busy, the main thread can't process the queue. And then as a result, you get stuttering and hiccups. So it's really important to keep your main thread free, so it's able to respond to the user input in a very quick manner.
+
+> [WWDC 2016 - Optimizing I/O for Performance and Battery Life](https://developer.apple.com/videos/play/wwdc2016/719/)
+
+Every thread or every application on the system starts with a single thread called the main thread.
+This thread is special, and it has a few primary purposes. That is to handle input and to update your interface (drawing views, doing layout, or animating). If you're doing other things on your main thread, such as executing lengthy tasks like expensive image processing, that will keeps your main thread busy, which means it won't be idle, you won't be able to respond to input, or update your UI. Additionally, you should avoid doing I/O on your main thread.
 
 # XCTest Metrics
 
@@ -124,3 +129,19 @@ First, we use **diagnostic signatures** to group similar problems together. For 
 
 The second part is **diagnostic log**. It contains anonymized diagnostic details from individual devices.
 And this includes metadata information, such as platform, OS version and device type. And also, the log contains function call stack trees, which can be extremely helpful to understand what is causing the power and performance hotspots. The diagnostic call stack JSON structure is also **shared with MetricKit**.
+
+# I/O
+
+> [WWDC 2016 - Optimizing I/O for Performance and Battery Life](https://developer.apple.com/videos/play/wwdc2016/719/)
+
+The main system resources are CPU, memory, and I/O. Operations that interact with the file system and deal with reading or writing files are generally considered an I/O. Talking to a web server is a good example of network-based I/O. When your app is using I/O, it runs code on the CPU, accesses memory, and ultimately saves data to or fetches data from the disk. If the network is involved, the network-based radios are interacted with as well. The combined power cost of all of these competents makes I/O a heavy operation in terms of battery usage.
+
+Best practices:
+
+- Caching: just like I/O, memory is a shared and limited resource in the system that you should be careful. We recommend using the `NSCache` APIs since they handle memory pressure conditions appropriately.
+- Coalescing I/Os: collects a bunch of updates that were frequently done, and write them out as a single I/O operation.
+
+To debug:
+
+- Xcode - Run - Debug Navigator - Disk
+- Instruments - Template: Blank - Add Library: Disk Usage

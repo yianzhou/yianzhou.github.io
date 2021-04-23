@@ -11,7 +11,23 @@ categories: [Apple]
 
 # GCD
 
-[WWDC 2017 - Modernizing Grand Central Dispatch Usage](https://developer.apple.com/videos/play/wwdc2017/706)
+[WWDC 2015 - Building Responsive and Efficient Apps with GCD](https://developer.apple.com/videos/play/wwdc2015/718/)
+
+Threads are competiting at moments like the main thread wants to handle new events while the GCD queue wants to execute the block you dispatched to it, but we're only on a single core device. In this case, which thread do we execute? This is where Quality of Service classes come into play. These are ways you tell the system what kind of work you're doing, and in turn, it allows the system to provide a variety of **resource controls** to most effectively execute your code:
+
+- CPU scheduling priority, which threads do we run, in what order?
+- I/O priority, how do we execute I/O with deference to other I/O in the system.
+- Timer coalescing, which is a power-saving feature.
+- Whether we run the CPU in throughput- or efficiency-oriented mode.
+
+Quality of Service Classes:
+
+- User Interactive: **This is the main thread.** The user interactive code is specifically the code needed in order to keep 60 frames per second **animation** running smoothly. It's the work actively involved in updating the UI. **There's nothing you have to do to get this. The main thread of the application always comes up at this QoS class**.
+- User Initiated: loading the results of an action done by the user. If the user can't continue to make meaningful progress with your application, user initiated is the correct class. (For example, user tap an icon and wait to view a document.)
+- Utility: long running tasks that don't prevent the user from continuing to use your app. (For example, download a magazine with a progress bar showing to user)
+- Background: The user is not actively watching. Any kind of maintenance task, cleanup work, database vacuuming would all be background.
+
+As I mentioned in the previous slide, dispatch async does automatic propagation of Quality...
 
 Dispatch queues 都是 FIFO 队列！串行队列，按 FIFO 原则出列，一个接一个执行；并行队列，按 FIFO 原则出列，可以并发执行，返回顺序无法预计。
 

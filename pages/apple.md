@@ -15,7 +15,11 @@ permalink: apple
 
 [Apple Silicons]({% post_url apple/2021-04-14-apple-silicons %})
 
-# 计算机科学
+[App Extension]({% post_url apple/2019-02-21-app-extension %})
+
+[iOS 重要更新]({% post_url apple/2020-10-08-iOS-update-notes %})，[App Store 相关]({% post_url apple/2019-01-18-appstore-connect %})
+
+# Apple Developer
 
 [iOS 进阶]({% post_url apple/2020-08-07-advanced %})，[Swift 底层]({% post_url apple/2019-06-24-swift %})
 
@@ -23,7 +27,9 @@ permalink: apple
 
 [多线程]({% post_url apple/2020-10-23-multithread %})，[信号量]({% post_url apple/2019-12-29-semaphore %})
 
-[编译过程]({% post_url apple/2020-04-28-compile %})，[获取函数调用栈及符号化]({% post_url apple/2020-10-30-symbol %})，[卡顿监测]({% post_url apple/2020-07-04-lag %})，[崩溃监控]({% post_url apple/2020-10-30-crash %})
+[LLVM]({% post_url apple/2021-04-25-llvm %})，[编译过程]({% post_url apple/2020-04-28-compile %})，[获取函数调用栈及符号化]({% post_url apple/2020-10-30-symbol %})
+
+[卡顿监测]({% post_url apple/2020-07-04-lag %})，[崩溃监控]({% post_url apple/2020-10-30-crash %})
 
 [性能优化]({% post_url apple/2021-04-19-performance %})，[启动时长优化]({% post_url apple/2020-10-27-app-launch %})，[内存优化]({% post_url apple/2020-10-31-memory %})，[包体大小]({% post_url apple/2020-11-2-app-size %})
 
@@ -37,23 +43,21 @@ permalink: apple
 
 [CocoaPods]({% post_url apple/2019-07-10-cocoapods %})，[第三方库]({% post_url apple/2020-05-06-frameworks %})，[SDWebImage]({% post_url apple/2020-10-14-SDWebImage %})，[Alamofire]({% post_url apple/2020-10-19-Alamofire %})，[Matrix]({% post_url apple/2020-11-1-matrix %})，[响应式编程]({% post_url apple/2020-11-1-reactive-rx %})，[Aspects]({% post_url apple/2020-11-13-aspects %})
 
-[iOS 重要更新]({% post_url apple/2020-10-08-iOS-update-notes %})，[App Store 相关]({% post_url apple/2019-01-18-appstore-connect %})
-
-[App Extension]({% post_url apple/2019-02-21-app-extension %})
-
-[数据结构与算法]({% post_url apple/2020-01-10-algorithm %})
-
-- [Leetcode 1 树、回溯法]({% post_url apple/2020-06-17-leetcode %})
-- [Leetcode 2 动态规划、背包问题]({% post_url apple/2020-06-17-leetcode2 %})
-- [Leetcode 3 链表、图]({% post_url apple/2020-06-17-leetcode3 %})
-- [Leetcode 4 排序、查找]({% post_url apple/2020-06-17-leetcode4 %})
-- [Leetcode 5 字符串]({% post_url apple/2020-06-17-leetcode5 %})
-- [Leetcode 6 设计题]({% post_url apple/2020-06-17-leetcode6 %})
-- [Leetcode 7 代数、几何、随机数]({% post_url apple/2020-06-17-leetcode7 %})
-
 [计算机网络]({% post_url apple/2021-03-04-computer-network %})，[Networking]({% post_url apple/2020-11-2-networking %})
 
 [代码签名]({% post_url apple/2020-10-10-signing %})
+
+# 数据结构与算法
+
+[数据结构与算法]({% post_url apple/2020-01-10-algorithm %})
+
+- [LeetCode 1 树、回溯法]({% post_url apple/2020-06-17-leetcode %})
+- [LeetCode 2 动态规划、背包问题]({% post_url apple/2020-06-17-leetcode2 %})
+- [LeetCode 3 链表、图]({% post_url apple/2020-06-17-leetcode3 %})
+- [LeetCode 4 排序、查找]({% post_url apple/2020-06-17-leetcode4 %})
+- [LeetCode 5 字符串]({% post_url apple/2020-06-17-leetcode5 %})
+- [LeetCode 6 设计题]({% post_url apple/2020-06-17-leetcode6 %})
+- [LeetCode 7 代数、几何、随机数]({% post_url apple/2020-06-17-leetcode7 %})
 
 # Effective Objective-C
 

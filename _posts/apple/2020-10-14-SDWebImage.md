@@ -16,7 +16,7 @@ let url = URL(string: "...")
 imageView.sd_setImage(with: url)
 ```
 
-这是 `UIImageView+WebCache` 提供的其中一个接口，由于 Objective-C 不像 Swift 可以为函数声明默认参数值 [Default Parameter Values](https://docs.swift.org/swift-book/LanguageGuide/Functions.html)，因此需要声明多个接口。它们最终会汇合到这个接口的实现：
+这是 `UIImageView+WebCache` 提供的其中一个接口，由于 Objective-C 不像 Swift 可以为函数声明[默认参数值](https://docs.swift.org/swift-book/LanguageGuide/Functions.html)，因此需要声明多个接口。它们最终会汇合到这个方法：
 
 ```objc
 - (void)sd_setImageWithURL:(nullable NSURL *)url
@@ -24,12 +24,24 @@ imageView.sd_setImage(with: url)
                    options:(SDWebImageOptions)options
                    context:(nullable SDWebImageContext *)context
                   progress:(nullable SDImageLoaderProgressBlock)progressBlock
-                 completed:(nullable SDExternalCompletionBlock)completedBlock;
+                 completed:(nullable SDExternalCompletionBlock)completedBlock {
+    [self sd_internalSetImageWithURL:url
+                    placeholderImage:placeholder
+                             options:options
+                             context:context
+                       setImageBlock:nil
+                            progress:progressBlock
+                           completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
+                               if (completedBlock) {
+                                   completedBlock(image, error, cacheType, imageURL);
+                               }
+                           }];
+}
 ```
 
 首先理解这个接口各参数的含义。
 
-`SDWebImageOptions` 定义在 `SDWebImageDefine.h`，是图片下载的选项，用 bitmask 的形式表示
+`SDWebImageOptions` 定义在 `SDWebImageDefine.h`，是图片下载的选项，用 bitmask 的形式表示：
 
 ```objc
 typedef NS_OPTIONS(NSUInteger, SDWebImageOptions) {
@@ -47,41 +59,9 @@ typedef NS_OPTIONS(NSUInteger, SDWebImageOptions) {
 typedef NSDictionary<SDWebImageContextOption, id> SDWebImageContext;
 ```
 
-这个接口的实现，调用了 `UIView+WebCache` 的方法：
+`sd_internalSetImage` 多了一个参数 `@param setImageBlock` If not provide, use the built-in set image code (supports `UIImageView/NSImageView` and `UIButton/NSButton` currently).
 
-```objc
-- (void)sd_setImageWithURL:(nullable NSURL *)url
-          placeholderImage:(nullable UIImage *)placeholder
-                   options:(SDWebImageOptions)options
-                   context:(nullable SDWebImageContext *)context
-                  progress:(nullable SDImageLoaderProgressBlock)progressBlock
-                 completed:(nullable SDExternalCompletionBlock)completedBlock {
-    // SDExternalCompletionBlock -> SDInternalCompletionBlock
-    // 两者有什么区别呢？
-    // typedef void(^SDExternalCompletionBlock)(UIImage * _Nullable image, NSError * _Nullable error, SDImageCacheType cacheType, NSURL * _Nullable imageURL);
-    // typedef void(^SDInternalCompletionBlock)(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL);
-
-    // Internal 多了 NSData *data 和 BOOL finished
-    // 这里只是直接调用了 SDExternalCompletionBlock，
-    // SDInternalCompletionBlock 多出来的两个参数没有使用到，应该是别的地方有用
-
-    [self sd_internalSetImageWithURL:url
-                    placeholderImage:placeholder
-                             options:options
-                             context:context
-                       setImageBlock:nil
-                            progress:progressBlock
-                           completed:^(UIImage * _Nullable image, NSData * _Nullable data, NSError * _Nullable error, SDImageCacheType cacheType, BOOL finished, NSURL * _Nullable imageURL) {
-                               if (completedBlock) {
-                                   completedBlock(image, error, cacheType, imageURL);
-                               }
-                           }];
-}
-```
-
-其中多了一个参数 `@param setImageBlock` If not provide, use the built-in set image code (supports `UIImageView/NSImageView` and `UIButton/NSButton` currently)
-
-查看分类 `@interface UIView (WebCache)`，这个分类中为 UIView 添加了几个属性：
+查看分类 `@interface UIView (WebCache)`，这个分类中为 `UIView` 添加了几个属性：
 
 ```objc
 @property (nonatomic, strong, readonly, nullable) NSURL *sd_imageURL;
@@ -102,9 +82,9 @@ typedef NSDictionary<SDWebImageContextOption, id> SDWebImageContext;
 }
 ```
 
-接下来探索 `@implementation UIView (WebCache)` 中关键方法的实现
+接下来探索 `@implementation UIView (WebCache)` 中关键方法的实现。
 
-下载图片的操作 SDWebImageOperation 会与当前 UIView 关联起来
+下载图片的操作 `SDWebImageOperation` 会与当前 `UIView` 关联起来：
 
 ```objc
 - (void)sd_internalSetImageWithURL:(nullable NSURL *)url
@@ -134,8 +114,10 @@ typedef NSDictionary<SDWebImageContextOption, id> SDWebImageContext;
 
     if (url) {
         id <SDWebImageOperation> operation = [manager loadImageWithURL:url options:options context:context progress:combinedProgressBlock completed:^(UIImage *image, NSData *data, NSError *error, SDImageCacheType cacheType, BOOL finished, NSURL *imageURL) {
-            [self sd_setImage:targetImage imageData:targetData basedOnClassOrViaCustomSetImageBlock:setImageBlock transition:transition cacheType:cacheType imageURL:imageURL];
-            completedBlock(image, data, error, cacheType, finished, url);
+            dispatch_main_async_safe(^{
+                [self sd_setImage:targetImage imageData:targetData basedOnClassOrViaCustomSetImageBlock:setImageBlock transition:transition cacheType:cacheType imageURL:imageURL];
+                callCompletedBlockClosure();
+            });
         }];
         // 将这个 operation 与当前 UIView 实例关联起来！
         [self sd_setImageLoadOperation:operation forKey:validOperationKey];
@@ -369,7 +351,7 @@ SDWebImageManager 这个类是 UIView category 提供的接口背后真正完成
 
 `SDImageCacheDefine` 定义了协议 `@protocol SDImageCache`，外部可以遵守这个协议并自行实现协议中的方法。如果不自定义的话，则会使用默认的实现类 `SDImageCache`。
 
-我们知道 SDWebImageCombinedOperation 包含了两个操作 cacheOperation 和 loaderOperation，其中 cacheOperation 就是从这里创建的：
+我们知道 `SDWebImageCombinedOperation` 包含了两个操作 `cacheOperation` 和 `loaderOperation`，其中 `cacheOperation` 就是从这里创建的：
 
 ```objc
 - (nullable NSOperation *)queryCacheOperationForKey:(nullable NSString *)key options:(SDImageCacheOptions)options context:(nullable SDWebImageContext *)context cacheType:(SDImageCacheType)queryCacheType done:(nullable SDImageCacheQueryCompletionBlock)doneBlock {
@@ -1079,7 +1061,7 @@ headerDictionary[@"Accept"] = @"image/*,*/*;q=0.8"; // 图片类型权重 1.0；
 ```swift
 private final class DownloadOperation: Operation {
     override func main() {
-        let url = URL(string: "http://d18c2vb2nmzsjs.cloudfront.net/cdn/iosi18n/sleep/banner-android1012.png")!
+        let url = URL(string: "https://www.baidu.com/")!
         let request = URLRequest(url: url)
         let dataTask = URLSession.shared.dataTask(with: request) { (data, response, error) in
             print("URL data task completed")
@@ -1129,7 +1111,7 @@ private final class DownloadOperation: Operation {
 
     override func start() {
         self.isExecuting = true
-        let url = URL(string: "http://d18c2vb2nmzsjs.cloudfront.net/cdn/iosi18n/sleep/banner-android1012.png")!
+        let url = URL(string: "https://www.baidu.com")!
         let request = URLRequest(url: url)
         let dataTask = URLSession.shared.dataTask(with: request) { (data, response, error) in
             print("URL data task completed")

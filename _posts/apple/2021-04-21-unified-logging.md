@@ -78,8 +78,6 @@ You view log messages using the **Console app**, **log command-line tool**, or *
 
 You can also access log messages programmatically using the `OSLog` framework.
 
-You can use launch Instruments from inside Xcode to record and analyze signposts created by your app.
-
 Log data is kept in a compressed binary format: `.tracev3` files stored under `/var/db/diagnostics/` with support in `/var/db/uuidtext`.
 
 New `.logarchive` format for portability of logs. Essentially a `.logarchive` is a collection of information out of `/var/db/diagnostics` and `/var/db/uuidtext` collected together into a single file that's easier to transfer to email or to attach to bug reports.
@@ -108,9 +106,9 @@ Activities associates log messages with user actions or other app-defined events
 
 > [WWDC 2018 - Measuring Performance Using Logging](https://developer.apple.com/videos/play/wwdc2018/405)
 
-Signposts extend the `OSLog` API, but they do it for the performance use case. That means they are conveying performance related information. You can annotate your code with signposts and find them in Instruments.
+Signposts extend the `OSLog` API, but they do it for the **performance** use case. That means they are conveying performance related information. You can annotate your code with signposts and find them in Instruments.
 
-Instruments - Template: Blank - Add Library: os_signpost
+Instruments - Template: Blank - Add Library: os_signpost.
 
 ```objc
 if (@available(iOS 12.0, *)) {
@@ -130,7 +128,7 @@ if (@available(iOS 12.0, *)) {
 }
 ```
 
-Points of interest with Time Profiler:
+**Points of interest** with Time Profiler:
 
 ```objc
 os_log_t poi_log = os_log_create("com.yianzhou.DemoOSLog", OS_LOG_CATEGORY_POINTS_OF_INTEREST);

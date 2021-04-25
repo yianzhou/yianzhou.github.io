@@ -17,21 +17,21 @@ When you save a picture to disk, it produces what's called a regular **file**. T
 
 How does the system know that this is an image, in this case saved as JPEG, rather than a text file or an MP3 track? Files are sequences of bytes, so you might expect that the system cracks it open and reads the bits inside to figure it out. Actually, the system almost never does that because it's extremely expensive and requires read permissions most processes don't have.
 
-In fact, the operating system bases most of its decisions on the file's **path extension**. On the web, however, it's a different story. Web servers use **MIME type**. So you see for jpeg image, there are five different pieces of metadata, all representing exactly the same thing.
+In fact, the operating system bases most of its decisions on the file's **path extension**. On the web, however, use **MIME type**. So you see for jpeg image, there are five different pieces of metadata, all representing exactly the same thing.
 
 ![img-40](/assets/images/62fb436b-4add-41ec-9984-7740d961056b.png)
 
-Well, on Apple's platforms, that's okay, because we use a single string called a **uniform type identifier** to canonically identify this file format. For JPEG images, `public.jpeg` this one string refers to all JPEG images, whether they're local or on the web.
+Well, on Apple's platforms, that's okay, because we use a single string called a **uniform type identifier** to canonically identify this file format. For JPEG images, `public.jpeg` refers to all JPEG images, whether they're local or on the web.
 
-When talking about uniform type identifiers, we say that the JPEG type **conforms to** the more abstract image type. This conformance tree implicitly allows for multiple inheritance (like how protocols work in Swift and Objective-C).
+When talking about uniform type identifiers, we say that the `public.jpeg` type **conforms to** the more abstract image type. This conformance tree implicitly allows for multiple inheritance (like how protocols work in Swift and Objective-C).
 
 ![img-40](/assets/images/67cae6e3-2f37-40bd-9172-11b4c64558f2.png)
 
-UIT can represent **files**. But we use them throughout our platforms for other purposes too. For instance, we also use them as the canonical type of **pasteboard content**. After all, if you can save it to disk, you can copy and paste it too.
+UTI can represent files. But we use them throughout our platforms for other purposes too. For instance, we also use them as the canonical type of **pasteboard content**.
 
 Many apps create and maintain their own data formats, and these formats deserve their own unique types. If you're using types declared by the system, you don't need to do much. We include a large number of types in `/System/Library/CoreServices/CoreTypes.bundle`.
 
-When creating your own UTI, there are a few naming rules to follow: UTI are always **case-insensitive** ASCII and **reverse-DNS**, such as com.example.file. Ideally, you'll use some more descriptive identifiers. Apple reserves some prefixes or namespaces in identifiers:
+When creating your own UTI, there are a few naming rules to follow: UTI are always **case-insensitive** ASCII and **reverse-DNS**, such as `com.example.file`. Ideally, you'll use some more descriptive identifiers. Apple reserves some prefixes or namespaces in identifiers:
 
 - `public.*` is reserved for use by Apple to declare **standardized types**.
 - `dyn.*`, fairly rare these days.

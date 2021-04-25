@@ -21,7 +21,7 @@ permalink: apple
 
 [C]({% post_url apple/2020-11-9-c %})，[C++]({% post_url apple/2020-11-9-cpp %})，[Runtime]({% post_url apple/2020-03-28-runtime %})，[RunLoop]({% post_url apple/2020-03-29-runloop %})，[Block]({% post_url apple/2020-04-22-block %})
 
-[进程与线程]({% post_url apple/2020-10-23-processes-and-threads %})，[信号量]({% post_url apple/2019-12-29-semaphore %})
+[多线程]({% post_url apple/2020-10-23-multithread %})，[信号量]({% post_url apple/2019-12-29-semaphore %})
 
 [编译过程]({% post_url apple/2020-04-28-compile %})，[获取函数调用栈及符号化]({% post_url apple/2020-10-30-symbol %})，[卡顿监测]({% post_url apple/2020-07-04-lag %})，[崩溃监控]({% post_url apple/2020-10-30-crash %})
 

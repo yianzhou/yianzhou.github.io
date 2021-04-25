@@ -16,9 +16,13 @@ categories: [Apple]
 Top seven factors that are likely to affect:
 
 - Critically low battery (iPhone battery <= 20%)
-- Low Power Mode: `ProcessInfo.processInfo.isLowPowerModeEnabled`, `NSProcessInfoPowerStateDidChange`
+- Low Power Mode:
+  - `ProcessInfo.processInfo.isLowPowerModeEnabled`
+  - `NSProcessInfoPowerStateDidChange`
 - App usage: There is an on-device predictive engine that learns which apps people will use and when.
-- App switcher: Users can stop transfers by swiping to kill the app in the App Switcher. When the system determines which apps to run, it constrains to the set of apps that are still visible in the App Switcher, so as to prevent the app from running unexpectedly against user intent.
+- App switcher:
+  - Users can stop transfers by swiping to kill the app in the App Switcher.
+  - When the system determines which apps to run, it constrains to the set of apps that are still visible in the App Switcher, so as to prevent the app from running unexpectedly against user intent.
 - Background App Refresh switch
 - System budgets
 - Rate limiting
@@ -65,7 +69,7 @@ Background App Refresh lets your app run periodically in the background so that 
 func application(_ application: UIApplication,
                  performFetchWithCompletionHandler completionHandler:
                  @escaping (UIBackgroundFetchResult) -> Void) {
-   // onfigure a URLSession object to download any new data.
+   // Configure a URLSession object to download any new data.
    if let newData = fetchUpdates() {
       addDataToFeed(newData: newData)
       completionHandler(.newData)
@@ -89,9 +93,8 @@ You can create tasks that run in the background. **These tasks continue to run e
 
 _You don’t have to do all background network activity with background sessions. Apps that declare appropriate background modes can use default URL sessions and data tasks, just as if they were in the foreground._
 
-> Listing 1
-
 ```swift
+// Listing 1
 private lazy var urlSession: URLSession = {
     let config = URLSessionConfiguration.background(withIdentifier: "MySession")
     config.isDiscretionary = true // [1]
@@ -106,7 +109,7 @@ You create download tasks from this session. With background sessions, **the act
 
 These tasks use system intelligence to decide when to start and when to stop a download based on various factors like battery, CPU, Wi-Fi, etc.
 
-If your app is in the background, the system may suspend your app. In this case, when the download finishes, the system resumes the app and calls the delegate method:
+If your app is in the background, the system may suspend your app. In this case, when the download finishes, the system resumes the app and calls the `UIApplicationDelegate` method:
 
 ```swift
 func application(_ application: UIApplication,
@@ -116,7 +119,7 @@ func application(_ application: UIApplication,
 }
 ```
 
-When all events have been delivered, the system calls:
+When all events have been delivered, the system calls the `URLSessionDelegate` method:
 
 ```swift
 func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
@@ -129,7 +132,7 @@ func urlSessionDidFinishEvents(forBackgroundURLSession session: URLSession) {
 }
 ```
 
-Once your resumed app calls the completion handler, the download task finishes its work and calls the delegate method:
+Once your resumed app calls the completion handler, the download task finishes its work and calls the `URLSessionDelegate` method:
 
 ```swift
 func urlSession(_ session: URLSession,

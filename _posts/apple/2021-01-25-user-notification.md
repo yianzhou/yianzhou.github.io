@@ -13,11 +13,10 @@ categories: [Apple]
 >
 > [Sample Code - Implementing Background Push Notifications](https://developer.apple.com/documentation/usernotifications/implementing_background_push_notifications)
 
-There are two types of push notifications: Alert notifications and background notifications.
+There are two types of push notifications: alert notifications and background notifications.
 
-**Alert notifications** allow you to deliver visible alerts that can be interacted.
-
-**Background notifications** allow your application to fetch data from the background upon receiving push notifications. These should be used to keep your application up-to-date even if the application isn't running. The system will launch your application and give you necessary runtime in order to perform your background update.
+- **Alert notifications** allow you to deliver visible alerts that can be interacted.
+- **Background notifications** allow your application to fetch data from the background upon receiving push notifications. These should be used to keep your application up-to-date even if the application isn't running. The system will launch your application and give you necessary runtime in order to perform your background update.
 
 # Request Authorization
 
@@ -173,7 +172,7 @@ The system calls this method when your app is running in the foreground or backg
 
 UNNotificationTrigger is an abstract class, concrete trigger classes include the following:
 
-- UNTimeIntervalNotificationTrigger 时间间隔触发（本地）
-- UNCalendarNotificationTrigger 日期触发（本地）
-- UNLocationNotificationTrigger 地点触发（本地）
-- UNPushNotificationTrigger 服务端推送（远程）
+- `UNTimeIntervalNotificationTrigger` 时间间隔触发（本地）
+- `UNCalendarNotificationTrigger` 日期触发（本地）
+- `UNLocationNotificationTrigger` 地点触发（本地）
+- `UNPushNotificationTrigger` 服务端推送（远程）

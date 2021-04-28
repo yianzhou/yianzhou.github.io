@@ -5,7 +5,7 @@ permalink: apple
 
 # 日常开发
 
-[开发及调试]({% post_url apple/2020-08-07-dev %})，[Shell]({% post_url apple/2020-02-22-shell %})，[macOS, Apple Silicons]({% post_url apple/2021-04-14-apple-silicons %})
+[开发及调试]({% post_url apple/2020-08-07-dev %})，[Shell]({% post_url apple/2020-02-22-shell %})，[macOS]({% post_url apple/2021-04-14-macos %})
 
 [Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})
 
@@ -19,7 +19,7 @@ permalink: apple
 
 [iOS 重要更新]({% post_url apple/2020-10-08-iOS-update-notes %})，[App Store 相关]({% post_url apple/2019-01-18-appstore-connect %})
 
-[Hippy]({% post_url apple/2021-04-26-hippy %})
+[React]({% post_url apple/2021-04-26-react %})
 
 # Apple Developer
 

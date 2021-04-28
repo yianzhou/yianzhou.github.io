@@ -1,11 +1,68 @@
 ---
-title: "CocoaPods"
+title: "Cocoapods"
 categories: [Apple]
 ---
 
 <!-- prettier-ignore -->
 * Do not remove this line (it will not be displayed)
 {:toc}
+
+# Installing Ruby
+
+[The definitive guide to installing Ruby gems on a Mac](https://www.moncefbelyamani.com/the-definitive-guide-to-installing-ruby-gems-on-a-mac/)
+
+某些 gem 的安装教程告诉读者，只要能够运行 `ruby -v` 就可以顺利运行 `gem install xx` 来安装 gem。但这在 macOS 上会得到错误信息：
+
+```sh
+ERROR: While executing gem ... (Gem::FilePermissionError)
+You don't have write permissions for the /Library/Ruby/Gems/2.6.0 directory
+```
+
+macOS returns this error because the default location for Ruby gem installations is the system Ruby directory that is preinstalled by Apple. That directory is not meant to be modified. Using sudo to install gems, or changing permissions of system files and directories is strongly discouraged, even if you know what you are doing.
+
+没有自行安装 Ruby 之前，`which ruby` 会找到 `/usr/bin/ruby`，这就是 macOS 自带的 Ruby。
+
+The solution is: install a separate version of Ruby that does not interfere with the one that came with your Mac!
+
+```sh
+# 1. Install Homebrew
+# 2. Install the latest Ruby
+brew install ruby
+# 3. Update the `PATH` environment variable
+echo 'export PATH="/usr/local/opt/ruby/bin:$PATH"' >> ~/.zshrc
+```
+
+To verify that you are using the Homebrew version of Ruby, run this command: `which ruby`, you should see `/usr/local/opt/ruby/bin/ruby`.
+
+Then, tell RubyGems to install into your user directory by configuring the RubyGems environment. Edit your `.bash_profile`:
+
+```sh
+export GEM_HOME=$HOME/.gem
+export PATH=$GEM_HOME/bin:$PATH
+```
+
+`/usr/local/opt` 这个目录存放的都是一些软链接：
+
+```sh
+cd /usr/local/opt
+ls -l
+...
+lrwxr-xr-x  1 zhouyian  admin   22 Jun 15 17:53 ruby -> ../Cellar/ruby/2.7.1_2
+```
+
+# RubyGems
+
+Ruby ships with RubyGems built-in.
+
+`gem search ^cocoapods$ -d`
+
+The `search` command lets you find remote gems by name. You can use regular expression characters in your query. If you see a gem you want more information on you can add the details option `-d`.
+
+`gem list` The list command shows your locally installed gems.
+
+`gem uninstall drip` The uninstall command removes the gems you have installed.
+
+Use `gem environment` to find out about your gem environment.
 
 # [RubyGems + Bundler](https://guides.cocoapods.org/using/a-gemfile.html)
 
@@ -52,16 +109,14 @@ pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :commit =
 
 `cd ~/.cocoapods/repos/master`，通过`git remote -v`，发现`master`文件夹是一个 git 仓库，它的远端是：
 
-```
+```sh
 origin https://github.com/CocoaPods/Specs.git (fetch)
 origin https://github.com/CocoaPods/Specs.git (push)
 ```
 
 每个第三方库会有多个版本号，每个版本号是一个文件夹，其中有一个`*.podspec.json`。比如：
 
-```
-~/.cocoapods/repos/master/Specs/0/0/1/YYImage/1.0.4/YYImage.podspec.json
-```
+`~/.cocoapods/repos/master/Specs/0/0/1/YYImage/1.0.4/YYImage.podspec.json`
 
 **注意，第三方库的源代码不会放在 Specs 文件夹里，这里只放描述信息。**
 
@@ -89,9 +144,7 @@ Trunk will publish a canonical JSON representation of your Podspec.
 
 回到终端，将这个描述文件仓库添加到本地：
 
-```sh
-pod repo add MyRepo https://github.com/yianzhou/PodSpecs.git
-```
+`pod repo add MyRepo https://github.com/yianzhou/PodSpecs.git`
 
 到这个目录下：`~/.cocoapods/repos/MyRepo`，会发现我们的描述文件 git 仓库，已经被 clone 到本地了。它跟`~/.cocoapods/repos/master`的作用是一样的。
 
@@ -136,9 +189,7 @@ GitHub 上有[这个问题的讨论](https://github.com/CocoaPods/CocoaPods/issu
 
 With New Build System, add to your Podfile, [参考](https://guides.cocoapods.org/syntax/podfile.html#install_bang)
 
-```
-install! 'cocoapods', :disable_input_output_paths => true
-```
+`install! 'cocoapods', :disable_input_output_paths => true`
 
 解决方法二：Use legacy build system
 
@@ -148,13 +199,11 @@ It forces Xcode to run the script everytime.
 
 # 问题：pod 连接慢、安装/更新失败等
 
-```
-[!] Failed to connect to GitHub to update the CocoaPods/Specs specs repo - Please check if you are offline, or that GitHub is down
-```
+`[!] Failed to connect to GitHub to update the CocoaPods/Specs specs repo - Please check if you are offline, or that GitHub is down`
 
 主要解决方法：更新 Ruby、CocoaPods、openssl 版本。
 
-```zsh
+```sh
 brew install ruby
 ruby --version
 export PATH=/usr/local/Cellar/ruby/2.7.1_2/bin:$PATH
@@ -166,7 +215,7 @@ brew link openssl --force
 
 删除主库并重新添加：
 
-```
+```sh
 pod repo remove master
 pod setup
 cd ~/.cocoapods/repos
@@ -179,8 +228,6 @@ pod repo add master https://github.com/CocoaPods/Specs.git
 
 在工程目录下运行命令：
 
-```
-xcodebuild -configuration "Release" -target "${FRAMEWORK_NAME}" -sdk iphoneos clean build
-```
+`xcodebuild -configuration "Release" -target "${FRAMEWORK_NAME}" -sdk iphoneos clean build`
 
 会将 Framework 打包到当前文件夹下。然后创建 .podspec 并声明 `s.ios.vendored_frameworks = 'path/to/framework'` 即可。

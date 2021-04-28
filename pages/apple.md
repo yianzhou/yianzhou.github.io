@@ -5,7 +5,7 @@ permalink: apple
 
 # 日常开发
 
-[开发及调试]({% post_url apple/2020-08-07-dev %})，[Shell]({% post_url apple/2020-02-22-shell %})，[macOS]({% post_url apple/2021-04-14-macos %})
+[开发及调试]({% post_url apple/2020-08-07-dev %})，[Shell]({% post_url apple/2020-02-22-shell %})，[macOS]({% post_url apple/2021-04-14-macos %})，[CocoaPods]({% post_url apple/2020-11-20-cocoapods %})
 
 [Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})
 
@@ -43,7 +43,7 @@ permalink: apple
 
 [埋点]({% post_url apple/2020-10-30-event-log %})，[Unified Logging]({% post_url apple/2021-04-21-unified-logging %})
 
-[CocoaPods]({% post_url apple/2019-07-10-cocoapods %})，[第三方库]({% post_url apple/2020-05-06-frameworks %})，[SDWebImage]({% post_url apple/2020-10-14-SDWebImage %})，[Alamofire]({% post_url apple/2020-10-19-Alamofire %})，[Matrix]({% post_url apple/2020-11-1-matrix %})，[响应式编程]({% post_url apple/2020-11-1-reactive-rx %})，[Aspects]({% post_url apple/2020-11-13-aspects %})
+[第三方库]({% post_url apple/2020-05-06-frameworks %})，[SDWebImage]({% post_url apple/2020-10-14-SDWebImage %})，[Alamofire]({% post_url apple/2020-10-19-Alamofire %})，[Matrix]({% post_url apple/2020-11-1-matrix %})，[响应式编程]({% post_url apple/2020-11-1-reactive-rx %})，[Aspects]({% post_url apple/2020-11-13-aspects %})
 
 [计算机网络]({% post_url apple/2021-03-04-computer-network %})，[Networking]({% post_url apple/2020-11-2-networking %})
 

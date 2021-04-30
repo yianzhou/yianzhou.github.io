@@ -7,7 +7,7 @@ permalink: apple
 
 [开发及调试]({% post_url apple/2020-08-07-dev %})，[Shell]({% post_url apple/2020-02-22-shell %})，[macOS]({% post_url apple/2021-04-14-macos %})，[CocoaPods]({% post_url apple/2020-11-20-cocoapods %})
 
-[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})
+[Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})，[UIScene]({% post_url apple/2021-04-30-uiscene %})
 
 [User Notification]({% post_url apple/2021-01-25-user-notification %})
 

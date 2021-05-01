@@ -134,10 +134,34 @@ Because XCTest works so well with both Xcode and Xcode server, you could use thi
 # MetricKit
 
 > [WWDC 2019 - Improving Battery Life and Performance](https://developer.apple.com/videos/play/wwdc2019/417/)
+>
+> [WWDC 2020 - What's new in MetricKit](https://developer.apple.com/videos/play/wwdc2020/10081/)
 
-With MetricKit, you can receive on-device app diagnostics and power and performance metrics captured by the system. A registered app receives reports containing data about the previous 24 hours at most once per day.
+With MetricKit, you can receive on-device app diagnostics and power and performance metrics captured by the system. A registered app receives reports containing data about the previous 24 hours at most once per day. Over the course of the day, the operating system is passively aggregating performance data for your app as it is used. This data is anonymized and designed to protect user privacy.
 
 It's up to you to take any actions once you receive this payload on the device. For example, you can choose to save it to a file, or you can also upload to your server so you can collect this from the field for multiple users.
+
+```swift
+import MetricKit
+
+class MySubscriber: NSObject, MXMetricManagerSubscriber {
+    var metricManager: MXMetricManager?
+    override init() {
+        super.init()
+        metricManager = MXMetricManager.shared
+        metricManager?.add(self)
+    }
+    override deinit() {
+        metricManager?.remove(self)
+    }
+    func didReceive(_ payload: [MXMetricPayload]) {
+        // new in iOS 13
+    }
+    func didReceive(_ payload: [MXDiagnosticPayload]) {
+        // new in iOS 14
+    }
+}
+```
 
 # App Store Connect API
 

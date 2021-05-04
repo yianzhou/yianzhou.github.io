@@ -42,5 +42,11 @@ Data task did completed:
 <!-- markdownlint-disable -->
 <div class="mermaid">
 sequenceDiagram
+    System ->> AFURLSessionManager: URLSession:task:didCompleteWithError:
+    AFURLSessionManager ->> AFURLSessionManager: delegateForTask:
+    AFURLSessionManager ->> AFURLSessionManagerTaskDelegate: URLSession:task:didCompleteWithError:
+    AFURLSessionManagerTaskDelegate ->> AFHTTPResponseSerializer: responseObjectForResponse:data:error:
+    AFHTTPResponseSerializer -->> AFURLSessionManagerTaskDelegate: id responseObject
+    AFURLSessionManagerTaskDelegate ->> Client: completionHandler(responseObject)
 </div>
 <!-- markdownlint-restore -->

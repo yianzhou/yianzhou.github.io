@@ -7,34 +7,6 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
-# Summary
-
-Application Layer:
-
-- HTTP/2
-  - Multiplexing, no HOL blocking
-  - HPACK
-  - Response Message Prioritization
-  - Server Push
-  - Connection Coalesing
-- DNS
-  - Optimistic DNS
-  - HTTP DNS, Encrypted DNS
-- Brotli
-- WebSocket
-
-Transport Layer:
-
-- Wi-Fi Assist, Multipath TCP
-- TCP_NOTSENT_LOWAT
-- ECN
-- TCP Fast Open
-
-Network Layer：
-
-- Supporting IPv6
-- Network Service Type
-
 # URLSession
 
 > [WWDC 2016 - NSURLSession: New Features and Best Practices](https://developer.apple.com/videos/play/wwdc2016/711)
@@ -47,9 +19,9 @@ Best practice: one session to support many (many!) tasks!
 
 Every `URLSession` object has a **connection pool** and when you create multiple of these `URLSession` objects, you don't get any benefit of connection reusing. It's also important to note that the `URLSession` objects are fairly expensive to create and have a non-trivial memory footprint.
 
-For almost all of your apps what you should have is just one `URLSession`, which can then have as many tasks as you want. The only time you would want more than one `URLSession` is when you have groups of different operations that have radically different requirements. And in that case you might create two different configuration objects to init two different `URLSessions`. One example is private browsing in Safari where each private browsing window is its own separate `URLSession` so that it doesn't share cookies and other states with the other sessions.
+For almost all of your apps what you should have is just one `URLSession`, which can then have as many tasks as you want. The only time you would want more than one `URLSession` is when you have groups of different operations that have radically different requirements. And in that case you might create two different configuration objects to init two different `URLSession`s. One example is private browsing in Safari where each private browsing window is its own separate `URLSession` so that it doesn't share cookies and other states with the other sessions.
 
-Most apps can just have one statically-allocated `URLSession`. But if you do allocate URLSessions dynamically, remember to clean up afterwards. Either `finishTasksAndInvalidate` or `invalidateAndCancel`. If you don't clean up, you'll leak memory.
+Most apps can just have one statically-allocated `URLSession`. But if you do allocate `URLSession`s dynamically, remember to clean up afterwards. Either `finishTasksAndInvalidate` or `invalidateAndCancel`. If you don't clean up, you'll leak memory.
 
 Delegate callbacks and convenience methods: Delegate callbacks give you detailed step-by-step progress information on the state of your task. The convenience methods, by comparison, are a quick and easy way of using the API that you don't get all the intermediate delegate callbacks, you just get the final result reported to the completion handler. Don't mix and match both on the same `URLSession`, pick one style and be consistent.
 
@@ -651,3 +623,31 @@ UTF-8 is an 8-bit byte-oriented encoding. Because of that, there are no byte ord
 You can jump into the middle of a UTF-8 file anywhere, and by just looking at any byte, you can tell what you've got. So it's very, very robust to insertion and deletion errors. It's an encoding that is efficient enough to be compact but has just enough redundancy to be very reliable.
 
 So, we recommend only use UTF-8, for everything!
+
+# Summary
+
+Application Layer:
+
+- HTTP/2
+  - Multiplexing, no HOL blocking
+  - HPACK
+  - Response Message Prioritization
+  - Server Push
+  - Connection Coalesing
+- DNS
+  - Optimistic DNS
+  - HTTP DNS, Encrypted DNS
+- Brotli
+- WebSocket
+
+Transport Layer:
+
+- Wi-Fi Assist, Multipath TCP
+- TCP_NOTSENT_LOWAT
+- ECN
+- TCP Fast Open
+
+Network Layer：
+
+- Supporting IPv6
+- Network Service Type

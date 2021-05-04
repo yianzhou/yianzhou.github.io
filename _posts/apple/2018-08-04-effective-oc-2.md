@@ -11,6 +11,8 @@ categories: [Effective Objective-C]
 
 访问对象的实例变量，是通过访问对象在内存中的首地址 + 偏移量来完成。
 
+> [objc explain: Non-fragile ivars](http://www.sealiesoftware.com/blog/archive/2009/01/27/objc_explain_Non-fragile_ivars.html)
+
 如果这个偏移量是一个编译时决定的常量，那么父类增加成员变量，就会造成内存布局的改动、导致所有子类都需要重新编译，否则就无法运行。例如，我们在某个 macOS 版本编写了一个类 `PetShopView` 继承 `NSView`，它们的内存布局：
 
 ![img-60](/assets/images/856E7BCD-E838-46B6-B8E1-7EF0077AD219.png)
@@ -19,7 +21,7 @@ categories: [Effective Objective-C]
 
 ![img-60](/assets/images/2960A97D-7D1C-40C7-88E2-2B00CFCB2C25.png)
 
-这意味着，所有继承自 NSView 的子类都不可用了！要么开发者重新编译并发布更新；要么苹果就不可以改动 `NSView` 的实例变量布局、以免新版操作系统上大量软件变得不可用！参考 [objc explain: Non-fragile ivars](http://www.sealiesoftware.com/blog/archive/2009/01/27/objc_explain_Non-fragile_ivars.html)
+这意味着，所有继承自 `NSView` 的子类都不可用了！要么开发者重新编译并发布更新；要么苹果就不可以改动 `NSView` 的实例变量布局、以免新版操作系统上大量软件变得不可用！
 
 那么如何解决这个问题呢？
 
@@ -33,11 +35,11 @@ This is known as the nonfragile Application Binary Interface (ABI). An ABI defin
 
 实际上编译器使用 `_属性名` 如 `_firstName` 作为真正的实例变量，并生成了存取方法。使用 @synthesize 可以更改这个默认的名字，但不建议这么做。
 
-@dynamic 可以告诉编译器不要自动创建实例变量 `_firstName` 和存取方法，Core Data 框架中使用了这种声明。
+@dynamic 可以告诉编译器不要自动创建实例变量 `_firstName` 和存取方法。
 
 属性的 attribute 会影响编译器所生成的存取方法：
 
-一、原子性。在 iOS 开发中，**所有属性都声明为 nonatomic**，这样做是因为在 iOS 中使用同步锁的开销较大，会带来严重的性能问题。而且 atomic 的属性并不能保证线程安全，要保证线程安全，还需采用更为深层的锁定机制。
+一、原子性。在 iOS 开发中，所有属性都声明为 `nonatomic`，这样做是因为在 iOS 中使用同步锁的开销较大，会带来严重的性能问题。而且 `atomic` 的属性并不能保证线程安全，要保证线程安全，还需采用更为深层的锁定机制。
 
 Atomic accessors include locks to ensure atomicity. This means that if two threads are reading and writing the same property, the value of the property at any given point in time is valid. Without the locks, or nonatomic, the property value may be read on one thread while another thread is midway through writing to it. If this happens, the value that’s read could be invalid.
 

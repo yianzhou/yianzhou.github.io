@@ -7,42 +7,40 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
-# URL Loading System
+> [AFNetworking](https://github.com/AFNetworking/AFNetworking)
 
-> [URL Loading System](https://developer.apple.com/documentation/foundation/url_loading_system)
+`AFURLSessionManager` creates and manages an `NSURLSession` object based on a specified `NSURLSessionConfiguration` object.
 
-You use a `URLSession` instance to create one or more `URLSessionTask` instances.
+`AFHTTPSessionManager` is a subclass of `AFURLSessionManager` with convenience methods for making HTTP requests (by `baseURL` and relative paths).
 
-To configure a session, you use a `URLSessionConfiguration` object.
+> [HTTP request methods](https://developer.mozilla.org/en-US/docs/Web/HTTP/Methods)
 
-- `.shared`
-- `.default`
-- `.ephemeral`
-- `.background(identifier)`
-
-It is important to configure your `URLSessionConfiguration` object appropriately before using it to initialize a session object. Once configured, the session object ignores any changes you make to the configuration object. If you need to modify your transfer policies, you must update the session configuration object and use it to create a new `URLSession` object.
-
-`URLSessionDelegate` The session object keeps a strong reference to the delegate until your app exits or explicitly invalidates the session. If you don’t invalidate the session, your app leaks memory until the app terminates.
-
-`URLCache`: An object that maps `URLRequest` objects to `CachedURLResponse` objects. `URLCache` is thread safe.
-
-```objc
-NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024 diskCapacity:20 * 1024 * 1024 diskPath:nil];
-[NSURLCache setSharedURLCache:URLCache];
-```
-
-# AFURLSessionManager
-
-`AFURLSessionManager` creates and manages an `NSURLSession` object based on a specified `NSURLSessionConfiguration` object, which conforms to `<NSURLSessionTaskDelegate>`, `<NSURLSessionDataDelegate>`, `<NSURLSessionDownloadDelegate>`, and `<NSURLSessionDelegate>`.
-
-`AFHTTPSessionManager` is a subclass of `AFURLSessionManager` with convenience methods for making HTTP requests (by `baseURL` and elative paths).
+Create and resume a task:
 
 <!-- markdownlint-disable -->
 <div class="mermaid">
-classDiagram
-    AFURLSessionManager <|-- AFHTTPSessionManager
-    class AFURLSessionManager {
-        -NSURLSession *session
-    }
+sequenceDiagram
+    Client ->>+ AFHTTPSessionManager: GET:
+    AFHTTPSessionManager ->> AFHTTPSessionManager: dataTaskWithHTTPMethod:
+    AFHTTPSessionManager ->>+ AFHTTPRequestSerializer: requestWithMethod:
+    AFHTTPRequestSerializer ->> AFHTTPRequestSerializer: requestBySerializingRequest:
+    AFHTTPRequestSerializer -->> AFHTTPRequestSerializer: NSURLRequest
+    AFHTTPRequestSerializer -->>- AFHTTPSessionManager: NSMutableURLRequest
+    AFHTTPSessionManager ->>+ AFURLSessionManager: dataTaskWithRequest:
+    AFURLSessionManager ->>+ NSURLSession: dataTaskWithRequest:
+    NSURLSession ->>- AFURLSessionManager: NSURLSessionDataTask
+    AFURLSessionManager ->> AFURLSessionManager: addDelegateForDataTask:
+    AFURLSessionManager ->> AFURLSessionManager: setDelegate:forTask:
+    AFURLSessionManager -->>- AFHTTPSessionManager: NSURLSessionDataTask
+    AFHTTPSessionManager -> AFHTTPSessionManager: [dataTask resume]
+    AFHTTPSessionManager -->>- Client: NSURLSessionDataTask
+</div>
+<!-- markdownlint-restore -->
+
+Data task did completed:
+
+<!-- markdownlint-disable -->
+<div class="mermaid">
+sequenceDiagram
 </div>
 <!-- markdownlint-restore -->

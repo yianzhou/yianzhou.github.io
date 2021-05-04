@@ -1,5 +1,5 @@
 ---
-title: "Networking in Apple Platforms"
+title: "Networking"
 categories: [Apple]
 ---
 
@@ -26,6 +26,8 @@ Most apps can just have one statically-allocated `URLSession`. But if you do all
 Delegate callbacks and convenience methods: Delegate callbacks give you detailed step-by-step progress information on the state of your task. The convenience methods, by comparison, are a quick and easy way of using the API that you don't get all the intermediate delegate callbacks, you just get the final result reported to the completion handler. Don't mix and match both on the same `URLSession`, pick one style and be consistent.
 
 ## URLSessionConfiguration
+
+It is important to configure your `URLSessionConfiguration` object appropriately before using it to initialize a session object. Once configured, the session object ignores any changes you make to the configuration object. If you need to modify your transfer policies, you must update the session configuration object and use it to create a new `URLSession` object.
 
 `URLSessionConfiguration`:
 
@@ -82,6 +84,17 @@ You can attach that progress object to a `UIProgressView` or an `NSProgressIndic
 You can also combine multiple progress objects into a parent progress object when you're performing multiple tasks.
 
 The binding between a `URLSessionTask` and the progress object is bidirectional. So if you pause a `URLSessionTask`, that is the same as pausing the progress object. If you pause the progress object, that is the same as pause the `URLSessionTask`.
+
+# URLCache
+
+> [URL Loading System](https://developer.apple.com/documentation/foundation/url_loading_system)
+
+`URLCache`: An object that maps `URLRequest` objects to `CachedURLResponse` objects. `URLCache` is thread safe.
+
+```objc
+NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024 diskCapacity:20 * 1024 * 1024 diskPath:nil];
+[NSURLCache setSharedURLCache:URLCache];
+```
 
 # HTTP/2
 

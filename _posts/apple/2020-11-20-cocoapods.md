@@ -9,7 +9,7 @@ categories: [Apple]
 
 # Installing Ruby
 
-[The definitive guide to installing Ruby gems on a Mac](https://www.moncefbelyamani.com/the-definitive-guide-to-installing-ruby-gems-on-a-mac/)
+> [The definitive guide to installing Ruby gems on a Mac](https://www.moncefbelyamani.com/the-definitive-guide-to-installing-ruby-gems-on-a-mac/)
 
 某些 gem 的安装教程告诉读者，只要能够运行 `ruby -v` 就可以顺利运行 `gem install xx` 来安装 gem。但这在 macOS 上会得到错误信息：
 
@@ -34,14 +34,14 @@ echo 'export PATH="/usr/local/opt/ruby/bin:$PATH"' >> ~/.zshrc
 
 To verify that you are using the Homebrew version of Ruby, run this command: `which ruby`, you should see `/usr/local/opt/ruby/bin/ruby`.
 
-Then, tell RubyGems to install into your user directory by configuring the RubyGems environment. Edit your `.bash_profile`:
+Then, tell RubyGems to install into your user directory by configuring the RubyGems environment. Edit `~/.zshrc`:
 
 ```sh
 export GEM_HOME=$HOME/.gem
 export PATH=$GEM_HOME/bin:$PATH
 ```
 
-`/usr/local/opt` 这个目录存放的都是一些软链接：
+`/usr/local/opt` 这个目录存放的都是一些符号链接：
 
 ```sh
 cd /usr/local/opt
@@ -58,21 +58,23 @@ Ruby ships with RubyGems built-in.
 
 The `search` command lets you find remote gems by name. You can use regular expression characters in your query. If you see a gem you want more information on you can add the details option `-d`.
 
-`gem list` The list command shows your locally installed gems.
+`gem list` shows your locally installed gems.
 
-`gem uninstall drip` The uninstall command removes the gems you have installed.
+`gem uninstall drip` removes the gems you have installed.
 
 Use `gem environment` to find out about your gem environment.
 
-# [RubyGems + Bundler](https://guides.cocoapods.org/using/a-gemfile.html)
+# Bundler
+
+> [Using a Gemfile](https://guides.cocoapods.org/using/a-gemfile.html)
 
 A lot of ideas for CocoaPods came from similar projects (for example [RubyGems](https://rubygems.org/), [Bundler](https://bundler.io/), [npm](https://www.npmjs.com/) and [Gradle](https://gradle.org/)).
 
-RubyGems is a hosted ruby library service. It centralizes where you look for a library, and installing ruby libraries / apps.（例如，[cocoapods](https://rubygems.org/gems/cocoapods) 就是通过 `gem install cocoapods` 安装的）These are installed into a central database of versions.
+RubyGems is a hosted ruby library service. It centralizes where you look for a library, and installing ruby libraries/apps. These are installed into a central database of versions.
 
 The downside of this is that there is no way to ensure that a project needing a specific version of a library can use that, it would always use the latest version.（就像 App Store 永远给你安装最新版本一样）This is the problem bundler solves.
 
-参考：[Bundler's Purpose and Rationale](https://bundler.io/v2.1/rationale.html)
+> [Bundler's Purpose and Rationale](https://bundler.io/v2.1/rationale.html)
 
 Bundler creates a consistent application environment for your application, by allowing you to specify the version of libraries. We took this idea almost whole-sale for CocoaPods. You define a `Gemfile` that says what libraries you want to include, and can optionally specify a version or range. You run `bundle install` and it will generate a `Gemfile.lock` saying the exact version of all of your libraries and then anyone else running bundle install with that project gets the exact same versions.
 
@@ -80,15 +82,15 @@ With a Gemfile setup, you run `bundle install` to install, or `bundle update` to
 
 Doing it without `bundle exec` will bypass your Gemfile's specific versioning and will use the latest version of the library within RubyGems. This could potentially be the exact same version, but it can often not.
 
-# [pod install vs. pod update](https://guides.cocoapods.org/using/pod-install-vs-update.html)
+# pod install vs. pod update
 
-`pod install`: This is to be used the first time you want to retrieve the pods for the project, but also every time you edit your Podfile to add, update or remove a pod.
+> [pod install vs. pod update](https://guides.cocoapods.org/using/pod-install-vs-update.html)
 
-Every time the pod install command is run — and downloads and install new pods — it writes the version it has installed, for each pods, in the Podfile.lock file. This file keeps track of the installed version of each pod and **locks** those versions. When you run pod install, it only resolves dependencies for pods that are **not** already listed in the Podfile.lock. For pods listed in the Podfile.lock, it downloads the explicit version listed in the Podfile.lock without trying to check if a newer version is available.
+`pod install`: This is to be used the first time you want to retrieve the pods for the project, but also every time you edit your `Podfile` to add, update or remove a pod.
 
-`pod update`: It will update the pod to the latest version possible (as long as it matches the version restrictions in your Podfile).
+Every time the pod install command is run — and downloads and install new pods — it writes the version it has installed, for each pods, in the `Podfile.lock` file. This file keeps track of the installed version of each pod and **locks** those versions. When you run pod install, it only resolves dependencies for pods that are **not** already listed in the `Podfile.lock`. For pods listed in the `Podfile.lock`, it downloads the explicit version listed in the `Podfile.lock` without trying to check if a newer version is available.
 
-# Podfile
+`pod update`: It will update the pod to the latest version possible (as long as it matches the version restrictions in your `Podfile`).
 
 ```rb
 pod 'SSZipArchive' # use the latest version
@@ -118,17 +120,13 @@ origin https://github.com/CocoaPods/Specs.git (push)
 
 `~/.cocoapods/repos/master/Specs/0/0/1/YYImage/1.0.4/YYImage.podspec.json`
 
-**注意，第三方库的源代码不会放在 Specs 文件夹里，这里只放描述信息。**
+注意，第三方库的源代码不会放在 Specs 文件夹里，这里只放描述信息。
 
 想要在 Cocoapods 中发布仓库，就是需要在`~/.cocoapods/repos/master`中添加我们的仓库的描述信息，然后 push 到远端。不过不用我们通过 git 命令，直接用 pod 命令操作即可。
 
 Running `pod lib create [pod name]` will set you up with a well thought out library structure allowing you to easily include your files and get started quickly.
 
-## Testing your library
-
 You should be testing your library. In Objective-C [Specta/Expecta](https://github.com/specta/expecta). In Swift [Quick/Nimble](https://github.com/Quick/Nimble). For View-based Testing: [iOSSnapshotTestCase](https://github.com/uber/ios-snapshot-test-case/).
-
-## Trunk
 
 发表到官方仓库需要一个“账户”：[CocoaPods Trunk](https://guides.cocoapods.org/making/getting-setup-with-trunk.html) is an authentication and CocoaPods API service. To publish new or updated libraries to CocoaPods for public release you will need to be registered with Trunk and have a valid Trunk session on your current device.
 
@@ -150,7 +148,7 @@ Trunk will publish a canonical JSON representation of your Podspec.
 
 ## 创建 SDK 代码库
 
-创建 `.podspec` 文件：`pod spec create SampleLib`，打开`SampleLib.podspec`文件并编辑好相关配置。可以参考别的第三方库的配置如 [YYImage](https://github.com/ibireme/YYImage/blob/master/YYImage.podspec)。
+创建 podspec 文件：`pod spec create SampleLib`，打开 `SampleLib.podspec` 文件并编辑好相关配置。可以参考别的第三方库的配置如 [YYImage](https://github.com/ibireme/YYImage/blob/master/YYImage.podspec)。
 
 验证仓库是否配置正确：`pod lib lint`，验证正确后，就可以把描述文件推到远端了。然后，打上版本号的 tag，注意这个 tag 是与`.podspec` 文件中的版本对应的。
 
@@ -179,7 +177,7 @@ source 'https://github.com/CocoaPods/Specs.git'
 
 # 问题：Development pods 的更改在 build 后没有生效
 
-[How to rebuild development pod changes?](https://stackoverflow.com/questions/50552752/how-to-rebuild-development-pod-changes)（Xcode11.4, pod 1.8.4 试过了，仍然没有解决）
+[How to rebuild development pod changes?](https://stackoverflow.com/questions/50552752/how-to-rebuild-development-pod-changes)（Xcode 11.4, pod 1.8.4 试过了，仍然没有解决）
 
 GitHub 上有[这个问题的讨论](https://github.com/CocoaPods/CocoaPods/issues/8073)：
 
@@ -222,12 +220,12 @@ cd ~/.cocoapods/repos
 pod repo add master https://github.com/CocoaPods/Specs.git
 ```
 
-# 通过 CocoaPods 集成 Framework
+# 集成 Framework
 
-首先要有一个工程，其中的 TARGETS 有我们想打包出来的 Framework。在工程里正常 build 后，产物会在 /Users/zhouyian/Library/Developer/Xcode/DerivedData 目录下，也可以在 Project Navigator - Products 下面找到。
+首先要有一个工程，其中的 TARGETS 有我们想打包出来的 Framework。在工程里正常 build 后，产物会在 `/Users/zhouyian/Library/Developer/Xcode/DerivedData` 目录下，也可以在 Project Navigator - Products 下面找到。
 
 在工程目录下运行命令：
 
 `xcodebuild -configuration "Release" -target "${FRAMEWORK_NAME}" -sdk iphoneos clean build`
 
-会将 Framework 打包到当前文件夹下。然后创建 .podspec 并声明 `s.ios.vendored_frameworks = 'path/to/framework'` 即可。
+会将 Framework 打包到当前文件夹下。然后创建 podspec 文件并声明 `s.ios.vendored_frameworks = 'path/to/framework'` 即可。

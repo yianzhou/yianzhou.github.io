@@ -15,7 +15,7 @@ categories: [Apple]
 
 `DispatchQueue` 是 FIFO 队列。串行队列，按 FIFO 原则出列，一个接一个执行；并行队列，按 FIFO 原则出列，并发执行，返回顺序无法预计。
 
-The system automatically creates the main queue and associates it with your application’s main thread. 系统会自动创建主队列，并将其与应用程序的主线程关联。主队列只有一个工作线程，就是主线程。
+系统会自动创建主队列，并将其与应用程序的主线程关联。主队列只有一个工作线程，就是主线程。
 
 ## Sync and Async
 
@@ -31,7 +31,7 @@ queue.async {
 }
 ```
 
-This is where you can queue up multiple items of work to your dispatch queue, and then will bring up a thread to execute that work. Dispatch will one by one take items off that queue and execute them. And then when it's finished with all items on the queue, the system will **reclaim** the thread that it bought up for you.
+This is where you can queue up multiple items of work to your dispatch queue, and then will **bring up** a thread to execute that work. Dispatch will one by one take items off that queue and execute them. And then when it's finished with all items on the queue, the system will **reclaim** the thread that it bought up for you.
 
 The second mode of execution is synchronous execution.
 
@@ -44,7 +44,7 @@ queue.sync {
 
 This is, you have your own thread. You submit synchronous work to the dispatch queue, and then it will **block** until the work item has completed. When it comes time to run the synchronous item, the dispatch queue will pass control over to the thread that was waiting, executes that work item, and then returns the control back to the worker thread. Dispatch will continue to drain the rest of the items on dispatch queue, and then also reclaims the worker thread that it was using.
 
-![img-80](/assets/images/eed3d6f2-6135-4f82-9b65-64018199aea1.png)
+![img-80](/assets/images/af0a14fb-689d-496b-ba3d-5aca619d833b.png)
 
 Use GCD for synchronization in Swift:
 
@@ -76,7 +76,7 @@ When designing tasks for concurrent execution, **do not call methods that block 
 
 Another way that apps consume too many threads is by creating too many private concurrent dispatch queues. Because each dispatch queue consumes thread resources, creating additional concurrent dispatch queues exacerbates the thread consumption problem. Instead of creating private concurrent queues, submit tasks to one of the global concurrent dispatch queues.
 
-For serial tasks, set the **target** of your serial queue to one of the global concurrent queues. That way, you can maintain the serialized behavior of the queue while minimizing the number of separate queues creating threads.
+For serial tasks, **set the target** of your serial queue to one of the global concurrent queues. That way, you can maintain the serialized behavior of the queue while minimizing the number of separate queues creating threads.
 
 GCD 管理了一个线程池，往全局并发队列、自己创建的并发队列里提交 block，GCD 会将 block 派发到线程池里的线程来执行。如果当前工作线程全繁忙，会创建新的线程，最多同时有 64 个工作线程。
 
@@ -229,7 +229,7 @@ Efficient parallel for-loop doing parallel computation across all CPU cores:
 
 A context switch is when the CPU switches between these different subsystems or threads that make up your application.
 
-Let's image that we only have one CPU remaining, the others are busy for some reason. At any time only one of these threads can run on that CPU. When the user touches the app, because the database is run off the main thread, the OS can immediately switch the CPU to work on the main thread, so it can respond immediately to the user without having to wait for the database thread to complete. When the user interface is done responding, the CPU can then switch back to the database thread, and then finish the networking task as well. These white lines below show the context switches.
+Let's image that we only have one CPU remaining, the others are busy for some reason. At any time only one threads can run on that CPU. When the user touches the app, because the database is run off the main thread, the OS can immediately switch the CPU to work on the main thread, so it can respond immediately to the user without having to wait for the database thread to complete. When the user interface is done responding, the CPU can then switch back to the database thread, and then finish the networking task as well. These white lines below show the context switches.
 
 ![img](/assets/images/b58785de-d2af-4c8b-9d76-638f9df52be3.png)
 
@@ -307,33 +307,29 @@ We have completely reinvented the internals of GCD this year to eliminate some u
 
 `@property(readonly, getter=isCancelled) BOOL cancelled;` Cancellation on `Operation` only flipped the boolean value of `cancelled`. So as you subclass `Operation`, it is up to you to decide what it means for your `Operation` to be canceled.
 
-`@property(readonly, getter=isReady) BOOL ready;` By default, an operation will become ready if all of its **dependencies** have finished executing. If you have two operation queues in your application, operations in the first queue can be dependent on the operations in the second queue. 先进入 ready 状态的任务先出列执行、不管其在队列中的哪个位置。从这一点来看，`OperationQueue` 并不是 FIFO 的队列。
+`@property(readonly, getter=isReady) BOOL ready;` By default, an operation will become ready if all of its **dependencies** have finished executing. If you have two operation queues in your application, operations in the first queue can be dependent on the operations in the second queue. 先进入 ready 状态的任务先出列执行、不管其在队列中的哪个位置。`OperationQueue` 并不是 FIFO 的队列！
 
 ![img](/assets/images/328be38f-19c3-4a69-969c-5c405da382f6.png)
 
-Use operations to **abstract the logic** in your app. By putting your logic inside of operations, it becomes very easy to change it later. Use **dependencies** to express the relationships between your operations. It makes it very simple to guarantee certain kinds of behaviors, that B must always follow A. Next, operations allow you to describe complex behaviors, such as **mutual exclusivity** or **composition**.
+Use operations to **abstract the logic** in your app. By putting your logic inside of operations, it becomes very easy to change it later. Use **dependencies** to express the relationships between your operations. Next, operations allow you to describe complex behaviors, such as **mutual exclusivity** or **composition**.
 
 # Synchronization
-
-## 竞争情况
 
 多个进程同时操作同一份数据、并且执行结果取决于操作发生的特定顺序的情况，称为**竞争情况** (race condition)。为了防止出现竞争情况，我们要求以某种方式同步 (synchronized) 进程。
 
 每个线程会有自己的栈内存空间，栈空间相互隔离、互不影响；但有时多个线程要访问到共享的堆区内存，此时如果不进行同步，就会出现内存不一致问题。设想这样一个场景，用户的银行账户里有 100 元，此时有 3 个柜员机同时进行存、取、查操作，它们之间就需要进行同步。
 
-## 临界区
-
 程序可以声明称为临界区 (critical section) 的代码。在临界区中，线程可能正在访问或更新与至少一个其他线程共享的数据。当一个线程在临界区执行时，不允许其他线程在临界区执行。多个线程必须互斥地对临界资源进行访问。
 
 ## 公平锁与非公平锁
 
-公平锁：在竞争情况下，把到达临界区的线程放到一个 FIFO 队列里等待，锁被释放后，唤醒队列头部的线程来获取锁。优点是每个线程都有机会得到锁，不会饿死；缺点是每个线程都要经历排队挂起、出队唤醒过程，涉及上下文切换，相对来说吞吐量没有非公平锁直接抢占来得高。
+公平锁：在竞争情况下，把到达临界区的线程放到一个 FIFO 队列里等待，锁被释放后，即被队列头部的线程保留。优点是每个线程都有机会得到锁，不会饿死；缺点是由于上下文切换次数更多、相对来说吞吐量没有非公平锁大。
 
-非公平锁：在竞争情况下，线程进入临界区直接尝试获取锁，无须考虑等待队列里的线程，获取不到再进入队列等待。优点是某些线程可以在到达临界区时直接抢占锁，不用经历排队挂起、再出队唤醒的过程，提高了整体的吞吐效率；缺点是可能导致队列里等待的线程一直获取不到锁、甚至饿死。
-
-为什么要进入队列等待呢？一直尝试获取锁可以吗？——可以，一直尝试获取的叫自旋锁，与互斥锁类似，只是自旋锁被某线程占用时，其他线程不会挂起，而是一直运行（自旋/空转）直到锁被释放。由于不涉及用户态与内核态之间的切换，它的效率高于互斥锁。但相应地，会一直占用 CPU，如果不能在很短的时间内获得锁，无疑会使 CPU 整体效率降低。
+非公平锁：在竞争情况下，锁被释放后不会被保留，无须考虑等待队列里的线程。优点是提高了重获锁的效率和整体的吞吐量；缺点是可能导致别的线程一直获取不到锁、甚至饿死。
 
 iOS 中日常使用到的锁，除了 `os_unfair_lock` 是非公平锁，其余都是公平锁。
+
+为什么要进入队列等待呢？一直尝试获取锁可以吗？——可以，一直尝试获取的叫自旋锁，与互斥锁类似，只是自旋锁被某线程占用时，其他线程不会挂起，而是一直运行（自旋/空转）直到锁被释放。由于不涉及用户态与内核态之间的切换，它的效率高于互斥锁。但相应地，会一直占用 CPU，如果不能在很短的时间内获得锁，无疑会使 CPU 整体效率降低。
 
 非公平锁/自旋锁适用于：预计临界区执行的时间很短，等待的线程能很快获得锁；临界区的代码经常被调用，但竞争情况很少发生。
 
@@ -355,11 +351,9 @@ This is a replacement for the deprecated `OSSpinLock`. This function doesn't spi
 
 ## 互斥锁
 
-`pthread_mutex_lock`，pthread 中的互斥锁，具有跨平台性质，有普通锁、检错锁、递归锁三种。当锁处于占用状态时，其他线程会挂起；当锁被释放时，所有等待的线程都将被唤醒，再次对锁进行竞争。在挂起与唤醒过程中，涉及用户态与内核态之间的上下文切换，这种切换是比较消耗性能的。
+TODO: `pthread_mutex_t`，pthread 中的互斥锁，具有跨平台性质，有普通锁、检错锁、递归锁三种。当锁处于占用状态时，其他线程会挂起；当锁被释放时，所有等待的线程都将被唤醒，再次对锁进行竞争。在挂起与唤醒过程中，涉及用户态与内核态之间的上下文切换，这种切换是比较消耗性能的。
 
 `NSLock` 是对 `pthread_mutex_lock` 的封装，是普通类型的互斥锁；如果用在需要递归嵌套加锁的场景时，需要使用其子类 `NSRecursiveLock`。
-
-## @synchronized
 
 `@synchronized` 是对 `pthread_mutex_t` 的封装，是递归类型的互斥锁。
 
@@ -369,20 +363,7 @@ This is a replacement for the deprecated `OSSpinLock`. This function doesn't spi
 }
 ```
 
-## 信号量
-
-信号量主要用于控制临界区的资源最多可以被多少个线程并发访问。
-
-```objc
-dispatch_semaphore_t lock = dispatch_semaphore_create(1);
-dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER); // 等待和发出信号必须对称！重复调用 wait 不会崩溃，但会造成无限的等待……
-NSLog(@"safe here ...");
-dispatch_semaphore_signal(lock);
-```
-
-## pthread_rwlock_t
-
-读写锁是用于“多线程读、单线程写”这一种读写互斥的场景，读操作可并发重入，写操作是互斥的。
+`pthread_rwlock_t` 读写锁是用于“多线程读、单线程写”这一种读写互斥的场景，读操作可并发重入，写操作是互斥的。
 
 ```objc
 - (instancetype)init {
@@ -404,6 +385,17 @@ dispatch_semaphore_signal(lock);
     [super saveMoney];
     pthread_rwlock_unlock(&_lock);
 }
+```
+
+## 信号量
+
+信号量主要用于控制临界区的资源最多可以被多少个线程并发访问。
+
+```objc
+dispatch_semaphore_t lock = dispatch_semaphore_create(1);
+dispatch_semaphore_wait(lock, DISPATCH_TIME_FOREVER); // 等待和发出信号必须对称！重复调用 wait 不会崩溃，但会造成无限的等待……
+NSLog(@"safe here ...");
+dispatch_semaphore_signal(lock);
 ```
 
 ## OSSpinLock (deprecated)

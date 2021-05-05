@@ -5,25 +5,23 @@ permalink: apple
 
 # 日常开发
 
-[开发及调试]({% post_url apple/2020-08-07-dev %})，[Shell]({% post_url apple/2020-02-22-shell %})，[macOS]({% post_url apple/2021-04-14-macos %})，[CocoaPods]({% post_url apple/2020-11-20-cocoapods %})
+[开发及调试]({% post_url apple/2020-08-07-dev %})，[macOS]({% post_url apple/2021-04-14-macos %})，[CocoaPods]({% post_url apple/2020-11-20-cocoapods %})
 
 [Swift Gists]({% post_url apple/2020-06-02-gist-swift %})，[OC Gists]({% post_url apple/2020-06-02-gist-oc %})，[UIFont]({% post_url apple/2020-07-10-UIFont %})，[UIScene]({% post_url apple/2021-04-30-uiscene %})
 
-[User Notification]({% post_url apple/2021-01-25-user-notification %})
-
-[App in the Background]({% post_url apple/2021-04-10-app-in-the-background %})
+[User Notification]({% post_url apple/2021-01-25-user-notification %})，[App in the Background]({% post_url apple/2021-04-10-app-in-the-background %})
 
 [Uniform Type Identifiers]({% post_url apple/2021-04-14-uniform-type-identifiers %})
 
 [App Extension]({% post_url apple/2019-02-21-app-extension %})
 
-[iOS 重要更新]({% post_url apple/2020-10-08-iOS-update-notes %})，[App Store 相关]({% post_url apple/2019-01-18-appstore-connect %})
+[iOS 重要更新]({% post_url apple/2020-10-08-iOS-update-notes %})
 
 [React]({% post_url apple/2021-04-26-react %})
 
-# Apple Developer
+# Apple
 
-[iOS 进阶]({% post_url apple/2020-08-07-advanced %})，[Swift 底层]({% post_url apple/2019-06-24-swift %})
+[Linux and Shell]({% post_url apple/2020-02-22-linux-and-shell %})，[iOS 进阶]({% post_url apple/2020-08-07-advanced %})，[Swift 底层]({% post_url apple/2019-06-24-swift %})
 
 [C]({% post_url apple/2020-11-9-c %})，[C++]({% post_url apple/2020-11-9-cpp %})，[Runtime]({% post_url apple/2020-03-28-runtime %})，[RunLoop]({% post_url apple/2020-03-29-runloop %})，[Block]({% post_url apple/2020-04-22-block %})
 

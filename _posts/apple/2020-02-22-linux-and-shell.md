@@ -123,8 +123,6 @@ The `$ less` command is a program to view text files. To exit less, press the q 
 
 安装 [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md)
 
-系统 Terminal.app 开启自动补全：`code ~/.inputrc`；Paste the following on separate lines: `set completion-ignore-case on set show-all-if-ambiguous on TAB: menu-complete`
-
 # HomeBrew
 
 这是一个简单易用的包管理器，可以让你轻松下载、管理第三方应用。

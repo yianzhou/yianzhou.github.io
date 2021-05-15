@@ -17,15 +17,13 @@ When we speak of the **command line**, we are really referring to the **shell**.
 
 When using a graphical user interface (GUI), we need another program called a terminal emulator, simply called **ternimal**, to interact with the shell.
 
-`[me@linuxbox ~]$`
-
-This is called a **shell prompt** and it will appear whenever the shell is ready to accept input.
+`[me@linuxbox ~]$` This is called a **shell prompt** and it will appear whenever the shell is ready to accept input.
 
 `$ date` displays the current time and date.
 
 `$ cal` displays a calendar of the current month.
 
-# Exploring the System
+# Navigation and Exploring
 
 Unix-like systems such as Linux always have a single file system tree, regardless of how many drives or storage devices are attached to the computer. Storage devices are **mounted** at various points on the tree according to the whims of the system administrator.
 
@@ -39,16 +37,14 @@ Each user account is given its own **home directory** and it is the only place a
 
 Navigation:
 
-`$ cd` to your home directory.
+- `$ cd` to your home directory
+- `$ cd -` to the previous working directory
 
-`$ cd -` to the previous working directory.
+List directory contents: `$ ls`
 
-List directory contents:
-
-`$ ls`
-
-- `-a` List all files including hidden files
-- `-l` Display results in long format
+- `-a` list all files including hidden files
+- `-l` display results in long format
+- `-i` shows the inode number, the same inode number indicates the same file
 
 Most commands use options which consist of a single character preceded by a dash. Many commands also support long options, consisting of a word preceded by two dashes.
 
@@ -57,8 +53,9 @@ Also, many commands allow multiple short options to be strung together: `$ ls -a
 `-rw-r--r-- 1 root root 1186219 2017-04-03 11:05 kubuntu-leaflet.png`
 
 - The first character indicates the type of file
-  - a leading dash means a regular file
+  - "-" means a regular file
   - "d" indicates a directory
+  - "l" indicates a special kind of a file called a **symbolic link**
 - Access rights for
   - the file's owner
   - members of the file's group
@@ -74,14 +71,165 @@ In Unix-like operating systems such as Linux, **everything is a file**. Use the 
 
 The `$ less` command is a program to view text files. To exit less, press the q key.
 
-- `/characters` Search forward to the next occurrence of characters
+- `/` Search forward to the next occurrence of characters
 - `n` Search for the next occurrence of the previous search
 
-`lrwxrwxrwx 1 root root 11 2007-08-11 07:34 libc.so.6 -> libc-2.6.so`
+# Manipulating
 
-"l" indicates a special kind of a file called a **symbolic link** (also known as a soft link). In most Unix-like systems it is possible to have a file referenced by multiple names.
+**Wildcards** can be used with any command that accepts **filenames** as arguments.
 
-**Hard links** also allow files to have multiple names, but they do it in a different way.
+| Pattern                | Matches                                                                       |
+| ---------------------- | ----------------------------------------------------------------------------- |
+| \*                     | All files                                                                     |
+| g\*                    | Any file beginning with “g”                                                   |
+| b\*.txt                | Any file beginning with “b” followed by any characters and ending with “.txt” |
+| Data???                | Any file beginning with “Data” followed by exactly three characters           |
+| BACKUP.[0-9][0-9][0-9] | Any file beginning with “BACKUP.” followed by exactly three numerals          |
+| [[:upper:]]\*          | Any file beginning with an uppercase letter                                   |
+| [![:digit:]]\*         | Any file not beginning with a numeral                                         |
+| \*[[:lower:]123]       | Any file ending with a lowercase letter or the numerals “1”, “2”, or “3”      |
+
+`$ mkdir` create directories
+
+`$ cp file1 file2` Copy file1 to file2. If file2 exists, it is **overwritten** with the contents of file1.
+
+`$ cp file1 file2 dir1` Copy file1 and file2 into directory dir1. The directory dir1 must already exist.
+
+- `-a, --archive` Copy items with all of their attributes, including ownerships and permissions.
+- `-i, --interactive` Before overwriting an existing file, prompt the user for confirmation.
+- `-r --recursive` Recursively copy directories and their contents. This option (or the `-a` option) is required when copying directories.
+- `-u --update` When copying files from one directory to another, only copy files that either don't exist or are newer than the existing corresponding files, in the destination directory.
+- `-v --verbose` Display informative messages as the copy is performed.
+
+`$ mv` performs both file moving and file renaming.
+
+`$ mv file1 file2` Move file1 to file2. If file2 exists, it is **overwritten** with the contents of file1.
+
+`$ rm` command is used to remove (delete) files and directories.
+
+- `-r --recursive` Recursively delete directories. To delete a directory, this option must be specified.
+- `-f --force` Ignore nonexistent files and do not prompt.
+
+`$ ln file link` creates a **hard link**.
+
+`$ ln -s item link` create a **symbolic link**.
+
+In most Unix-like systems it is possible to have a file referenced by multiple names. By default, every file has a single **hard link** that gives the file its name. When a hard link is deleted, the link is removed but the contents of the file itself continue to exist until all links to the file are deleted.
+
+Hard links cannot span physical devices. Hard links cannot reference directories, only files.
+
+Modern practice prefers symbolic links. Symbolic links were created to overcome the limitations of hard links. Symbolic links work by creating a special type of file that contains a text pointer to the referenced file or directory.
+
+`lrwxr-xr-x 1 yianzhou staff 3 May 16 08:36 fun-sym -> fun`
+
+Notice the size of the symbolic link file is 3, which is the number of characters in the string "fun".
+
+# Commands
+
+A command can be one of four different things:
+
+1. An executable program written in C and C++ or scripting languages such as the shell, Perl, Python, Ruby, etc.
+2. A shell builtins.
+3. A shell function.
+4. An alias.
+
+`$ type command` displays a command's type.
+
+`$ which command` displays a executable's location.
+
+`$ man command` On most Linux systems, `man` uses `less` to display the manual page.
+
+A note on notation: When square brackets appear in the description of a command's syntax, they indicate optional items. A vertical bar character indicates mutually exclusive items.
+
+It's possible to put more than one command on a line by separating each command with a semicolon.
+
+Create command alias: `$ alias foo='cd /usr; ls; cd -'`. They vanish when our shell session ends.
+
+To remove an alias, the `$ unalias command` is used.
+
+To see all the aliases defined in the environment, use the `alias` command without arguments.
+
+# Redirection
+
+Keeping with the Unix theme of “everything is a file,” programs such as `ls` actually send their results to a special file called standard output (often expressed as stdout) and their status messages to another file called standard error (stderr). By default, both standard output and standard error are linked to the screen and not saved into a disk file.
+
+We can **redirect** the input and output of commands to and from files, as well as connect multiple commands together into powerful command **pipelines**.
+
+To redirect standard output to another file instead of the screen, we use the `>` redirection operator.
+
+We append redirected output to a file instead of overwriting the file from the beginning by using the `>>` redirection operator.
+
+To redirect standard error we must refer to its **file descriptor**. A program can produce output on any of several numbered file streams, the first three are standard input, output and error, the shell references them internally as file descriptors 0, 1, and 2. We can redirect standard error with `2>` notation.
+
+We use the single notation `&>` to redirect both standard output and standard error to the file.
+
+`<` uses a file as a source of standard input.
+
+`$ cat` command reads one or more files and copies them to standard output. It is often used to display short text files.
+
+Since `cat` can accept more than one file as an argument, it can also be used to join files together:
+
+`cat movie.mpeg.0* > movie.mpeg`
+
+Using the pipe operator `|`, the standard output of one command can be piped into the standard input of another.
+
+The `uniq` command is often used in conjunction with `sort`. `uniq` accepts a sorted list of data and removes any duplicates from the list.
+
+`$ ls /bin /usr/bin | sort | uniq | less`
+
+`$ grep` is to find text patterns within files.
+
+- `-i` ignore case when performing the search
+
+The `$ head` command prints the first ten lines of a file, and the `$ tail` command prints the last ten lines.
+
+# Expansion and Qouting
+
+`$ echo` displays a line of text.
+
+Each time we type a command and press the Enter key, bash performs several substitutions upon the text before it carries out our command. The process that makes this happen is called **expansion**. With expansion, we enter something and it is expanded into something else before the shell acts upon it.
+
+The mechanism by which wildcards work is called pathname expansion.
+
+```sh
+$ echo /usr/*/share
+/usr/kerberos/share /usr/local/share
+```
+
+Tilde Expansion: The tilde character (~) has a special meaning. When used at the beginning of a word, it expands into the name of the home directory of the named user or, if no user is named, the home directory of the current user.
+
+Arithmetic expansion uses the following form: `$((expression))`: `$ echo $((2 + 2)) 4`
+
+Brace expansion can create multiple text strings from a pattern containing braces.
+
+```sh
+$ mkdir {0..9}
+$ ls
+0 1 2 3 4 5 6 7 8 9
+```
+
+To invoke parameter expansion: `$ echo $USER`
+
+To see a list of available variables: `$ printenv | less`
+
+Command substitution allows us to use the output of a command as an expansion.
+
+`$ file $(ls -d /usr/bin/* | grep unzip)` In this example, the results of the pipeline became the argument list of the file command.
+
+There is an alternate syntax for command substitution in older shell programs using backquotes.
+
+Parameter expansion, arithmetic expansion, and command substitution still take place within **double quotes**:
+
+```sh
+$ echo "$USER $((2+2))"
+yianzhou 4
+```
+
+By default, word-splitting looks for the presence of spaces, tabs, and newlines and treats them as delimiters between words.
+
+Consider the following: `$ echo $(cal)`, `$ echo "$(cal)"`. In the first instance, the unquoted command substitution resulted in a command line containing 38 arguments. In the second, it resulted in a command line with one argument that includes the embedded spaces and newlines.
+
+If we need to suppress all expansions, we use **single quotes**.
 
 # 命令
 
@@ -107,9 +255,7 @@ The `$ less` command is a program to view text files. To exit less, press the q 
 
 清理 Xcode 磁盘空间：`rm -rf ~/Library/Developer/Xcode/iOS\ DeviceSupport`
 
-# 配置 iTerms
-
-下载 [iTerms2](https://www.iterm2.com/)
+# zsh config
 
 查看当前系统已安装的 shell：`cat /etc/shells`
 

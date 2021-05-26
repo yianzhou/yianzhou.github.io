@@ -75,7 +75,9 @@ mutableDictionary[@"lastName"] = @"Galloway";
 
 少用预处理指令：`#define ANIMATION_DURATION 0.3`，多使用类型常量，后者提供了更多的可读性。
 
-A constant that does not need to be exposed to the outside world should be defined in the implementation file where it is used. The usual convention for constants is to prefix with the letter k for constants that are local to a translation unit (implementation file).
+A constant that does not need to be exposed to the outside world should be defined in the implementation file where it is used. The usual convention for constants is to prefix with the letter `k` for constants that are local to a translation unit (implementation file).
+
+A translation unit is the input the compiler receives to generate one object file. In the case of Objective-C, this usually means that there is one translation unit per class: every implementation (.m) file.
 
 ```objc
 #import "EOCAnimatedView.h"
@@ -89,7 +91,15 @@ static const NSTimeInterval kAnimationDuration = 0.3;
 @end
 ```
 
-It is important that the variable is declared as both `static` and `const`. The `const` qualifier means that the compiler will throw an error if you try to alter the value. The `static` qualifier means that the variable is local to the translation unit in which it is defined. A translation unit is the input the compiler receives to generate one object file. In the case of Objective-C, this usually means that there is one translation unit per class: every implementation (.m) file. So in the preceding example, `kAnimationDuration` will be declared locally to the object file generated from `EOCAnimatedView.m`. If the variable were not declared `static`, the compiler would create an external symbol for it. If another translation unit also declared a variable with the same name, the linker would throw an error.
+It is important that the variable is declared as both `static` and `const`.
+
+The `const` qualifier means that the compiler will throw an error if you try to alter the value.
+
+The `static` qualifier means that the variable is local to the translation unit in which it is defined.
+
+So in the preceding example, `kAnimationDuration` will be declared locally to the object file generated from `EOCAnimatedView.m`.
+
+If the variable were not declared `static`, the compiler would create an external symbol for it. If another translation unit also declared a variable with the same name, the linker would throw an error.
 
 In fact, when declaring the variable as both `static` and `const`, the compiler doesn’t end up creating a symbol at all but instead replaces occurrences just like a preprocessor define does. Remember, however, the benefit is that the type information is present.
 
@@ -103,7 +113,9 @@ extern NSString *const EOCStringConstant;
 NSString *const EOCStringConstant = @"VALUE";
 ```
 
-The constant is declared in the header file and defined in the implementation file. The placement of the `const` qualifier is important, means "constant pointer to an `NSString`", the constant should not be allowed to change to point to a different `NSString` object.
+The constant is declared in the header file and defined in the implementation file.
+
+The placement of the `const` qualifier is important, means "constant pointer to an `NSString`", the constant should not be allowed to change to point to a different `NSString` object.
 
 The `extern` keyword in the header tells the compiler that there will be a symbol for `EOCStringConstant` in the global symbol table. This means that the constant can be used without the compiler’s being able to see the definition for it. The compiler simply knows that the constant will exist when the binary is linked. The compiler will allocate storage for the string in the data section of the object file that is generated from this implementation file. When this object file is linked with other object files to produce the final binary, the linker will be able to resolve the global symbol for `EOCStringConstant` wherever else it has been used.
 

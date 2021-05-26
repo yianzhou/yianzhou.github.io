@@ -105,7 +105,7 @@ pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :tag => '
 pod 'Alamofire', :git => 'https://github.com/Alamofire/Alamofire.git', :commit => '0f506b1c45' # Or specify a commit
 ```
 
-# 如何发布仓库
+# 创建自己的 Pod
 
 我们先看看 CocoaPods 在本地目录里的东西：`cd ~/.cocoapods/repos`，这里存放着 Pod 的仓库目录，其中的`master`文件夹是 CocoaPods 官方的仓库。如果你添加过其他的 repo，这里还会有其他文件夹。
 
@@ -128,23 +128,11 @@ Running `pod lib create [pod name]` will set you up with a well thought out libr
 
 You should be testing your library. In Objective-C [Specta/Expecta](https://github.com/specta/expecta). In Swift [Quick/Nimble](https://github.com/Quick/Nimble). For View-based Testing: [iOSSnapshotTestCase](https://github.com/uber/ios-snapshot-test-case/).
 
-发表到官方仓库需要一个“账户”：[CocoaPods Trunk](https://guides.cocoapods.org/making/getting-setup-with-trunk.html) is an authentication and CocoaPods API service. To publish new or updated libraries to CocoaPods for public release you will need to be registered with Trunk and have a valid Trunk session on your current device.
+`${PODS_ROOT}` 定义在 Build Settings - User-Defined:
 
-账户没有密码，是通过 Email 地址完成的：First sign up for an account with your email address. This begins a session on your current device. You must click a link in an email Trunk sends you to verify the connection between your Trunk account and the current computer. Trunk accounts do not have passwords, only per-computer session tokens.
+![img-40](/assets/images/69ec9525-8b37-4c98-8855-74dada759357.png)
 
-Trunk will publish a canonical JSON representation of your Podspec.
-
-# 创建私有仓库
-
-## 创建“描述文件”仓库
-
-首先创建一个类似于`~/.cocoapods/repos/master/Specs`这样的存放描述文件的 git 仓库。例如 <https://github.com/yianzhou/PodSpecs>
-
-回到终端，将这个描述文件仓库添加到本地：
-
-`pod repo add MyRepo https://github.com/yianzhou/PodSpecs.git`
-
-到这个目录下：`~/.cocoapods/repos/MyRepo`，会发现我们的描述文件 git 仓库，已经被 clone 到本地了。它跟`~/.cocoapods/repos/master`的作用是一样的。
+[Podspec Syntax Reference](https://guides.cocoapods.org/syntax/podspec.html)
 
 ## 创建 SDK 代码库
 
@@ -154,13 +142,37 @@ Trunk will publish a canonical JSON representation of your Podspec.
 
 `pod lib lint` does not access the network, whereas `pod spec lint` checks the external repo and associated tag.
 
-验证成功后，可以发布到我们的私有库描述文件中：`pod repo push MyRepo SampleLib.podspec --allow-warnings`；这时会再验证一次配置是否正确，成功的话，我们的 `~/.cocoapods/repos/MyRepo` 中也会增加了这个新的库了。
+验证成功后，可以发布到我们的私有库描述文件中：`pod repo push MyRepo SampleLib.podspec --allow-warnings`；这时会再验证一次配置是否正确，成功的话，我们的 `~/.cocoapods/repos/MyRepo` 中就会增加这个新的库了。
 
 使用 `pod search SampleLib` 验证，若出现仓库信息说明已经成功了，这时候就可以在 Podfile 添加、使用自己的仓库了。
 
-## 使用私有库
+## 集成 Framework
 
-使用私有库需要在 Podflie 中添加版本库地址，若同时使用了公有库，也需要加上公有库地址。
+首先要有一个工程，其中的 TARGETS 有我们想打包出来的 Framework。在工程里正常 build 后，产物会在 `/Users/zhouyian/Library/Developer/Xcode/DerivedData` 目录下，也可以在 Project Navigator - Products 下面找到。
+
+在工程目录下运行命令：
+
+`xcodebuild -configuration "Release" -target "${FRAMEWORK_NAME}" -sdk iphoneos clean build`
+
+会将 Framework 打包到当前文件夹下。然后创建 podspec 文件并声明 `s.vendored_frameworks = 'path/to/framework'` 即可。
+
+## 发布到官方源
+
+发表到官方仓库需要一个“账户”：[CocoaPods Trunk](https://guides.cocoapods.org/making/getting-setup-with-trunk.html) is an authentication and CocoaPods API service. To publish new or updated libraries to CocoaPods for public release you will need to be registered with Trunk and have a valid Trunk session on your current device.
+
+账户没有密码，是通过 Email 地址完成的：First sign up for an account with your email address. This begins a session on your current device. You must click a link in an email Trunk sends you to verify the connection between your Trunk account and the current computer. Trunk accounts do not have passwords, only per-computer session tokens.
+
+Trunk will publish a canonical JSON representation of your Podspec.
+
+## 发布到私有源
+
+我们需要一个等价于 `~/.cocoapods/repos/master/Specs` 这样的、存放描述文件的 git 仓库。
+
+回到终端，将这个描述文件仓库添加到本地：`pod repo add MyRepo https://github.com/yianzhou/PodSpecs.git`
+
+到这个目录下：`~/.cocoapods/repos/MyRepo`，会发现我们的描述文件仓库，已经被 clone 到本地了。它跟 `~/.cocoapods/repos/master` 的作用是一样的。
+
+使用私有源需要在 Podflie 中添加版本库地址，若同时使用了公有源，需要同时加上公有源的地址。
 
 ```rb
 source 'https://github.com/yianzhou/PodSpecs.git'
@@ -168,12 +180,6 @@ source 'https://github.com/CocoaPods/Specs.git'
 ```
 
 `pod install`时，会拉取 `Podflie` 中 `source` 标记的版本库到本地的 repos 文件夹中；然后在 repos 中搜索 `SampleLib.podspec` 文件。根据文件中描述的源码地址下载并整合到项目中。
-
-# 查看下载进度
-
-打开 Activity Monitor，选择 Network，筛选 git，然后可看到进程的网络情况。
-
-![image](/assets/images/Screen%20Shot%202020-03-02%20at%2014.52.56.png)
 
 # 问题：Development pods 的更改在 build 后没有生效
 
@@ -219,13 +225,3 @@ pod setup
 cd ~/.cocoapods/repos
 pod repo add master https://github.com/CocoaPods/Specs.git
 ```
-
-# 集成 Framework
-
-首先要有一个工程，其中的 TARGETS 有我们想打包出来的 Framework。在工程里正常 build 后，产物会在 `/Users/zhouyian/Library/Developer/Xcode/DerivedData` 目录下，也可以在 Project Navigator - Products 下面找到。
-
-在工程目录下运行命令：
-
-`xcodebuild -configuration "Release" -target "${FRAMEWORK_NAME}" -sdk iphoneos clean build`
-
-会将 Framework 打包到当前文件夹下。然后创建 podspec 文件并声明 `s.ios.vendored_frameworks = 'path/to/framework'` 即可。

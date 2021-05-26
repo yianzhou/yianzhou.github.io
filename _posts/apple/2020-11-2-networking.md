@@ -109,17 +109,15 @@ In [iOS 12](https://developer.apple.com/videos/play/wwdc2018/714), we have somet
 
 The first certificate presented to us covers all the subdomains under example.com. Also notice that delivery.example.com, it results to the same IP address as the first connection. It's safe to assume we're talking to the same endpoint and reuse the connection instead of opening a new one when we want to fetch the second resource.
 
-**Header compression** support allows for better bandwidth utilization as extraneous bytes can be eliminated on both request and response headers.
-
 Two to three times faster if you configure the **Server Push** on your HTTP/2 server! And you don't even have to change any code in your app! The data for your `URLSessionDataTask` will be delivered out of the Server Push storage directly to your application.
 
 # Optimistic DNS
 
 > [WWDC 2018 - Optimizing Your App for Today’s Internet](https://developer.apple.com/videos/play/wwdc2018/)
 
-Many servers have a very short time to live configured on their DNS records. And they do this such that if a server goes down or the server wants to load balance over another IP address, it can quickly change the IP address record and have clients adjust and start using the new address.
+Many servers have a very short time-to-live configured on their DNS records. And they do this such that if a server goes down or the server wants to load balance over another IP address, it can quickly change the IP address record and have clients adjust and start using the new address.
 
-The downside, though, is that this really can hurt client performance. With a short time to live, a client will almost always have to take the round trip to do DNS, to request the address for the host name that you are connecting to. Most of the time, the server address has not changed at all, and so this is a wasted round trip.
+The downside, though, is that this really can hurt client performance. With a short time-to-live, a client will almost always have to take the round trip to do DNS, to request the address for the host name that you are connecting to. Most of the time, the server address has not changed at all, and so this is a wasted round trip.
 
 So, optimistic DNS is a solution that we released last year that solves this problem. Optimistic DNS allows your connection to optimistically connect to the **last known** good IP address for that host name, in parallel with issuing a new query for the host name's current address. If nothing has changed, which is almost always the case, the connection will just establish to the old IP address. But if something has changed you'll still get the new IP address and connect to it instead.
 
@@ -483,7 +481,7 @@ There are two new keys you can provide in your app's Info.plist.
 
 Thirty years ago we had BSD Sockets. It was a great API. But now the Internet has become a lot more complicated.
 
-You may have assumed that `URLSession` is also just a wrap around Sockets. Not quite. `URLSession` is actually built using Apple's user space networking code Network.framework.Now in iOS 12, we are exposing that same API that `URLSession` uses!
+You may have assumed that `URLSession` is also just a wrap around Sockets. Not quite. `URLSession` is actually built using Apple's user space networking code Network.framework. Now in iOS 12, we are exposing that same API that `URLSession` uses!
 
 And if you're the developer of third-party libraries that are built on BSD Sockets, we encourage you to look at the Network.framework APIs.
 

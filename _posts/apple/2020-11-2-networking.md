@@ -438,9 +438,25 @@ TLS 1.3 is enabled by default for Network.framework and `URLSession` APIs.
 - Strong cryptography AEAD with Forward Secrecy by default
 - Privacy: certificates and most handshake fields are encrypted
 
-> In cryptography, forward secrecy (FS), also known as perfect forward secrecy (PFS), is a feature of specific key agreement protocols that gives assurances that session keys will not be compromised even if long-term secrets used in the session key exchange are compromised.
+> [TLS 1.3 Handshake](https://youtu.be/yPdJVvSyMqk)
+
+![img](/assets/images/ef9217ea-ab57-45d3-a42f-4b9fa2f26a0f.png)
+
+## Forward Secrecy
+
+> [Perfect Forward Secrecy](https://youtu.be/IkM3R-KDu44)
 >
-> 前向安全指的是长期使用的主密钥泄漏不会导致过去的会话密钥泄漏。前向安全能够保护过去的通讯不受密钥在未来暴露的威胁。
+> [Explaining the Diffie-Hellman Key Exchange](https://youtu.be/pa4osob1XOk)
+
+**Key exchange or key agreement**: Before a client and server can begin to exchange information protected by TLS, they must securely exchange or agree upon an encryption key and a cipher to use when encrypting data.
+
+The client and server need to **exchange keys** and ultimately come to a **shared secret key** to do the encryption. The essence of the Diffie-Hellman Key Exchange is working on how they actually exchange keys. The DHE does not rely on the client and server using the private/public key in order to exchange the premaster key. **They generates PMS by their own random number!**
+
+![img](/assets/images/fbd16fc7-1c74-4c5c-97f6-0d866b8d5449.png)
+
+Forward Secrecy is an outcome if you choose the Diffie-Hellman Key Exchange as the cipher suite of your TLS handshake.
+
+Perfect Forward Secrecy is an outcome if you use a **brand new** random number in the Diffie-Hellman Key Exchange every single session.
 
 # Bonjour and Local Network
 

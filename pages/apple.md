@@ -19,6 +19,8 @@ permalink: apple
 
 [React]({% post_url apple/2021-04-26-react %})
 
+[Git]({% post_url apple/2021-06-05-git %})
+
 # Apple
 
 [Linux and Shell]({% post_url apple/2020-02-22-linux-and-shell %})，[iOS 进阶]({% post_url apple/2020-08-07-advanced %})，[Swift 底层]({% post_url apple/2019-06-24-swift %})
@@ -46,6 +48,10 @@ permalink: apple
 [计算机网络]({% post_url apple/2021-03-04-computer-network %})，[Networking]({% post_url apple/2020-11-2-networking %})，[AFNetworking]({% post_url apple/2021-05-04-afnetworking %})，[Alamofire]({% post_url apple/2020-10-19-alamofire %})
 
 [代码签名]({% post_url apple/2020-10-10-signing %})
+
+# WWDC
+
+[WWDC 2021]({% post_url apple/2021-06-20-wwdc21 %})
 
 # 数据结构与算法
 

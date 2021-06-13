@@ -268,6 +268,8 @@ The HTTP/2 solution for HOL blocking is to break each message into small **frame
 
 ![img](/assets/images/2dcd5341-c392-49b1-b2ee-3eb7e357af2f.png)
 
+> [WWDC 2015 - Networking with NSURLSession](https://developer.apple.com/videos/play/wwdc2015/711/)
+
 The ability to break down an HTTP message into independent frames, interleave them, and then reassemble them on the other end is the single most important enhancement of HTTP/2. The framing is done by the framing sub-layer of the HTTP/2 protocol. When a server wants to send an HTTP response, the response is processed by the framing sub-layer, where it is broken down into frames. The header field of the response becomes one frame, and the body of the message is broken down into one for more additional frames. The frames of the response are then interleaved by the framing sub-layer in the server with the frames of other responses and sent over the single persistent TCP connection. As the frames arrive at the client, they are first reassembled into the original response messages at the framing sub-layer and then processed by the browser as usual. Similarly, a client’s HTTP requests are broken into frames and interleaved.
 
 In addition to breaking down each HTTP message into independent frames, the framing sublayer also binary encodes the frames. Binary protocols are more efficient to parse, lead to slightly smaller frames, and are less error-prone.
@@ -1234,8 +1236,6 @@ Desirable properties of secure communication (Transport layer security provides)
 - Integrity: The message can’t be altered without detection.
 - Authentication: Prove the identity of exactly who you are talking to.
 
-TLS enhances TCP with confidentiality, data integrity, server authentication, and client authentication.
-
 TLS is often used to provide security to transactions that take place over HTTP. However, because TLS secures TCP, it can be employed by any application that runs over TCP. TLS provides a simple Application Programmer Interface (API) with sockets, which is similar and analogous to TCP’s API.
 
 TLS has three phases: handshake, key derivation, and data transfer. We now describe these three phases for a communication session between a client (Bob) and a server (Alice), with Alice having a private/public key pair and a certificate that binds her identity to her public key.
@@ -1263,6 +1263,10 @@ You may be wondering why there are nonces in steps 1 and 2. Don’t sequence num
 At some point, either Bob or Alice will want to end the TLS session. One approach would be to let Bob end the TLS session by simply terminating the underlying TCP connection. But such a naive design sets the stage for the truncation attack. If Trudy were to do this, Alice would think she received all of Bob’s data when actuality she only received a portion of it.
 
 The solution to this problem is to indicate in the type field whether the record serves to terminate the TLS session. (Although the TLS type is sent in the clear, it is authenticated at the receiver using the record’s HMAC.) By including such a field, if Alice were to receive a TCP FIN before receiving a closure TLS record, she would know that something funny was going on.
+
+![img-80](/assets/images/7A53B42F-BDBE-47C9-9592-4123314BF45A.png)
+
+> [HTTPS 详解一：附带最精美详尽的 HTTPS 原理图](https://segmentfault.com/a/1190000021494676)
 
 ## IPsec and VPNs
 

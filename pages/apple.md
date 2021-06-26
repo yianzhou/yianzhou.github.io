@@ -35,7 +35,7 @@ permalink: apple
 
 [性能优化]({% post_url apple/2021-04-19-performance %})，[启动时长优化]({% post_url apple/2020-10-27-app-launch %})，[内存优化]({% post_url apple/2020-10-31-memory %})，[包体大小]({% post_url apple/2020-11-2-app-size %})
 
-[Auto Layout]({% post_url apple/2020-10-27-auto-layout %})，[Core Animation]({% post_url apple/2018-07-28-core-animation %})，[图形渲染]({% post_url apple/2020-04-22-graphics %})，[Metal]({% post_url apple/2019-01-10-Metal %})，[ARKit]({% post_url apple/2018-12-20-ARKit %})
+[UIKit]({% post_url apple/2020-10-27-UIKit %})，[Core Animation]({% post_url apple/2018-07-28-core-animation %})，[图形渲染]({% post_url apple/2020-04-22-graphics %})，[Metal]({% post_url apple/2019-01-10-Metal %})，[ARKit]({% post_url apple/2018-12-20-ARKit %})
 
 [音视频基础知识]({% post_url apple/2018-12-21-audio-video %})，[AVFoundation]({% post_url apple/2018-12-21-avfoundation %})，[音视频直播开发]({% post_url apple/2021-04-09-live-streaming %})
 

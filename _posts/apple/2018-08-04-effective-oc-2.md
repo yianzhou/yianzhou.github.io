@@ -45,7 +45,7 @@ Atomic accessors include locks to ensure atomicity. This means that if two threa
 
 If you’ve been developing for iOS at all, you’ll notice that all properties are declared nonatomic. The reason is that, historically, the locking introduces such an overhead on iOS that it becomes a performance problem. Usually, atomicity is not required anyway, since it does not ensure thread safety, which usually requires a deeper level of locking.
 
-通过阅读 objc 的源码得知，当属性被声明为了 `atomic`，对该属性的读、写会使用 `os_unfair_lock` 加锁。这个锁仅仅是在读、写属性时加的，对属性的其它操作都不是线程安全的。例如这样一个属性 `@property(atomic, assign) int money;`，对它进行 `self.money++` 这样的操作就不是线程安全的。
+通过阅读 objc 的源码得知，当属性被声明为 `atomic`，对该属性的读、写会使用 `os_unfair_lock` 加锁。这个锁仅仅是在读、写属性时加的，对属性的其它操作都不是线程安全的。例如这样一个属性 `@property(atomic, assign) int money;`，对它进行 `self.money++` 这样的操作就不是线程安全的。
 
 二、读写权限（readwrite 或 readonly）
 

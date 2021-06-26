@@ -7,6 +7,8 @@ categories: [Apple]
 * Do not remove this line (it will not be displayed)
 {:toc}
 
+authorizationStatusForMediaType
+
 AVFoundation Stack on iOS:
 
 ![img-60](/assets/images/1_zY4oLLDPVGW1cMdhzSHElg.png)

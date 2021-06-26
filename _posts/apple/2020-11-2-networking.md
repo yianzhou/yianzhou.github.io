@@ -50,7 +50,7 @@ It is important to configure your `URLSessionConfiguration` object appropriately
 
 `allowsExpensiveNetworkAccess`: whether connections may use a network interface that the system considers expensive. (iOS 13 considers most cellular networks and personal hotspots expensive)
 
----
+## waitsForConnectivity
 
 `var waitsForConnectivity: Bool`
 
@@ -67,8 +67,6 @@ func urlSession(_ session: URLSession, taskIsWaitingForConnectivity task: URLSes
 
 This API only has an effect for non-background sessions, it's not necessary for background `URLSession` who does this automatically.
 
----
-
 ## URLSessionStreamTask
 
 There are some cases where you need a protocol other than HTTP or HTTPS, and you want to do something custom directly on top of TCP/IP networking. `NSURLSessionStreamTask` is a Foundation extraction, directly over a TCP connection.
@@ -84,17 +82,6 @@ You can attach that progress object to a `UIProgressView` or an `NSProgressIndic
 You can also combine multiple progress objects into a parent progress object when you're performing multiple tasks.
 
 The binding between a `URLSessionTask` and the progress object is bidirectional. So if you pause a `URLSessionTask`, that is the same as pausing the progress object. If you pause the progress object, that is the same as pause the `URLSessionTask`.
-
-# URLCache
-
-> [URL Loading System](https://developer.apple.com/documentation/foundation/url_loading_system)
-
-`URLCache`: An object that maps `URLRequest` objects to `CachedURLResponse` objects. `URLCache` is thread safe.
-
-```objc
-NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024 diskCapacity:20 * 1024 * 1024 diskPath:nil];
-[NSURLCache setSharedURLCache:URLCache];
-```
 
 # HTTP/2
 
@@ -122,18 +109,6 @@ The downside, though, is that this really can hurt client performance. With a sh
 So, optimistic DNS is a solution that we released last year that solves this problem. Optimistic DNS allows your connection to optimistically connect to the **last known** good IP address for that host name, in parallel with issuing a new query for the host name's current address. If nothing has changed, which is almost always the case, the connection will just establish to the old IP address. But if something has changed you'll still get the new IP address and connect to it instead.
 
 It is on by default for connections using Network.framework and `URLSession`.
-
-# HTTPDNS
-
-传统 DNS 协议运行在 UDP 协议之上，使用端口号 53，向本地运营商询问域名对应的 IP 地址。HTTPDNS 使用 HTTP 协议进行域名解析，这样做有几个好处：
-
-- 绕过运营商 Local DNS，避免域名劫持（有时候我们访问一些未投入使用的域名，会被运营商插入广告）
-- 由于运营商策略的多样性，其 Local DNS 的解析结果可能不是最近、最优的节点；HTTPDNS 能够直接得到客户端的出口网关 IP，从而更准确地判断客户端地区和运营商，得到更精准的解析结果，让客户端就近接入业务节点
-- 通过热点域名预解析、客户端 DNS 缓存、懒更新策略等方式实现接近 0 解析延迟
-- 避免 Local DNS 不遵循权威 TTL，解析结果长时间无法更新的问题
-- 能够有效缓解如东南亚、印度等地区，不确定的运营商网络带来的 APP 可用性风险
-
-> <https://cn.aliyun.com/product/httpdns>
 
 # Encrypted DNS
 
@@ -229,7 +204,7 @@ The persistent cookie storage returned by `sharedHTTPCookieStorage` may be avail
 
 > [WWDC 2018 - Optimizing Your App for Today’s Internet](https://developer.apple.com/videos/play/wwdc2018/)
 
-The URL Loading System caches responses both in memory and on disk, improving performance and reducing network traffic.
+The [URL Loading System](https://developer.apple.com/documentation/foundation/url_loading_system) caches responses both in memory and on disk, improving performance and reducing network traffic.
 
 `URLSessionConfiguration` has a property called `requestCachePolicy`; Each `URLRequest` instance contains a `URLRequest.CachePolicy` object to indicate if and how caching should be performed.
 
@@ -255,6 +230,13 @@ func urlSession(_ session: URLSession, dataTask: URLSessionDataTask,
 
 For servers, please consider using cache control headers `Cache-Control: no-store` to decide what resources should be cacheable.
 
+`URLCache`: An object that maps `URLRequest` objects to `CachedURLResponse` objects. `URLCache` is thread safe.
+
+```objc
+NSURLCache *URLCache = [[NSURLCache alloc] initWithMemoryCapacity:4 * 1024 * 1024 diskCapacity:20 * 1024 * 1024 diskPath:nil];
+[NSURLCache setSharedURLCache:URLCache];
+```
+
 # Statistics
 
 Another evolution to the `URLSession` API is the addition of network statistics.
@@ -277,9 +259,11 @@ Another evolution to the `URLSession` API is the addition of network statistics.
 
 # Wi-Fi Assist
 
+> [WWDC 2017 - Advances in Networking, Part 1](https://developer.apple.com/videos/play/wwdc2017/707/)
+
 We have Wi-Fi Assist since iOS 9 (2015). Wi-Fi Assist is triggered whenever we are in a marginal Wi-Fi scenario, which means the signal strength of Wi-Fi is very low. Whenever iOS is detecting this, it will play a contest between Wi-Fi and cellular data. So when you are creating a new connection, we will first attempt to create the connection on Wi-Fi. And shortly after that where if this connection hasn't been established, we will go on and create a connection over cell so that if cellular data wins, we will start using the cellular link.
 
-In [iOS 13](https://developer.apple.com/videos/play/wwdc2019/712), even when a flow has already been established on Wi-Fi and has started to exchange data, if later on the signal quality is reducing, we are able to move the next request over to cell.
+In iOS 13, even when a flow has already been established on Wi-Fi and has started to exchange data, if later on the signal quality is reducing, we are able to move the next request over to cell.
 
 If Wi-Fi associated once again, You get automatic reliable network fallback if you use `URLSession` and CFNetwork-layer APIs. What you can do is pay attention to the better route notification so that you migrate back to Wi-Fi when it's available.
 
@@ -297,7 +281,7 @@ Multipath TCP is the protocol that has been designed specifically for mobile dev
 
 What it does on top of TCP is that it provides a way to seamlessly move traffic from the Wi-Fi interface over to the cellular interface whenever it realizes that Wi-Fi is not good enough, and it also allows to move the traffic back again so that your application is not consuming cellular data. It is also able to choose the best interface if you have a latency-sensitive and interactive flow.
 
-If you are building your application on top of the `URLSession` API, Multipath TCP sits just below this. It creates the so-called TCP Subflows. Those TCP subflows, one for each interface are actually full-fledged TCP connections, and MPTCP is in charge of making sure that the data gets sent over either of them.
+If you are building your application on top of the `URLSession` API, Multipath TCP sits just below this. It creates the so-called TCP subflows. Those TCP subflows, one for each interface are actually full-fledged TCP connections, and MPTCP is in charge of making sure that the data gets sent over either of them.
 
 ![img](/assets/images/e2b857c6-f6d2-4377-acbb-9021b5c048a6.png)
 
@@ -346,11 +330,25 @@ Dropping packets is an expensive way to signal congestion. Marking packets “Co
 
 CoDel (pronounced "coddle") for controlled delay is a scheduling algorithm designed to overcome bufferbloat in networking hardware, such as routers. CoDel (or similar Smart Queue Management) plus ECN does helps to reduce network delay and packet loss!
 
-> Bufferbloat is a cause of high latency in packet-switched networks caused by excess buffering of packets.
-
 It is in Linux and turned on by default, more than half of the top million web servers in the world already support ECN. ECN now enabled in OS X 10.11 and iOS 9 for all TCP connection.
 
 One common misunderstanding about ECN is that it has to be supported end to end on the entire path across the internet, and that's not true. There is only one place that needs to support ECN for you to get the benefit. For your residential network access, you may have paid for 20 or 50 megabits of service and your ISP artificially throttle your data to the rate you've paid for. So the bottleneck is always the one that exists at your ISP's headend equipment. That is the only place on the path that needs to mark congestion.
+
+> [Reduce network delays for your app - WWDC 2021](https://developer.apple.com/videos/play/wwdc2021/10239/)
+
+![img](/assets/images/1d63b5f2-1a48-4b86-ae5d-a309fa8eff5f.png)
+
+Packets spend a lot of time sitting in excessively large buffers in the network. This phenomenon of excessively large buffers is called bufferbloat.
+
+There's software and hardware processing time. As CPUs get ever faster, this processing time continues to shrink.
+
+There's the actual data transmission time. As data rates increase from kilobits to megabits to gigabits per second, transmission time continues to shrink.
+
+Then there's the time delay due to buffering in the network. We're working with the industry on reducing these delays.
+
+But there's always going to be the speed-of-light signal propagation delay. Back in the 1990s, the Stanford-to-MIT ping time, round-trip, coast-to-coast, across the United States, was already under 100 milliseconds. That's pretty close to the speed-of-light limit already, so it's not going to get much better.
+
+As an app developer, there's not a lot you can do to improve the underlying network round-trip time, but you can control how many round trips your app requires. Every developer who wants great network performance should pay attention to the number of round trips. (HTTP3 + QUIC saves round trips against TCP + TLS1.2!)
 
 # TCP_NOTSENT_LOWAT
 
@@ -364,6 +362,8 @@ When you set that socket option, the socket send buffer remains unchanged (in th
 
 It's available in Linux too because this option applies at the source of the data on the sending side. So for those of you who are running Linux servers, this option is available too. This option will be turned on automatically for all connections using the higher layer `URLSession` and CFNetwork APIs.
 
+But most servers on the internet run on Linux and use BSD Sockets. Contact your server operators to ensure that they are using the TCP not sent low watermark socket option to reduce the delays at the source.
+
 # TCP Fast Open
 
 TCP Fast Open combines the connection setup and the data exchange into one packet exchange.
@@ -371,6 +371,17 @@ TCP Fast Open combines the connection setup and the data exchange into one packe
 This is not turned on by default. The reason is, if one of those packets is delayed and shows up much later, then to the server that looks like a perfectly valid TFO request, and whatever the operation was, it will do it again. If that operation was sending you a JPEG image, doing it twice may be no big deal. If that operation was sending you a pair of shoes from Zappos, then doing it twice might not be what you want.
 
 ![img-60](/assets/images/8e540cf6-f47a-46d6-a0fb-caa7972ad6b5.png)
+
+[Reduce network delays for your app - WWDC 2021](https://developer.apple.com/videos/play/wwdc2021/10239/)
+
+TCP Fast Open is supported in Network framework and Sockets.
+
+To use it with `NWConnection`, there are two options:
+
+- First, your app provides the initial data to be sent out with the handshake.
+- Second, send the TLS handshake message as the initial data.
+
+When using TCP Fast Open, you have to be careful that you only send idempotent requests with the handshake. Idempotent basically means that the data is safe to be replayed over the network.
 
 # Supporting IPv6
 
@@ -389,6 +400,36 @@ Subscribers are now connecting to cellular data networks over IPv6. The cellular
 If you are working with an IPv4 address literal, new in OS X 10.11 and iOS 9, higher-layer networking frameworks (`URLSession` and CFNetwork-layer APIs) will works in even in IPv6-only network! The OS synthesizes IPv6 address for you. BUT, using literal IPv4 addresses will prevent direct IPv6 connection to a dual-stack server.（服务器同时支持 IPv4 和 IPv6，使用字面 IPv4 地址会连接到服务器 IPv4 的服务）
 
 We recommend you use hostnames. That way you can get a v4 address on a v4 network and a v6 address on a v6 network.
+
+# Optimize for 5G networks
+
+> [Optimize for 5G networks - WWDC 2021](https://developer.apple.com/videos/play/wwdc2021/10103/)
+
+Each step in network evolution has brought dramatically new capabilities to mobile devices.
+
+![img](/assets/images/443a7eb8-78ce-40bd-91bb-4b4aad1534a6.png)
+
+5G come primarily in two varieties, commonly referred to as Non-Standalone (NSA) and Standalone (SA).
+
+Non-Standalone is built on the existing LTE core and can use both LTE and 5G links to schedule traffic, operates at frequencies below 7 GHz, and includes support for millimeter wave.
+
+Standalone is built entirely on the new 5G core, also operates at frequencies below 7 GHz, and includes support for millimeter wave, and delivers improved latency performance over LTE.
+
+We pick the best network using two techniques called "Automatic Switch to 5G" and "Smart Data Mode". Both technologies look at a combination of performance, security, and power characteristics to enable the best wireless connection for your app.
+
+Best Practices:
+
+- With the system choosing the best network on your behalf, you should stop considering the network type.
+- Use our frameworks to take full advantage of 5G. (AVFoundation, CallKit, URLSession, Network.framework)
+- Tune your application for **constrained** and **expensive** paths. "Allow More Data on 5G" indicating an inexpensive path, similar to Wi-Fi; "Standard mode" is usually considered as expensive; and "Low Data Mode" is considered constrained.
+
+[networkUnavailableReason](https://developer.apple.com/documentation/foundation/urlerror/3329607-networkunavailablereason/)
+
+[AVURLAssetAllowsCellularAccessKey](https://developer.apple.com/documentation/avfoundation/avurlassetallowscellularaccesskey?language=objc)
+
+[AVURLAssetAllowsConstrainedNetworkAccessKey](https://developer.apple.com/documentation/avfoundation/avurlassetallowsconstrainednetworkaccesskey?language=objc)
+
+[AVURLAssetAllowsExpensiveNetworkAccessKey](https://developer.apple.com/documentation/avfoundation/avurlassetallowsexpensivenetworkaccesskey?language=objc)
 
 # Network Security
 
@@ -430,7 +471,7 @@ In iOS 12.1, certificates issued after October 15, 2018, from a system-trusted r
 
 ## TLS 1.3
 
-TLS 1.3 is enabled by default for Network.framework and `URLSession` APIs.
+TLS 1.3 is enabled by default for Network.framework and `URLSession` APIs since iOS 13.4.
 
 ![img](/assets/images/e35da8fc-1047-41c4-8e39-77ac7488905e.png)
 
@@ -441,6 +482,8 @@ TLS 1.3 is enabled by default for Network.framework and `URLSession` APIs.
 > [TLS 1.3 Handshake](https://youtu.be/yPdJVvSyMqk)
 
 ![img](/assets/images/ef9217ea-ab57-45d3-a42f-4b9fa2f26a0f.png)
+
+The TLS 1.3 protocol defines **early data support**, which can save yet another round trip by sending idempotent requests along with the TLS handshake message.
 
 ## Forward Secrecy
 
@@ -650,31 +693,3 @@ UTF-8 is an 8-bit byte-oriented encoding. Because of that, there are no byte ord
 You can jump into the middle of a UTF-8 file anywhere, and by just looking at any byte, you can tell what you've got. So it's very, very robust to insertion and deletion errors. It's an encoding that is efficient enough to be compact but has just enough redundancy to be very reliable.
 
 So, we recommend only use UTF-8, for everything!
-
-# Summary
-
-Application Layer:
-
-- HTTP/2
-  - Multiplexing, no HOL blocking
-  - HPACK
-  - Response Message Prioritization
-  - Server Push
-  - Connection Coalesing
-- DNS
-  - Optimistic DNS
-  - HTTP DNS, Encrypted DNS
-- Brotli
-- WebSocket
-
-Transport Layer:
-
-- Wi-Fi Assist, Multipath TCP
-- TCP_NOTSENT_LOWAT
-- ECN
-- TCP Fast Open
-
-Network Layer：
-
-- Supporting IPv6
-- Network Service Type

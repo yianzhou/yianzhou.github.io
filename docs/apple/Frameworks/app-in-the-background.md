@@ -74,8 +74,6 @@ func application(_ application: UIApplication,
 
 ## Background Notification
 
-See [Background Notification]({% post_url apple/2021-01-25-user-notification %}#background-notification).
-
 ![img](/assets/images/cbfea2f0-a85b-41e3-8cce-69803c19941e.png)
 
 Instead of running upon every push, the system delays the delivery of some pushes to limit the amount of execution while maintaining a frequent launch cadence. The time interval between runs was just 15 minutes, meaning we had many times per hour, and the app will be up-to-date before the user launches it.

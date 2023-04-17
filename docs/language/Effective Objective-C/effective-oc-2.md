@@ -8,11 +8,11 @@
 
 如果这个偏移量是一个编译时决定的常量，那么父类增加成员变量，就会造成内存布局的改动、导致所有子类都需要重新编译，否则就无法运行。例如，我们在某个 macOS 版本编写了一个类 `PetShopView` 继承 `NSView`，它们的内存布局：
 
-![img-60](/assets/images/856E7BCD-E838-46B6-B8E1-7EF0077AD219.png)
+![img](/assets/images/856E7BCD-E838-46B6-B8E1-7EF0077AD219.png)
 
 假设，苹果在新的 macOS 版本为 `NSView` 增加了一个实例变量，那么它们的内存布局就会变成：
 
-![img-60](/assets/images/2960A97D-7D1C-40C7-88E2-2B00CFCB2C25.png)
+![img](/assets/images/2960A97D-7D1C-40C7-88E2-2B00CFCB2C25.png)
 
 这意味着，所有继承自 `NSView` 的子类都不可用了！要么开发者重新编译并发布更新；要么苹果就不可以改动 `NSView` 的实例变量布局、以免新版操作系统上大量软件变得不可用！
 

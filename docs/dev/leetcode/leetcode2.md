@@ -1,5 +1,164 @@
 # 动态规划
 
+## 递归与动态规划导论
+
+### [509-斐波那契数](https://leetcode-cn.com/problems/fibonacci-number/)
+
+斐波那契数列 [0, 1, 1, 2, 3, 5, 8, ...] 可以表示为递归形式：
+
+```cpp
+int fib(n) {
+    if (n == 0) return 0;
+    if (n == 1) return 1;
+    return fib(n-1) + fib(n-2);
+}
+```
+
+涉及递归的问题都可以画出递归树，对于分析算法复杂度、寻找算法低效的原因、找到高效的解法有很大帮助！假设求 fib(20)，画出递归树后会发现，这个递归存在着大量重复计算，假设 N = 20，那么树的高度是 20，树的节点数是 2 ^ N，算法复杂度是 O(2^n)，这太大了！
+
+![img](/assets/images/96DF710A-350E-4544-BA5B-09193264FF0C.jpg)
+
+因此我们可以用一个数组或者哈希表存储已经计算过的结果，当遍历递归树遇到同样的节点时，就可以快速访问到结果而不必重复计算，这就是“剪枝”。通过剪枝，把一颗存在巨量冗余的递归树，变成了不存在冗余的递归图，fib(20) ... fib(1) 每个结果都只计算了一次。这就是“记忆化递归”！
+
+![image](/assets/images/截屏2020-07-1209.50.50.png)
+
+递归的思路是把一个大问题，自顶向下分解成子问题，最后到达递归树的叶子结点，然后逐层返回计算结果。而动态规划的思想，是从最小子问题开始，即 f(1) 和 f(2)，自底向上，逐步构建出大问题的解。
+
+```cpp
+class Solution {
+public:
+    int fib(int n) {
+        if (n <= 1) return n;
+        vector<int> dp(n+1, 0);
+        dp[1] = 1;
+        for (int i = 2; i <= n; ++i) {
+            dp[i] = dp[i-1] + dp[i-2];
+        }
+        return dp[n];
+    }
+};
+```
+
+### [322-零钱兑换](https://leetcode-cn.com/problems/coin-change/)
+
+给定不同面额的硬币和一个目标金额，计算可以凑成目标金额的最少硬币个数；如果不能凑成目标金额，返回  -1。每一种硬币的数量不限。
+
+递归方案，自顶向下思考。由于每一种硬币的数量不限，每一步都可以选择任意一枚硬币，这是一个 N 叉递归树的前序遍历。
+
+举例：目标 11 元，硬币 [1, 2, 5]。最少硬币数 `dfs(11) = 1 + min(dfs(11-1), dfs(11-2), dfs(11-5))`
+
+```mermaid
+graph TD
+    dfs11(["dfs(11)"])
+    dfs11 --> dfs10(["dfs(10)"])
+    dfs11 --> dfs9(["dfs(9)"])
+    dfs11 --> dfs6(["dfs(6)"])
+    dfs6 --> dfs5(["dfs(5)"])
+    dfs6 --> dfs4(["dfs(4)"])
+    dfs6 --> dfs1(["dfs(1)"])
+```
+
+这个递归调用存在许多子问题被重复计算，因此我们需要一个缓存，来实现递归树的剪枝。
+
+```cpp
+class Solution {
+public:
+    int dfs(vector<int> &coins, int target, unordered_map<int, int> &um) {
+        if (target < 0) return -1;
+        if (target == 0) return 0;
+        if (um.find(target) != um.end()) {
+            return um[target];
+        }
+        int res = INT_MAX;
+        for (int c : coins) {
+            int cur = 1 + dfs(coins, target - c, um);
+            if (cur > 0)
+                res = min(res, cur);
+        }
+        um[target] = res == INT_MAX ? -1 : res;
+        return um[target];
+    }
+
+    int coinChange(vector<int>& coins, int amount) {
+        unordered_map<int, int> um;
+        return dfs(coins, amount, um);
+    }
+};
+```
+
+动态规划问题的两个要素：最优子结构、状态转移方程。
+
+- 最优子结构：问题的最优解，可以从其子问题的最优解构造出来。
+- 状态转移方程：假设已知子问题的最优解 dp[0] ... dp[n-1]，如何得到问题的最优解 dp[n]。
+
+如何找到最优子结构？——“问什么就设什么”。这道题目问的是凑成总金额 S 所需的最少的硬币个数。我们就设 F(S) 为组成金额 S 最少的硬币数。
+
+画 N \* M 表格。N = len(coins) + 1，M = amount + 1。
+
+第一行，什么硬币也不选。代表 dp 数组的初始状态。其中 dp[0] = 0，0 元不需要硬币。
+
+第二行，选择 2 元硬币。对于 amount >= 2，`dp[i] = (1 + dp[i-2]) if dp[i-2] != -1 else -1`
+
+第三行，选择 5 元硬币，对于 amount >= 5，要组合成 amount，可以用 1 + dp[i-5] 枚硬币，或者 dp[i] 枚硬币（继承上一行），结果应该是两者中较小的一个。得到状态转移方程 `dp[i] = min(dp[i], 1 + dp[i-c])`
+
+```cpp
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        vector<int> dp(amount+1, -1);
+        dp[0] = 0;
+        for (int c : coins) {
+            for (int i = c; i < amount+1; ++i) {
+                if (dp[i-c] != -1) {
+                    int res = dp[i-c] + 1;
+                    dp[i] = dp[i] == -1 ? res : min(dp[i], res);
+                }
+            }
+        }
+        return dp[amount];
+    }
+};
+```
+
+### [518-零钱兑换 II](https://leetcode-cn.com/problems/coin-change-2/)
+
+给定不同面额的硬币和一个目标金额，计算可以凑成目标金额的硬币组合数；如果不能凑成目标金额，返回 0。每一种硬币的数量不限。
+
+这是一个典型的组合问题，对于每种硬币都有选与不选两种情况，且最后组成的金额可以拆分为更小的金额。这种大问题里嵌套子问题的，首先想到用动态规划解决。动态规划两步走——最优子结构（求什么就设什么）、状态转移方程（画表格）。
+
+动态规划的过程就是一个填表格的过程，假设可用硬币为 [2, 5, 10]，计算 amount = 11 元的组合总数，M = len([2, 5, 10])，N = 11，画一个 M+1 行，N+1 列的表格。
+
+填第一行，即什么硬币都不选。
+
+填第二行，此时选择了硬币 [2]，对于 amount < 2，用 2 元硬币无法凑成，因此结果是直接继承上一行。对于 amount >= 2，则组合数 = 选择 2 元硬币的组合数 + 不选择 2 元硬币的组合数。
+
+其中，不选择 2 元硬币的组合数 = dp[i]，继承上一行。选择 2 元硬币的组合数 = dp[i-2]。这是动态规划中重要的思想——前面计算的结果可以为后面所用。由于我们是从左往右遍历，我们已经计算出了 dp[i-2] 的组合数，dp[i] 的每种组合即 dp[i-2] 的每种组合加上一枚 2 元硬币。
+
+因此我们得到了一个递推关系：`dp[i] = dp[i] + dp[i-coin]`
+
+而且，在动态计算的过程中，dp[i] 的计算只与上一行有关，因此我们只需要一个长度为 amount+1 的数组作为存储即可。
+
+![image](/assets/images/截屏2020-07-20下午9.00.56.png)
+
+```cpp
+class Solution {
+public:
+    int coinChange(vector<int>& coins, int amount) {
+        vector<int> dp(amount+1, -1);
+        dp[0] = 0;
+        for (int c : coins) {
+            for (int i = c; i <= amount; ++i) {
+                if (dp[i-c] != -1) {
+                    int res = 1 + dp[i-c];
+                    dp[i] = dp[i] == -1 ? res : min(dp[i], res);
+                }
+            }
+        }
+        return dp[amount];
+    }
+};
+```
+
 ## 背包问题
 
 ### [背包问题](https://www.lintcode.com/problem/backpack/description)
@@ -121,164 +280,6 @@ public:
             }
         }
         return 1 - dp[n];
-    }
-};
-```
-
-## 递归与动态规划导论
-
-### [509-斐波那契数](https://leetcode-cn.com/problems/fibonacci-number/)
-
-斐波那契数列 [0, 1, 1, 2, 3, 5, 8, ...] 可以表示为递归形式：
-
-```cpp
-int fib(n) {
-    if (n == 0) return 0;
-    if (n == 1) return 1;
-    return fib(n-1) + fib(n-2);
-}
-```
-
-涉及递归的问题都可以画出递归树，对于分析算法复杂度、寻找算法低效的原因、找到高效的解法有很大帮助！假设求 fib(20)，画出递归树后会发现，这个递归存在着大量重复计算，假设 N = 20，那么树的高度是 20，树的节点数是 2 ^ N，算法复杂度是 O(2^n)，这太大了！
-
-![img](/assets/images/96DF710A-350E-4544-BA5B-09193264FF0C.jpg)
-
-因此我们可以用一个数组或者哈希表存储已经计算过的结果，当遍历递归树遇到同样的节点时，就可以快速访问到结果而不必重复计算，这就是“剪枝”。通过剪枝，把一颗存在巨量冗余的递归树，变成了不存在冗余的递归图，fib(20) ... fib(1) 每个结果都只计算了一次。这就是“记忆化递归”！
-
-![image](/assets/images/截屏2020-07-1209.50.50.png)
-
-递归的思路是把一个大问题，自顶向下分解成子问题，最后到达递归树的叶子结点，然后逐层返回计算结果。而动态规划的思想，是从最小子问题开始，即 f(1) 和 f(2)，自底向上，逐步构建出大问题的解。
-
-```cpp
-class Solution {
-public:
-    int fib(int n) {
-        if (n <= 1) return n;
-        vector<int> dp(n+1, 0);
-        dp[1] = 1;
-        for (int i = 2; i <= n; ++i) {
-            dp[i] = dp[i-1] + dp[i-2];
-        }
-        return dp[n];
-    }
-};
-```
-
-### [322-零钱兑换](https://leetcode-cn.com/problems/coin-change/)
-
-给定不同面额的硬币和一个目标金额，计算可以凑成目标金额的最少硬币个数；如果不能凑成目标金额，返回  -1。每一种硬币的数量不限。
-
-递归方案，自顶向下思考。由于每一种硬币的数量不限，每一步都可以选择任意一枚硬币，这是一个 N 叉递归树的前序遍历。
-
-举例：目标 11 元，硬币 [1, 2, 5]。最少硬币数 dfs(11) = 1 + min(dfs(11-1), dfs(11-2), dfs(11-5))
-
-<div class="mermaid">
-graph TD
-    dfs11(["dfs(11)"])
-    dfs11 --> dfs10(["dfs(10)"])
-    dfs11 --> dfs9(["dfs(9)"])
-    dfs11 --> dfs6(["dfs(6)"])
-    dfs6 --> dfs5(["dfs(5)"])
-    dfs6 --> dfs4(["dfs(4)"])
-    dfs6 --> dfs1(["dfs(1)"])
-</div>
-
-这个递归调用存在许多子问题被重复计算，因此我们需要一个缓存，来实现递归树的剪枝。
-
-```cpp
-class Solution {
-public:
-    int dfs(vector<int> &coins, int target, unordered_map<int, int> &um) {
-        if (target < 0) return -1;
-        if (target == 0) return 0;
-        if (um.find(target) != um.end()) {
-            return um[target];
-        }
-        int res = INT_MAX;
-        for (int c : coins) {
-            int cur = 1 + dfs(coins, target - c, um);
-            if (cur > 0)
-                res = min(res, cur);
-        }
-        um[target] = res == INT_MAX ? -1 : res;
-        return um[target];
-    }
-    int coinChange(vector<int>& coins, int amount) {
-        unordered_map<int, int> um;
-        return dfs(coins, amount, um);
-    }
-};
-```
-
-动态规划问题的两个要素：最优子结构、状态转移方程。
-
-- 最优子结构：问题的最优解，可以从其子问题的最优解构造出来。
-- 状态转移方程：假设已知子问题的最优解 dp[0] ... dp[n-1]，如何得到问题的最优解 dp[n]。
-
-如何找到最优子结构？——“问什么就设什么”。这道题目问的是凑成总金额 S 所需的最少的硬币个数。我们就设 F(S) 为组成金额 S 最少的硬币数。
-
-画 N \* M 表格。N = len(coins) + 1，M = amount + 1。
-
-第一行，什么硬币也不选。代表 dp 数组的初始状态。其中 dp[0] = 0，0 元不需要硬币。
-
-第二行，选择 2 元硬币。对于 amount < 2，直接继承上一行。`dp[i] = 1 + dp[i-2] if dp[i-2] != -1 else -1`
-
-第三行，选择 5 元硬币，对于 amount < 5，直接继承上一行。要组合成 amount，可以用 1 + dp[i-5] 枚硬币，或者 dp[i] 枚硬币（继承上一行），结果应该是两者中较小的一个。得到状态转移方程 `dp[i] = min(dp[i], 1 + dp[i-c])`
-
-```cpp
-class Solution {
-public:
-    int coinChange(vector<int>& coins, int amount) {
-        vector<int> dp(amount+1, -1);
-        dp[0] = 0;
-        for (int c : coins) {
-            for (int i = c; i < amount+1; ++i) {
-                if (dp[i-c] != -1) {
-                    int res = dp[i-c] + 1;
-                    dp[i] = dp[i] == -1 ? res : min(dp[i], res);
-                }
-            }
-        }
-        return dp[amount];
-    }
-};
-```
-
-### [518-零钱兑换 II](https://leetcode-cn.com/problems/coin-change-2/)
-
-给定不同面额的硬币和一个目标金额，计算可以凑成目标金额的硬币组合数；如果不能凑成目标金额，返回 0。每一种硬币的数量不限。
-
-这是一个典型的组合问题，对于每种硬币都有选与不选两种情况，且最后组成的金额可以拆分为更小的金额。这种大问题里嵌套子问题的，首先想到用动态规划解决。动态规划两步走——最优子结构（求什么就设什么）、状态转移方程（画表格）。
-
-动态规划的过程就是一个填表格的过程，假设可用硬币为 [2, 5, 10]，计算 amount = 11 元的组合总数，M = len([2, 5, 10])，N = 11，画一个 M+1 行，N+1 列的表格。
-
-填第一行，即什么硬币都不选。
-
-填第二行，此时选择了硬币 [2]，对于 amount < 2，用 2 元硬币无法凑成，因此结果是直接继承上一行。对于 amount >= 2，则组合数 = 选择 2 元硬币的组合数 + 不选择 2 元硬币的组合数。
-
-其中，不选择 2 元硬币的组合数 = dp[i]，继承上一行。选择 2 元硬币的组合数 = dp[i-2]。这是动态规划中重要的思想——前面计算的结果可以为后面所用。由于我们是从左往右遍历，我们已经计算出了 dp[i-2] 的组合数，dp[i] 的每种组合即 dp[i-2] 的每种组合加上一枚 2 元硬币。
-
-因此我们得到了一个递推关系：`dp[i] = dp[i] + dp[i-coin]`
-
-而且，在动态计算的过程中，dp[i] 的计算只与上一行有关，因此我们只需要一个长度为 amount+1 的数组作为存储即可。
-
-![image](/assets/images/截屏2020-07-20下午9.00.56.png)
-
-```cpp
-class Solution {
-public:
-    int coinChange(vector<int>& coins, int amount) {
-        vector<int> dp(amount+1, -1);
-        dp[0] = 0;
-        for (int c : coins) {
-            for (int i = c; i <= amount; ++i) {
-                if (dp[i-c] != -1) {
-                    int res = 1 + dp[i-c];
-                    dp[i] = dp[i] == -1 ? res : min(dp[i], res);
-                }
-            }
-        }
-        return dp[amount];
     }
 };
 ```
@@ -632,7 +633,7 @@ public:
 
 每次转移，如果 nums[i] 与前两个数构成等差数列，那么 `dp[i] = dp[i-1] + 1`，这个 +1 意义是：
 
-![img-60](/assets/images/402b29f9-84be-4cae-b168-94f86916e039.png)
+![img](/assets/images/402b29f9-84be-4cae-b168-94f86916e039.png)
 
 ```cpp
 class Solution {

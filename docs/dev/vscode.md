@@ -36,6 +36,9 @@ workbench.action.openEditorAtIndex1 打开/切换 tab：自定义！
 {
   "editor.formatOnType": false,
   "editor.formatOnSave": false
+  "[markdown]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  },
 }
 ```
 

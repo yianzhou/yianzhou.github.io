@@ -363,7 +363,7 @@ TCP Fast Open combines the connection setup and the data exchange into one packe
 
 This is not turned on by default. The reason is, if one of those packets is delayed and shows up much later, then to the server that looks like a perfectly valid TFO request, and whatever the operation was, it will do it again. If that operation was sending you a JPEG image, doing it twice may be no big deal. If that operation was sending you a pair of shoes from Zappos, then doing it twice might not be what you want.
 
-![img-60](/assets/images/8e540cf6-f47a-46d6-a0fb-caa7972ad6b5.png)
+![img](/assets/images/8e540cf6-f47a-46d6-a0fb-caa7972ad6b5.png)
 
 [Reduce network delays for your app - WWDC 2021](https://developer.apple.com/videos/play/wwdc2021/10239/)
 
@@ -450,7 +450,7 @@ But OCSP stapling actually doesn't protect users against malicious servers. In p
 
 Apple is enhanceing this. First, we gather information from certificate transparency logs. CT logs contain cryptographic proofs of the existence of a certificate. We request all of the revocation information from certificate authorities. We aggregate it into a single efficient bundle, and then make it available to all of our clients. Those clients check in periodically with us to get that bundled revocation information, and use that latest status revocation information when checking server certificates that they are using. If the client hits a certificate that is listed there and your servers are not using OCSP Stapling, the client will then perform OCSP.
 
-![img-60](/assets/images/97cbc95a-ac3c-4f9e-aff9-30dc6619add1.png)
+![img](/assets/images/97cbc95a-ac3c-4f9e-aff9-30dc6619add1.png)
 
 ### Certificate Transparency
 
@@ -537,7 +537,7 @@ You may have assumed that `URLSession` is also just a wrap around Sockets. Not q
 
 And if you're the developer of third-party libraries that are built on BSD Sockets, we encourage you to look at the Network.framework APIs.
 
-![img-60](/assets/images/2f20c9f3-ce1c-48f5-942c-31d8b00126df.png)
+![img](/assets/images/2f20c9f3-ce1c-48f5-942c-31d8b00126df.png)
 
 Use this framework when you need direct access to protocols like TLS, TCP, and UDP for your custom application protocols. Continue to use `URLSession`, which is built upon this framework, for loading HTTP- and URL-based resources.
 

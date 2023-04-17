@@ -4,7 +4,7 @@ authorizationStatusForMediaType
 
 AVFoundation Stack on iOS:
 
-![img-60](/assets/images/1_zY4oLLDPVGW1cMdhzSHElg.png)
+![img](/assets/images/1_zY4oLLDPVGW1cMdhzSHElg.png)
 
 [Learning-AV-Foundation 示例代码](https://github.com/tapharmonic/Learning-AV-Foundation)
 
@@ -435,7 +435,7 @@ QuickTime 文件由一种称为 atom 的数据结构组成；MP4 直接派生自
 
 AVFoundation 使用键空间作为将一组相关的键组合在一起的方法，每个资源至少包含两个 `AVMetadataKeySpace`（键空间）。Common 键空间是所有资源格式都有的；其它键空间是特定的资源格式才有的。
 
-![img-60](/assets/images/57913ED8-77F7-4955-8676-7932F0F600CF.jpg)
+![img](/assets/images/57913ED8-77F7-4955-8676-7932F0F600CF.jpg)
 
 Common 键空间通过 `commonMetadata` 查询：
 
@@ -564,7 +564,7 @@ asset.loadValuesAsynchronously(forKeys: [commonMetadataKey]) {
 
 ## 播放视频
 
-![img-60](/assets/images/4EB5C76B-8346-48FB-87B9-980997AB5C72.jpg)
+![img](/assets/images/4EB5C76B-8346-48FB-87B9-980997AB5C72.jpg)
 
 ### 快速播放
 

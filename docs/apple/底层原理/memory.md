@@ -196,7 +196,7 @@ int MapFile(char *inPathName, void **outDataPtr, size_t *outDataLength, size_t a
 
 如果在调试的时候我们 Malloc Stack，就可以查到每个对象创建时的调用堆栈：
 
-![img-60](/assets/images/9f481203-16a3-4b66-b54d-8340dc28acad.png)
+![img](/assets/images/9f481203-16a3-4b66-b54d-8340dc28acad.png)
 
 `malloc_history App.memgraph [address]` 可以看到指定地址内存分配时的堆栈。
 

@@ -12,6 +12,7 @@ Xcode 调试无法安装：
 
 - 重启 Xcode：❌
 - 重启 Mac：❌
+- 拔掉线重插：✅
 - 重启 iPhone：✅（23/4/10 试了也不行）
 - 删掉所有 appextension target：✅（23/4/10 试了也不行）
 - 删掉 APP 重装：✅

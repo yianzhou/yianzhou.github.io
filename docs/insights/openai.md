@@ -102,3 +102,5 @@ ChatGPT 不是“通用人工智能”，而是一个 LLM（Large Language Model
 Whisper Notes: 一个免费的 iOS 应用，在手机上实现了离线 OpenAI Whisper 模型，可以将语音输入以极高的准确率转成文字。
 
 [FreedomGPT](https://freedomgpt.com/): 一个号称完全自由的 GPT 聊天模型，不带有任何内容审查和过滤机制，有 Web 版和桌面端。
+
+Music created by the AI engines: [Streams | Musico](https://www.musi-co.com/listen/streams)

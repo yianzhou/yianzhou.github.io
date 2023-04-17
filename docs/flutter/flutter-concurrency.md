@@ -1,6 +1,8 @@
 # Dart Concurrency
 
-[Concurrency in Dart | Dart](https://dart.dev/guides/language/concurrency)
+## 异步
+
+[Concurrency in Dart | Dart](https://dart.dev/language/concurrency)
 
 [Asynchronous programming: futures, async, await | Dart](https://dart.dev/codelabs/async-await)
 
@@ -13,6 +15,20 @@ The synchronous `File` method `readAsStringSync()` reads a file synchronously, b
 The asynchronous equivalent, `readAsString()`, immediately returns an object of type `Future<String>`. At some point in the future, the `Future<String>` completes with either a string value or an error.
 
 ![img](/img/13D9F70F-C26E-495F-83FF-31A4D4AA9BC1.png)
+
+> [Flutter 教程 Async-1 事件循环 Event Loop 机制\_哔哩哔哩\_bilibili](https://www.bilibili.com/video/BV12K4y1Z7Zg/?spm_id_from=333.788)
+
+JavaScript 只有一个线程；Dart 里面，每个线程都被封装在一个 `Isolate` 里面。
+
+`Future` 就相当于 JavaScript 里面的 `Promise`。
+
+[Dart asynchronous programming: Isolates and event loops | by Kathy Walrath | Dart | Medium](https://medium.com/dartlang/dart-asynchronous-programming-isolates-and-event-loops-bffc3e296a6a#:~:text=A%20Dart%20app%20has%20a,Dart%20isolates%2C%20and%20so%20on.)
+
+Event Loop 可以防止主线程被阻塞，保持主线程的响应。`Future` 调用会把闭包放进 Event Queue 里面；Dart 还保留了更优先的 Microtask Queue，一般不要使用。
+
+由于 Dart 的单线程模型，如果你真的有很大的计算量要运行，就算你派发到 Event Queue 里面，最终还是要占用主线程来计算，可能导致阻塞，此时你就需要创建 `Isolate`，用多线程来解决问题。
+
+## 示例
 
 ```dart title='demo1.dart'
 import 'dart:async';

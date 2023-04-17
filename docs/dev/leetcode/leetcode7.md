@@ -113,7 +113,7 @@ public:
 
 ## [11-盛最多水的容器](https://leetcode-cn.com/problems/container-with-most-water/)
 
-![img-60](https://aliyun-lc-upload.oss-cn-hangzhou.aliyuncs.com/aliyun-lc-upload/uploads/2018/07/25/question_11.jpg)
+![img](https://aliyun-lc-upload.oss-cn-hangzhou.aliyuncs.com/aliyun-lc-upload/uploads/2018/07/25/question_11.jpg)
 
 双指针限定容器的左右边界，因容器容量由高度较小的指针决定，因此每次移动高度较小的那一侧的指针。
 

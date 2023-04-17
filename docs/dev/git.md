@@ -83,7 +83,7 @@ The **author date** notes when this commit was originally made (i.e. when you fi
 
 The **commit date** gets changed every time the commit is being modified, for example when rebasing the branch where the commit is in on another branch (more).
 
-![img-60](/assets/images/fea19a87-fb67-4a85-ac07-d4dad995f08d.png)
+![img](/assets/images/fea19a87-fb67-4a85-ac07-d4dad995f08d.png)
 
 ## gitignore
 

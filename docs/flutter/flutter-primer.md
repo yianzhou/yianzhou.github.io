@@ -425,3 +425,43 @@ dSYM: <https://storage.cloud.google.com/flutter_infra_release/flutter/6ba2af10bb
 或者打开 `Flutter.framework` 的 `Info.plist`，也可以看到 engine 版本。
 
 `engine/DEPS` 这个文件记录了引擎用的 dart 版本、skia 版本等信息。
+
+## Navigator
+
+对于非常重的页面（例如有视频、图片等资源），在多次 Push 之后可能会出现 OOM 的情况，如何解决？
+
+```dart
+import 'package:flutter/material.dart';
+
+void main() {
+  runApp(const MyApp());
+}
+
+class Page {
+  String title;
+  double scrollPositionY;
+}
+
+class MyApp extends StatelessWidget {
+  const MyApp({Key? key}) : super(key: key);
+
+  List<Page> _pages;
+
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'Flutter Demo',
+      home: Navigator(
+          pages: _optimizeGetPages().map((e) => MaterialPage(child: Text(e.title))).toList(),
+          onPopPage: (route, result) {
+            _pages.removeLast();
+            return route.didPop(result);
+          }),
+    );
+  }
+
+  List<Page> _optimizeGetPages() {
+    return _pages.sublist(_pages.length - 3);
+  }
+}
+```

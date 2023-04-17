@@ -122,7 +122,7 @@ HTTP 在默认方式下使用持续连接 (persistent connection)，意味着客
 
 非持续连接有这样一些缺点：第一，必须为每一个对象的请求建立和维护一个全新的 TCP 连接。这意味着，在客户端和服务器中都要分配 TCP 的缓冲区、保持 TCP 的变量；第二，每请求一个对象都要经历 2 RTTs，即 1 RTT 用于创建 TCP 连接，1 RTT 用于请求和接收对象。
 
-With HTTP/1.1 persistent connections, the server leaves the TCP connection open after sending a response. Subsequent requests and responses between the same client and server can be sent over the same connection. In particular, an entire Web page (in the example above, the base HTML file and the 10 images), moreover, multiple Web pages residing on the same server can be sent from the server to the same client over a single persistent TCP connection. These requests for objects can be made back-to-back, without waiting for replies to pending requests (called **pipelining**). Typically, the HTTP server closes a connection when it isn’t used for a certain time (a configurable timeout interval). When the server receives the back-to-back requests, it sends the objects back-to-back. The default mode of HTTP uses persistent connections with pipelining.
+With HTTP/1.1 persistent connections, the server leaves the TCP connection open after sending a response. Subsequent requests and responses between the same client and server can be sent over the same connection. In particular, an entire Web page (in the example above, the base HTML file and the 10 images), moreover, multiple Web pages residing on the same server can be sent from the server to the same client over a single persistent TCP connection. These requests for objects can be made back-to-back, without waiting for replies to pending requests (called **pipelining**). Typically, the HTTP server closes a connection when it isn’t used for a certain time (a configurable timeout interval). When the server receives the back-to-back requests, it sends the objects back-to-back.**（大部分浏览器禁用了 pipelining，详见下文）**
 
 Suppose within your Web browser you click on a link to obtain a Web page. Further suppose that the Web page associated with the link contains exactly one object, consisting of a small amount of HTML text. Assuming zero transmission time of the object, how much time elapses from when the client clicks on the link until the client receives the object? -- 1RTT elapses to set up the TCP connection and another 1RTT elapses to request and receive the small object.
 
@@ -135,13 +135,11 @@ Suppose the HTML file references 8 very small objects on the same server,
 
 ### HTTP Message Format
 
-There are two types of HTTP messages, request mes- sages and response messages.
+There are two types of HTTP messages, request messages and response messages.
 
 #### Request Message
 
-下面看一个典型的请求报文：
-
-```s
+```
 GET /cs453/index.html HTTP/1.1
 Host: gaia.cs.umass.edu
 User-agent: Mozilla/5.0
@@ -170,9 +168,7 @@ A request generated with a form does not necessarily use the POST method. Instea
 
 #### Response Message
 
-下面看一个典型的响应报文：
-
-```s
+```
 HTTP/1.1 200 OK
 Date: Tue, 18 Aug 2015 15:44:04 GMT
 Server: Apache/2.2.3 (CentOS)
@@ -651,13 +647,13 @@ As with UDP, the header includes source and destination port numbers, which are 
 - The **RST**, **SYN**, and **FIN** bits are used for connection setup and teardown.
 - The CWR and ECE bits are used in explicit congestion notification.
 
-![img-60](/assets/images/e1517d86-1953-4dc1-8bcc-6aa30160c5b5.jpg)
+![img](/assets/images/e1517d86-1953-4dc1-8bcc-6aa30160c5b5.jpg)
 
 TCP views data as an unstructured, but ordered, stream of bytes. The sequence number for a segment is therefore the byte-stream number of the first byte in the segment.
 
 Suppose that a process in Host A wants to send a stream of data to a process in Host B over a TCP connection. The TCP in Host A will implicitly number each byte in the data stream. Suppose that the data stream consists of a file consisting of 500,000 bytes, that the MSS is 1,000 bytes, and that the first byte of the data stream is numbered 0. As shown in Figure 3.30, TCP constructs 500 segments out of the data stream. The first segment gets assigned sequence number 0, the second segment gets assigned sequence number 1,000, the third segment gets assigned sequence number 2,000, and so on. Each sequence number is inserted in the sequence number field in the header of the appropriate TCP segment.
 
-![img-60](/assets/images/2fa1b7f7-7e91-4476-b7f7-47f20997d923.png)
+![img](/assets/images/2fa1b7f7-7e91-4476-b7f7-47f20997d923.png)
 
 Recall that TCP is full-duplex, the acknowledgment number that Host A puts in its segment is the sequence number of the next byte Host A is expecting from Host B.
 
@@ -713,7 +709,7 @@ Even though the actions taken by flow and congestion control are similar (the th
 
 TCP provides flow control by having the sender maintain a variable called the **receive window**: `rwnd = RcvBuffer – [LastByteRcvd – LastByteRead]`
 
-![img-60](/assets/images/2c34bbc3-fb1a-40a0-be20-60dbed5764a2.png)
+![img](/assets/images/2c34bbc3-fb1a-40a0-be20-60dbed5764a2.png)
 
 Host A makes sure throughout the connection’s life that, the amount of unacknowledged data that A has sent into the connection, less or equals than the rwnd: `LastByteSent – LastByteAcked <= rwnd`.
 
@@ -727,7 +723,7 @@ Suppose a process running in one host (client) wants to initiate a connection wi
 2. Once the TCP SYN segment arrives, the server allocates the TCP buffers and variables to the connection, and sends a connection-granted segment, the **SYNACK segment**, to the client TCP. The SYNACK segment also contains no application-layer data. However, it does contain three important pieces of information in the segment header. First, the SYN bit is set to 1. Second, the acknowledgment field of the TCP segment header is set to `client_isn+1`. Finally, the server chooses its own initial sequence number (`server_isn`) and puts this value in the sequence number field of the TCP segment header.
 3. Upon receiving the SYNACK segment, the client also allocates buffers and variables to the connection. The client host then sends the server yet another segment, putting the value `server_isn+1` in the acknowledgment field of the TCP segment header. The SYN bit is set to zero, since the connection is established. This third stage of the three-way handshake may carry client-to-server data in the segment payload.
 
-![img-60](/assets/images/f7435a29-0c44-415f-b830-676a291e1f6e.png)
+![img](/assets/images/f7435a29-0c44-415f-b830-676a291e1f6e.png)
 
 Once these three steps have been completed, the client and server hosts can send segments containing data to each other.
 
@@ -739,20 +735,14 @@ Either of the two processes participating in a TCP connection can end the connec
 - The client acknowledges the server’s shutdown segment and wait for a time, typically 30 seconds, letting the TCP client resend the final acknowledgment in case the ACK is lost. After the wait, the connection formally closes and all resources on the client side (including port numbers) are released.
 - The server receives the final ACK and closes down.
 
-![img-60](/assets/images/a3952603-43c0-49c8-b969-df3d4ef60658.png)
+TCP 关闭连接时，主动方和被动方分别发生了什么：
 
-三次握手：
+- 双方都需要发送 FIN 信号，并且，发送 ACK 以确认对方发的 FIN 信号
+- 主动方在发送最后的 ACK 后，需要等待 2MSL 的时间，这是为了确认被动方收到了最后的 ACK
 
-- 客户端：你好，能听到我说话吗？
-- 服务端：你好，我能听到，你能听到我说话吗？
-- 客户端：你好，我能听到。开始说话……
+The MSL is the maximum amount of time that a TCP segment can live in the network.
 
-四次挥手：
-
-- 客户端：老师，该下课了。
-- 服务端：好的，等我说完最后这点就下课。
-- 服务端：我说完了，下课。
-- 客户端：谢谢老师，老师再见。
+![img](/assets/images/a3952603-43c0-49c8-b969-df3d4ef60658.png)
 
 > [Nmap](https://nmap.org/) ("Network Mapper") is a free and open source (license) utility for network discovery and security auditing.
 
@@ -1157,7 +1147,7 @@ Although many technologies and standards for wireless LANs were developed in the
 
 The fundamental building block of the 802.11 architecture is the basic service set (BSS). A BSS contains one or more wireless stations and a central base station, known as an **access point (AP)** in 802.11 parlance. As with Ethernet devices, each 802.11 wireless station has a 6-byte MAC address that is stored in the firmware of the station’s adapter (that is, 802.11 network interface card). Each AP also has a MAC address for its wireless interface. As with Ethernet, these MAC addresses are administered by IEEE and are (in theory) globally unique.
 
-![img-60](/assets/images/f1ef6d59-64c0-476c-83ed-c0d97595c328.png)
+![img](/assets/images/f1ef6d59-64c0-476c-83ed-c0d97595c328.png)
 
 When a network administrator installs an AP, the administrator assigns a one- or two-word **Service Set Identifier (SSID)** to the access point（即 Wi-Fi 列表里显示的名称）. The 802.11 standard requires that an AP periodically send **beacon frames**, each of which includes the AP’s SSID and MAC address.
 
@@ -1173,7 +1163,7 @@ In order to increase the physical range of a wireless LAN, companies and univers
 
 Mobility can be handled in a relatively straightforward manner when the BSSs are part of the subnet.
 
-![img-60](/assets/images/58f51861-ebbb-43f7-9076-d060ff13b11a.png)
+![img](/assets/images/58f51861-ebbb-43f7-9076-d060ff13b11a.png)
 
 Figure 7.15 shows two interconnected BSSs with a host, H1, moving from BSS1 to BSS2. Because in this example the interconnection device that connects the two BSSs is not a router, all of the stations in the two BSSs, including the APs, belong to the same IP subnet. Thus, when H1 moves from BSS1 to BSS2, it may keep its IP address and all of its ongoing TCP connections. If the interconnection device were a router, then H1 would have to obtain a new IP address in the subnet in which it was moving. This address change would disrupt (and eventually terminate) any on-going TCP connections at H1. In Section 7.6, we’ll see how a network-layer mobility protocol, such as mobile IP, can be used to avoid this problem.
 
@@ -1266,7 +1256,7 @@ Four keys:
 
 Now that Alice and Bob share the same four session keys (EB, MB, EA, and MA), they can start to send secured data to each other over the TCP connection. Since TCP is a byte-stream protocol, TLS breaks the data stream into **records**, appends an HMAC to each record for integrity checking, and then encrypts the record+HMAC. This encrypted package is then passed to TCP for transport over the Internet.
 
-![img-60](/assets/images/6dd1c78b-2527-4a51-90ea-8fa905ba93f4.png)
+![img](/assets/images/6dd1c78b-2527-4a51-90ea-8fa905ba93f4.png)
 
 Bob maintains a sequence number counter, which begins at zero and is incremented for each TLS record he sends. Bob doesn’t actually include a sequence number in the record itself, but when he calculates the HMAC, he includes the sequence number in the HMAC calculation. Thus, the HMAC is now a hash of the data plus the HMAC key plus the current sequence number. Alice tracks Bob’s sequence numbers, allowing her to verify the data integrity of a record by including the appropriate sequence number in the HMAC calculation. This use of TLS sequence numbers prevents Trudy from carrying out a woman-in-the-middle attack, such as reordering or replaying segments.
 

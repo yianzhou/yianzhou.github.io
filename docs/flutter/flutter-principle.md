@@ -30,21 +30,9 @@ Here, rather than mutating an UIView instance when the UI changes, Flutter const
 
 > [Flutter architectural overview](https://flutter.dev/docs/resources/architectural-overview)。
 
-![img-60](/assets/images/9B096B50-89DA-4F44-883D-29C43FB985B7.png)
+![img](/assets/images/9B096B50-89DA-4F44-883D-29C43FB985B7.png)
 
 Most developers will interact with Flutter via the Flutter Framework. The [Flutter Engine](https://github.com/flutter/engine) is a portable runtime for hosting Flutter applications. It implements Flutter's core libraries, including animation and graphics, file and network I/O, accessibility support, plugin architecture, and a Dart runtime and compile toolchain.
-
-## 异步
-
-> [Flutter 教程 Async-1 事件循环 Event Loop 机制\_哔哩哔哩\_bilibili](https://www.bilibili.com/video/BV12K4y1Z7Zg/?spm_id_from=333.788)
-
-JavaScript 只有一个线程；Dart 里面，每个线程都被封装在一个 `Isolate` 里面。
-
-`Future` 就相当于 JavaScript 里面的 `Promise`。
-
-Event Loop 可以防止主线程被阻塞，保持主线程的响应。`Future` 调用会把闭包放进 Event Queue 里面；Dart 还保留了更优先的 Microtask Queue，一般不要使用。
-
-由于 Dart 的单线程模型，如果你真的有很大的计算量要运行，就算你派发到 Event Queue 里面，最终还是要占用主线程来计算，可能导致阻塞，此时你就需要创建 `Isolate`，用多线程来解决问题。
 
 ## 三棵树
 
@@ -70,3 +58,27 @@ When your app creates and displays a scene, the UI thread creates a **layer tree
 [Flutter 120hz 高刷新率在 Android 和 iOS 上的调研总结 - 掘金](https://juejin.cn/post/7081273509690736653)
 
 [Support Variable Refresh Rate Displays (PUBLICLY SHARED) - Google Docs](https://docs.google.com/document/d/1O-ot6MydAl5pAr_XGnpR-Qq5A5CPDF6edaPu8xQtgCQ/edit?resourcekey=0-LlXeGtGRC67XL4NrGoc91A)
+
+## Garbage Collector
+
+[Using the Memory view | Flutter](https://docs.flutter.dev/development/tools/devtools/memory)
+
+官方文档里引用的文章：[Flutter: Don’t Fear the Garbage Collector | by Matt Sullivan | Flutter | Medium](https://medium.com/flutter/flutter-dont-fear-the-garbage-collector-d69b3ff1ca30)
+
+Dart 垃圾回收：分代的，两步：新生代 Young Space Scavenger、老生代 Parallel Marking and Concurrent Sweeping
+
+新生代（Cheney 算法）：
+
+- 针对生命周期很短的对象，例如 `StatelessWidget`。阻塞的，但比第二代算法快得多，结合空闲时调度，消除可感知的卡顿。
+- 新对象被分配在连续的内存块（与 malloc 不同）
+- 新对象被分配的空间分为两个“半空间”，新对象被分配在活跃的半空间，当它满了，就把仍然存活的对象拷贝到不活跃的半空间
+
+Bump pointer works by allocating memory from a contiguous block of memory and keeping track of the next available address to allocate. When a new object needs to be allocated, the garbage collector simply moves the pointer to the next available address and returns it. This is a simple and efficient method of allocation, but it can lead to fragmentation of the memory block.
+
+malloc does not require a contiguous block of memory. Instead, it searches for a free block of memory of the requested size and returns a pointer to that block. This can lead to more efficient use of memory and less fragmentation, but it also requires more bookkeeping overhead.
+
+老生代：
+
+- 那些在上一阶段没有被回收的，会成为老生代
+- 两步：遍历对象引用图，标记存活的对象；扫描全部内存，清楚未被标记的对象
+- 比较慢，但是发生频率很低

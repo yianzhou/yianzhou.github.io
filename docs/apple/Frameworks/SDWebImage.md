@@ -665,7 +665,7 @@ static inline NSString * _Nonnull SDDiskCacheFileNameForKey(NSString * _Nullable
 
 `UIImage` is responsible for loading image content. And `UIImageView` is responsible for displaying it, for rendering it. In addition to rendering, being a continuous process, rather than a one-time event, there's this hidden phase called decoding.
 
-![img-60](/assets/images/956C45FD-8BB4-4BB5-9CC5-E788644BF46C.jpg)
+![img](/assets/images/956C45FD-8BB4-4BB5-9CC5-E788644BF46C.jpg)
 
 But in order to discuss decoding, I first need to discuss a concept called a buffer.
 

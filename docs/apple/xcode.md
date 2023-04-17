@@ -136,3 +136,13 @@ objc[90825]: OBJC_DISABLE_AUTORELEASE_COALESCING_LRU: disable coalescing of auto
 1. 关闭 Xcode
 2. 终端执行 `defaults write com.apple.dt.Xcode ShowBuildOperationDuration YES`
 3. 重启 Xcode
+
+## OTA
+
+OTA 方式安装，是通过 WebKit 解析链接中的 itms-services:// 来实现的。例如：
+
+```
+<a href="itms-services://?action=download-manifest&url=https://zjhdreamteam.coding.net/p/OTADemo/git/raw/master/manifest.plist">点击安装</a>
+```
+
+浏览器会去读取 manifest.plist 中的信息，如：iOS 应用的名称、版本、安装地址等。

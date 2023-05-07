@@ -1,5 +1,55 @@
 # VISA
 
+## 申根
+
+好的，以下是申根成员国的国家及首都的中英文对照表：
+
+1. 奥地利 - Austria - 维也纳 (Vienna)
+2. 比利时 - Belgium - 布鲁塞尔 (Brussels)
+3. 捷克共和国 - Czech Republic - 布拉格 (Prague)
+4. 丹麦 - Denmark - 哥本哈根 (Copenhagen)
+5. 爱沙尼亚 - Estonia - 塔林 (Tallinn)
+6. 芬兰 - Finland - 赫尔辛基 (Helsinki)
+7. 法国 - France - 巴黎 (Paris)
+8. 德国 - Germany - 柏林 (Berlin)
+9. 希腊 - Greece - 雅典 (Athens)
+10. 匈牙利 - Hungary - 布达佩斯 (Budapest)
+11. 冰岛 - Iceland - 雷克雅未克 (Reykjavik)
+12. 意大利 - Italy - 罗马 (Rome)
+13. 拉脱维亚 - Latvia - 里加 (Riga)
+14. 列支敦士登 - Liechtenstein - 瓦杜兹 (Vaduz)
+15. 立陶宛 - Lithuania - 维尔纽斯 (Vilnius)
+16. 卢森堡 - Luxembourg - 卢森堡市 (Luxembourg City)
+17. 马耳他 - Malta - 瓦莱塔 (Valletta)
+18. 荷兰 - Netherlands - 阿姆斯特丹 (Amsterdam)
+19. 挪威 - Norway - 奥斯陆 (Oslo)
+20. 波兰 - Poland - 华沙 (Warsaw)
+21. 葡萄牙 - Portugal - 里斯本 (Lisbon)
+22. 罗马尼亚 - Romania - 布加勒斯特 (Bucharest)
+23. 斯洛伐克 - Slovakia - 布拉迪斯拉发 (Bratislava)
+24. 斯洛文尼亚 - Slovenia - 卢布尔雅那 (Ljubljana)
+25. 西班牙 - Spain - 马德里 (Madrid)
+26. 瑞典 - Sweden - 斯德哥尔摩 (Stockholm)
+27. 瑞士 - Switzerland - 伯尔尼 (Bern)
+
+| City                    | Flight             | Duration       | Price      |
+| ----------------------- | ------------------ | -------------- | ---------- |
+| 深圳往返巴黎（SZX-CDG） | 海南航空           | 12h 55, 11h 55 | HKD 12,672 |
+| 香港往返巴黎（HKG-CDG） | 法国航空、国泰航空 | 14h 10, 12h 10 | HKD 12,222 |
+
+音乐厅：
+
+- 瑞士-日内瓦-维多利亚音乐厅（Victoria Hall）
+- 瑞士-苏黎世-歌剧院
+- 瑞士-卢塞恩-KKL 音乐厅
+- 奥地利-维也纳-金色大厅
+
+瑞士周边国家：
+
+- 维也纳到苏黎世直飞航班 1h20m，火车 8h。
+- 巴黎到苏黎世直飞航班 1h15m，火车 4h11m。
+- 罗马到苏黎世直飞航班 5h05m，火车 7h17m 米兰中转。
+
 ## 加拿大
 
 [Visit Canada - Canada.ca](https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada.html)

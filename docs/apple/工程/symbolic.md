@@ -68,7 +68,7 @@ DWARF 是一种被众多编译器和调试器使用的、用于支持源代码�
 
 `clang -c main.c` 后 `objdump --macho --private-headers main.o`，此时没有 Dwarf Section。
 
-`clang -c -g main.c` 后再查看，
+`clang -c -g main.c` 后再查看，多了很多 segname 为`__DWARF`的 section。
 
 dSYM 文件是保存了 DWARF 格式的调试信息的文件。它是怎么生成的？从目标文件中加载 DWARF 段、重定位所有地址、然后打包成 dSYM。dSYM 保存的是不含偏移的虚拟内存地址。
 

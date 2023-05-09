@@ -1,5 +1,45 @@
 # Flutter News
 
+## 3.10
+
+[What’s new in Flutter 3.10. Seamless web and mobile integration… | by Kevin Chisholm | Flutter | May, 2023 | Medium](https://medium.com/flutter/whats-new-in-flutter-3-10-b21db2c38c73)
+
+Material 3: Developers must “opt in” to these changes using the `useMaterial3` theme flag. In the next stable release, `useMaterial3` defaults to true.
+
+All M3 components configure the default colors of the theme’s `ColorScheme`. You can create a custom color scheme either from a single “seed” color or from an image. 从一个种子颜色或者从一张图片，就能创建一套标准色版。
+
+Flutter supports SLSA level 1
+
+By default, all apps built for iOS with Flutter 3.10 use **Impeller**. Impeller on Android remains under active development but not ready for preview.
+
+Eliminating Jank: You need to set the `FlutterViews` background color to a non-nil value.
+
+In this release, we moved the opening and decoding of local images from the Dart thread to a background thread. This change eliminates potential long pauses on screens with a lot of local images, while avoiding delaying vsync events.
+
+Reducing iOS startup latency: An inefficient strategy for identifier lookups in app bundles increased app startup latency. This startup latency grows in proportion to the app’s size. In this release, we fixed the bundle identifier lookup. This reduced startup latency by 100ms or about 30–50% in a large production application.
+
+It adds the ability to decode **APNG** images.
+
+iOS Wireless debugging.
+
+Flutter apps on iOS can now support accurate rendering for wide gamut images. 广色域图片
+
+## 3.7
+
+[What’s new in Flutter 3.7. Material 3 updates, iOS improvements… | by Kevin Chisholm | Flutter | Medium](https://medium.com/flutter/whats-new-in-flutter-3-7-38cbea71133c)
+
+Enhanced Material 3 support, Menu bars and cascading menus
+
+Impeller preview: We expect to make Impeller the default renderer on iOS in a forthcoming stable release.
+
+When you release an iOS app, a checklist of settings to update ensures that your app is ready for submission to the App Store. The flutter build ipa command now validates some of these settings.
+
+DevTools updates.
+
+Now Platform Channels can be invoked from any Isolate. Previously, users were only able to invoke Platform Channels from Flutter’s supplied main isolate.
+
+This release introduces a few improvements to **memory management** that have the collective effect of reducing jank caused by garbage collection pauses, reducing CPU utilization due to allocation velocity and background GC threads, and reducing the memory footprint.
+
 ## 3.3
 
 [What’s new in Flutter 3.3. Exciting updates for text handling… | by Kevin Chisholm | Flutter | Medium](https://medium.com/flutter/whats-new-in-flutter-3-3-893c7b9af1ff)

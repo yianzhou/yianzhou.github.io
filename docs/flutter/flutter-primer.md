@@ -22,6 +22,8 @@ export PATH="$HOME/Documents/flutter/bin:$PATH"
 
 同时，新增了 `flutter/bin/cache`，TODO: 这些缓存的作用。
 
+Flutter framework 位置：`flutter/bin/cache/artifacts/engine/ios/Flutter.xcframework/ios-arm64_armv7/Flutter.framework'`
+
 ## 新建项目
 
 在命令行直接创建新项目，默认原生语言是 kotlin 和 swift，使用 objc 和 java 需要传参。

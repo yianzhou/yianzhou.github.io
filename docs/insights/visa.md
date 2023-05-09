@@ -50,6 +50,8 @@
 - 巴黎到苏黎世直飞航班 1h15m，火车 4h11m。
 - 罗马到苏黎世直飞航班 5h05m，火车 7h17m 米兰中转。
 
+我们是瑞士驻华大使馆/领事馆的官方合作伙伴：[欢迎来到 VFS Global | vfsglobal](https://visa.vfsglobal.com/chn/zh/che/)
+
 ## 加拿大
 
 [Visit Canada - Canada.ca](https://www.canada.ca/en/immigration-refugees-citizenship/services/visit-canada.html)

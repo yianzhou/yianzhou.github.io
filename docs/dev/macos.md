@@ -106,3 +106,21 @@ Reading List: `chrome://flags/#read-later`
 可以设置快捷键：
 
 ![img](/img/8CB530FC-506D-4614-A581-7844BDF9044F.png)
+
+## .DS_Store
+
+.DS_Store is a hidden file that is created by macOS Finder to store custom attributes of a folder, such as the position of icons, the size and position of windows, and other view options. It is a binary file that is not meant to be edited manually.
+
+The .DS_Store file is created automatically by Finder when you open a folder or change its view options. It is stored in the same folder as the folder it belongs to, and it is hidden by default to prevent accidental deletion or modification.
+
+If you see a .DS_Store file appear suddenly in your macOS Finder, it is likely because you have opened or modified a folder in Finder. This is a normal behavior of macOS, and you don't need to worry about it.
+
+However, if you want to prevent the creation of .DS_Store files, you can disable it by running the following command in Terminal:
+
+`defaults write com.apple.desktopservices DSDontWriteNetworkStores true`
+
+This will prevent the creation of .DS_Store files on network volumes. If you want to prevent the creation of .DS_Store files on local volumes as well, you can run the following command:
+
+`defaults write com.apple.desktopservices DSDontWriteStores true`
+
+Note that disabling the creation of .DS_Store files may affect the behavior of Finder and other macOS applications, so use it with caution.

@@ -177,3 +177,9 @@ switch (config.priority) {
 涉及到终端到 Flutter 数据传递时，不要随便改数据类型，这个值是 Android 终端传的，iOS 直接改了没验证，结果启动页面就 exception
 
 ![img](/img/C572AAAA-B297-47FF-B4BC-1C764D11551C.png)
+
+## An error occurred while processing the post-install hook of the Podfile
+
+Issue: [Error running pod install, undefined local variable or method 'continue' for #<Pod::Podfile:0x00000001095c1188 @defined_in_file=#<Pathname:/path/to/ios/Podfile> · Issue #104118 · flutter/flutter](https://github.com/flutter/flutter/issues/104118)
+
+fix: [continue->next in Ruby script by jmagman · Pull Request #104296 · flutter/flutter](https://github.com/flutter/flutter/pull/104296)

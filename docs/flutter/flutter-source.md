@@ -92,7 +92,17 @@ cd my_app
 
 在 Android Studio 中运行 my_app，即可调试 framework 源码。
 
-`open flutter_soure/my_app/ios/Runner.xcworkspace` 打开 Xcode 工程，将 `flutter_source/src/out/ios_debug_unopt/flutter_engine.xcodeproj` 拖到 Runner 项目中，运行，即可断点调试 embedder 源码。
+```sh
+cd my_app # 在my_app调试
+export FLUTTER_ENGINE=$HOME/Documents/flutter_source/src/
+flutter build ios --debug --local-engine ios_debug_unopt_arm64
+```
+
+官方说了，只能符号断点调试：
+
+> Add an engine symbol breakpoint via Debug > Breakpoints > Create Symbolic Breakpoint.... The Symbol field should be the engine symbol you're interested in, like -[FlutterEngine runWithEntrypoint:] (note the -[ prefix has no space).
+
+打开 `flutter_source/src/out/ios_debug_unopt/flutter_engine.xcodeproj`，阅读源码比较方便。
 
 You can also set the environment variable `$FLUTTER_ENGINE` instead of specifying `--local-engine-src-path`.
 

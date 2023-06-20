@@ -27,3 +27,5 @@ slug: /
 [GitHub Copilot · Your AI pair programmer](https://github.com/features/copilot)
 
 [IndieKKY/bilibili-subtitle: 哔哩哔哩字幕列表浏览器扩展，功能包括点击跳转，下载字幕，总结字幕，翻译字幕等。](https://github.com/IndieKKY/bilibili-subtitle) 哔哩哔哩字幕列表是一个浏览器扩展，旨在提供更高效和可控的视频信息获取方式。
+
+[pics/binary/README.md at master · corkami/pics · GitHub](https://github.com/corkami/pics/blob/master/binary/README.md) 这个仓库收集了作者原创的大量 IT 海报。

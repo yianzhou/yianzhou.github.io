@@ -1920,6 +1920,8 @@ unique_ptr<string> p4(new string("Trex"));
 p3.reset(p4.release()); // 释放 p3 指向的内存；p3 指向 p4 指向的内存，p4 置为空
 ```
 
+`reset` is a member function of `std::shared_ptr` and `std::unique_ptr` used to release ownership of the current allocated memory (if any) and set the smart pointer to manage a new object (if provided).
+
 创建 `weak_ptr` 要用一个 `shared_ptr` 来初始化它：
 
 ```cpp

@@ -1,20 +1,27 @@
 # Flutter Source
 
-## 编译
+## 环境配置
 
-[Setting up the Engine development environment · flutter/flutter Wiki](https://github.com/flutter/flutter/wiki/Setting-up-the-Engine-development-environment)
+本节介绍编译 Flutter 源码所需要的环境配置。
+
+参考文档：[Setting up the Engine development environment · flutter/flutter Wiki](https://github.com/flutter/flutter/wiki/Setting-up-the-Engine-development-environment)
+
+其中一个依赖项是 [Chromium's depot_tools](https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html)：
+
+- Chromium is an open-source web browser project initiated by Google and maintained by the developer community. The Chromium project primarily provides a browser engine responsible for processing web requests, rendering web pages, and incorporating a range of security features and performance optimizations. Many modern browsers, such as Google Chrome, Microsoft Edge, Opera, Brave, and Vivaldi, are built on top of the Chromium project.
+- The Chromium depot_tools(7) suite contains many git workflow-enhancing tools which are designed to work together to enable anyone to wrangle the Chromium codebase expertly.
 
 ```bash
+# 可以把 depot_tools 单独放，或者放到 flutter_source 目录里
 mkdir flutter_source
-
 cd flutter_source
-
-# https://commondatastorage.googleapis.com/chrome-infra-docs/flat/depot_tools/docs/html/depot_tools_tutorial.html#_setting_up
 git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 
 # Add depot_tools to the front of your PATH
+# 也可以加到 ~/.zshrc 里
 export PATH=`pwd`/depot_tools:$PATH
 
+# A configuration file for you source checkout
 touch .gclient
 ```
 
@@ -33,32 +40,22 @@ solutions = [
 ]
 ```
 
+`DEPS`: A file in the chromium checkout which gclient sync uses to determine what dependencies to pull in. This file also contains hooks.（位于 `src/flutter/DEPS`）
+
+`gclient sync`: This will pull all dependencies of the `src/flutter` checkout. You will need to run this any time you update the `src/flutter` checkout, including when you switch branches. **Avoid interrupting this script, as doing so can leave your repository in an inconsistent state that is tedious to clean up.**
+
 ```bash
 # 第一次运行这个，会非常非常久，别着急
 # 这一步会克隆 flutter/engine 仓库
+# 在 flutter_source 根目录或者子目录运行此命令，应该没有什么区别，都是用 flutter_source/.gclient 这个文件
 gclient sync
-
-# 自己手动克隆 flutter 仓库
-git clone https://github.com/flutter/flutter.git
 ```
 
-至此，形成这样的目录结构：
+Editor autocomplete support: On Mac, you can simply use Xcode (e.g., open `out/host_debug_unopt/products.xcodeproj`).
 
-```
-➜  flutter_source tree -L 1 .
-.
-├── depot_tools
-├── flutter
-└── src
-```
+## 编译
 
-确保 `flutter` 目录下的代码是最新的，如果切到其它分支，即使是 stable 分支，也不能保证可以编译成功的。
-
-确保 `src/flutter` 目录下的代码是 `flutter/bin/internal/engine.version` 的版本，两者对齐。
-
-每次切换版本后，再执行一遍 `gclient sync -D` 同步一下。
-
-[Compiling the engine · flutter/flutter Wiki](https://github.com/flutter/flutter/wiki/Compiling-the-engine)
+参考文档：[Compiling the engine · flutter/flutter Wiki](https://github.com/flutter/flutter/wiki/Compiling-the-engine)
 
 ```bash
 cd src
@@ -71,9 +68,12 @@ cd src
 
 # 编译源码（Intel）
 ninja -C out/ios_debug_unopt && ninja -C out/host_debug_unopt
+
 # 编译源码（M1）
 ninja -C out/ios_debug_unopt_arm64 && ninja -C out/host_debug_unopt_arm64
 ```
+
+iOS expect both a `host` and `ios` build. It is critical to recompile the `host` build after upgrading the Dart SDK (e.g. via a `gclient sync` after merging up to head), since artifacts from the `host` build need to be version matched to artifacts in the `iOS` build.
 
 ## 源码调试
 
@@ -92,7 +92,7 @@ cd my_app
 
 在 Android Studio 中运行 my_app，即可调试 framework 源码。
 
-```sh
+```bash
 cd my_app # 在my_app调试
 export FLUTTER_ENGINE=$HOME/Documents/flutter_source/src/
 flutter build ios --debug --local-engine ios_debug_unopt_arm64
@@ -200,6 +200,32 @@ I also checked in the secondary tree for:
 ```
 
 这个问题的原因是 `flutter_source/src/flutter/impeller` 子仓库存在变更，把变更丢弃，然后再 `gclient sync` 即可。
+
+```
+depot_tools/ninja.py: Could not find Ninja in the third_party of the current project, nor in your PATH.
+Please take one of the following actions to install Ninja:
+- If your project has DEPS, add a CIPD Ninja dependency to DEPS.
+- Otherwise, add Ninja to your PATH *after* depot_tools.
+
+depot_tools/ninja.py: Fallback to a deprecated legacy ninja binary. Note that this ninja binary will be removed soon.
+Please install ninja to your project using DEPS. If your project does not have DEPS, Please install ninja in your PATH.
+See also https://crbug.com/1340825
+```
+
+解决：`brew install ninja`
+
+```
+../../flutter/fml/backtrace.cc:7:10: fatal error: 'cxxabi.h' file not found
+#include <cxxabi.h>
+         ^~~~~~~~~~
+1 error generated.
+
+In file included from ../../third_party/abseil-cpp/absl/debugging/symbolize.cc:33:
+../../third_party/abseil-cpp/absl/debugging/symbolize_darwin.inc:15:10: fatal error: 'cxxabi.h' file not found
+#include <cxxabi.h>
+         ^~~~~~~~~~
+1 error generated.
+```
 
 ## Release 产物
 

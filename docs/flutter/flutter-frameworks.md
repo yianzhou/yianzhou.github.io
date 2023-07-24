@@ -94,11 +94,28 @@ If something is a `ChangeNotifier`, you can subscribe to its changes. (It is a f
 When you call `notifyListeners()` in your model, all `Consumer` widgets's `builder` method get called.
 
 ```dart
-return Consumer<CartModel>(
-  builder: (context, cart, child) {
-    return Text("Total price: ${cart.totalPrice}");
-  },
-);
+class EditNotifier with ChangeNotifier {
+  bool isEditing = false;
+
+  void setEditing(bool isEditing) {
+    this.isEditing = isEditing;
+    notifyListeners();
+  }
+}
+
+@override
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: ChangeNotifierProvider(
+      create: (ctx) => EditNotifier(),
+      child: Consumer<EditNotifier>(
+        builder: (BuildContext context, notifier, Widget? child) {
+          return Text("isEditing: ${notifier.isEditing}");
+        },
+      ),
+    ),
+  );
+}
 ```
 
 如果不想包一层 `Consumer`，也可以直接在我们的 Widget 里监听状态：

@@ -183,3 +183,10 @@ switch (config.priority) {
 Issue: [Error running pod install, undefined local variable or method 'continue' for #<Pod::Podfile:0x00000001095c1188 @defined_in_file=#<Pathname:/path/to/ios/Podfile> · Issue #104118 · flutter/flutter](https://github.com/flutter/flutter/issues/104118)
 
 fix: [continue->next in Ruby script by jmagman · Pull Request #104296 · flutter/flutter](https://github.com/flutter/flutter/pull/104296)
+
+
+## Incorrect use of ParentDataWidget
+
+Under `ListView` don't use `Spacer` Widget.
+
+`Expanded` cannot be used inside a `Stack`. You should use `Expanded` only within a `Column`, `Row` or `Flex`.

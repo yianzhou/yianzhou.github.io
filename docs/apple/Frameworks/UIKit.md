@@ -144,6 +144,8 @@ To determine whether to rotate, the system compares the **view controller's supp
 
 `setNeedsStatusBarAppearanceUpdate` Call this method if the view controller's status bar attributes, such as hidden/unhidden status or style, change. If you call this method within an animation block, the changes are animated along with the rest of the animation block.
 
+`prefersStatusBarHidden` 状态栏隐藏
+
 ## UIViewController
 
 ![img](/assets/images/8376D74D-9BC0-42C7-92E6-CF0608A85CF8.png)
@@ -174,6 +176,12 @@ self.flutterVC = nil;
 
 - 生命周期事件：`viewWillAppear`, `viewDidAppear`, `viewWillDisappear`, `viewDidDisappear`
 - 旋转事件：`willRotateToInterfaceOrientation:duration:`, `willAnimateRotationToInterfaceOrientation:duration:`, `didRotateFromInterfaceOrientation:`
+
+A presents B, B presents C:
+
+以 B 为参照：A 为 presentingViewController，C 为 presentedViewController
+
+![img](/img/27B9A169-9724-4480-B916-005A93F4232F.png)
 
 ## UIApplication
 

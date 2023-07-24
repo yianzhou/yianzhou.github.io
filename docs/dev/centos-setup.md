@@ -21,7 +21,7 @@ chmod 600 .ssh/authorized_keys
 
 [How To Install Linux, Nginx, MySQL, PHP (LEMP stack) on Ubuntu 18.04](https://www.digitalocean.com/community/tutorials/how-to-install-linux-nginx-mysql-php-lemp-stack-ubuntu-18-04)
 
-CentOS 的 yum 的软件版本很多不是最新的，要安装最新的 MariaDB 和 PHP：
+CentOS 的 yum 的软件版本很多不是最新的，要安装最新的 MariaDB 和 PHP：
 
 [How to Upgrade MariaDB 5.5 to MariaDB 10.0 on CentOS 7](http://www.liquidweb.com/kb/how-to-upgrade-mariadb-5-5-to-mariadb-10-0-on-centos-7/)
 

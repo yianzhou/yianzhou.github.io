@@ -194,20 +194,14 @@ Running mdfind "com_apple_xcode_dsym_uuids == 8E662F82-B1E4-3E7E-A376-18E9755A8F
 
 那么函数在 dSYM 文件中的地址 = 0x00000001026188f0 - 0x2408000 = 0x1002108F0（即十六进制的 2164976！）
 
-拿这个地址就可以在 dSYM 文件中检索到具体的文件名、函数名和行号。
-
-```log
-> dwarfdump --arch arm64 Demo.app.dSYM --lookup 0x1002108F0
-...
-Line info: file 'DemoViewController.swift', line 140, column 12, start line 137
-```
-
-或者使用 atos，传入镜像首地址和函数真实内存地址即可。
+本地手动翻译堆栈，推荐使用 atos，传入镜像首地址和函数真实内存地址即可。
 
 在 Bugly 页面选择“还原前”，三个红框分别是基址、真实虚拟内存地址、UUID：
 
 ![img](/img/1CC8563A-2F46-4F74-9FB6-E8323C125592.png)
 
 ```c
-atos -o editorFramework.framework.dSYM/Contents/Resources/DWARF/editorFramework -l 0x1128a4000 0x113a184e0
+atos -o editorFramework.framework.dSYM/Contents/Resources/DWARF/editorFramework -arch arm64 -l 0x1111fc000 0x0000000111fa8c5c 0x0000000111fa8c58 0x0000000111fa9870 0x0000000111fa9648 0x0000000111d9dc24 0x0000000111d9db98
 ```
+
+`0x1111fc000`是基地址，后面的是堆栈地址。

@@ -76,6 +76,8 @@ class CardShadowContainer extends StatelessWidget {
 - `SizedBox` 可以用在 `Row`, `Column`，用于占位固定的宽/高。
 - `Spacer` 可以用在 `Row`, `Column` 布局时加入可自适应的间隔。
 
+`Row` 里面的 `Text` 超过一行怎么办？用 `Flexible` 包住 `Text`
+
 `Stack` 将 children 都堆叠在一起。
 
 - `Align`：依附在 `Stack` 的某个方位。

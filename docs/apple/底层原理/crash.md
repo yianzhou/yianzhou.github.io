@@ -210,3 +210,21 @@ If your app contains code in Objectice-C, C, or C++, run the static analyzer, an
 > [WWDC 2018 - Understanding Crashes and Crash Logs](https://developer.apple.com/videos/play/wwdc2018/414/)
 
 And if you upload an app that contains bitcode you should use the "Xcode - Organizer - Archives - Download Debug Symbols" to download any dSYMs that come from a store-side bitcode compilation.
+
+## [uikit: -[UIApplication _terminateW… | Apple Developer Forums](https://developer.apple.com/forums/thread/107644)
+
+There are two standard terminate paths your app can follow:
+
+Terminate while suspended (A) — When the user moves your app to the background the system typically will typically suspend it shortly thereafter. Once the app is suspended the system can remove your app from memory without resuming it.
+
+Terminate while active (B) — In some situations the system may need to terminate your app while it’s active. In this case code within your app runs to trigger the termination. You can hear about this by implementing the `-applicationWillTerminate:` app delegate method.
+
+To investigate this you test case B. You can do this by removing your app from the multitasking UI when it’s at the front. Implement `-applicationWillTerminate:` and set a breakpoint there to confirm that you’re actually hitting case B. From there you can try to track down who installed this `atexit` handler and why it’s crashing.
+
+[AudioToolBox crash report only in … | Apple Developer Forums](https://developer.apple.com/forums/thread/119759)
+
+This code path only runs if the system decides to terminate your app while it’s still running. This can happen in a number of circumstances, including:
+
+- The app is in the foreground and the user force quits it from the multitasking UI.
+- The app is running in the background — for example, playing audio — and the user force quits it from the multitasking UI.
+- The app is running in the background — for example, playing audio — and the system needs to terminate it for some reason (app upgrade, system shutdown, and so on).

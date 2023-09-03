@@ -1,4 +1,4 @@
-# 区块链和 Web3
+# Web3
 
 [#12：大白话聊 Web3 —— 终将到来的时代，会如我们所想吗？（Sarah & 王建硕） - Traders' Talk | 小宇宙 - 听播客，上小宇宙](https://www.xiaoyuzhoufm.com/episode/62d93b1cfa15142e17251e05)
 

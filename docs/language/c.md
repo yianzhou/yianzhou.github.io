@@ -10,6 +10,7 @@ In C, function arguments are passed by values.
 
 ```c
 #include <stdio.h>
+
 void test(int y) {
     y = 20;
     printf("y = %d\n", y); // y = 20
@@ -23,14 +24,13 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
-`int a = 10;` a 是 int 类型的变量，打印它要用 `printf("%d", a);`，这个变量存储的值是整数 10。
+`int a = 10;` a 是 `int` 类型的变量，这个变量存储的值是整数 10，打印 a 的值 `printf("%d", a);`
 
-`int *b = &a;` b 是 int \* 类型的变量，即指向 int 类型的指针！打印它要用 `printf("%p", b);`，这个变量存储的值是 a 的地址！
-
-函数参数依然是 passed by value，但不同的是，这次是将 x 的地址传入函数调用，函数内部创建了它的局部变量 y，并使用 x 的地址初始化了 y！
+`int *b = &a;` b 是 `int*` 类型的变量，即指向 int 类型的指针，这个变量存储的值是 a 的地址，打印 a 的地址 `printf("%p", b);`
 
 ```c
 #include <stdio.h>
+
 void test(int *y) {
     printf("y points to, or, what y stores is = %p\n", y); // 0x7ffeefbff4cc
     printf("address of y itself is = %p\n", &y); // 0x7ffeefbff4a8
@@ -47,6 +47,8 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
+函数参数依然是 passed by value，但不同的是，这次是将 x 的地址传入函数调用，函数内部创建了它的局部变量 y，并使用 x 的地址初始化了 y！
+
 现在，我们创建一个指针并指向一块堆区内存：
 
 ```c
@@ -57,11 +59,12 @@ int main(int argc, const char * argv[]) {
 }
 ```
 
-那么，`void test(int *y)` 函数只能修改 px 指向的内存空间（`*px`）的数据，如何改变 px 的指向呢？！很简单！把指针的地址传进去就可以了！
+那么，`void test(int *y)` 函数只能修改 px 指向的内存空间（`*px`）的数据，如何改变 px 的指向呢？把指针的地址传进去就可以了。
 
 ```c
 #include <stdio.h>
 #include <stdlib.h>
+
 void test(int **py) {
     *py = malloc(sizeof(int));
     printf("*py points to %p\n", *py); //  0x1005b4770

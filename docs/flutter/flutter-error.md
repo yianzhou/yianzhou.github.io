@@ -184,9 +184,16 @@ Issue: [Error running pod install, undefined local variable or method 'continue'
 
 fix: [continue->next in Ruby script by jmagman · Pull Request #104296 · flutter/flutter](https://github.com/flutter/flutter/pull/104296)
 
-
 ## Incorrect use of ParentDataWidget
 
 Under `ListView` don't use `Spacer` Widget.
 
 `Expanded` cannot be used inside a `Stack`. You should use `Expanded` only within a `Column`, `Row` or `Flex`.
+
+## Waiting for connection
+
+重新 `make ios-debug DART_ONLY=1` 再 `make ios-attach` 就可以连上了。
+
+## RenderConstrainedBox object was given an infinite size during layout.
+
+有个需求，需要在 Column 中放个 Webview，用到 RenderUiKitView，根据错误信息描述，原因是在渲染控件时，WebView 是无限大的，在 Column 中是不允许这样的。我们只需要使用 Expanded 将其包裹即可。

@@ -158,3 +158,9 @@ AWDL 是苹果公司推出的独家无线直接链接协议，可实现点到点
 ## 私有无线局域网地址（MAC 地址）
 
 [在 iPhone、iPad、iPod touch 和 Apple Watch 上使用私有无线局域网地址 - 官方 Apple 支持 (中国)](https://support.apple.com/zh-cn/HT211227)
+
+## Xcode 高亮和自动补全失效
+
+`rm -rf ~/Library/Developer/Xcode/DerivedData/ModuleCache.noindex`
+
+还不行的话，`rm -rf ~/Library/Developer/Xcode/DerivedData/`

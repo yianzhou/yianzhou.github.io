@@ -32,7 +32,7 @@ solutions = [
   {
     "managed": False,
     "name": "src/flutter",
-    "url": "git@github.com:flutter/engine.git",
+    "url": "git@github.com:flutter/engine.git", // 这里可以换成自己维护的引擎仓库地址
     "custom_deps": {},
     "deps_file": "DEPS",
     "safesync_url": "",
@@ -52,6 +52,8 @@ gclient sync
 ```
 
 Editor autocomplete support: On Mac, you can simply use Xcode (e.g., open `out/host_debug_unopt/products.xcodeproj`).
+
+切换引擎分支：打开 `src/flutter/.git`，这是一个 git 仓库，在这里切换
 
 ## 编译
 
@@ -145,7 +147,7 @@ ninja: build stopped: subcommand failed.
 /Users/yianzhou/Documents/flutter_source/depot_tools/vpython3: line 45: exec: /Users/yianzhou/Documents/flutter_source/depot_tools/.cipd_bin/vpython3: cannot execute: No such file or directory
 ```
 
-这个问题，我把 flutter_source 目录执行 `git pull`，多试了几次，就好了。
+这个问题，我把 `flutter_source/depot_tools` 目录执行 `git pull`，多试了几次，就好了。
 
 ```
 Undefined symbols for architecture arm64:

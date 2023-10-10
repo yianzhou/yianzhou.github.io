@@ -91,7 +91,11 @@ dlclose(FTServicesHandle);
 Charles HTTPS 抓包检查：
 
 1. 电脑上的证书是否已安装好（Help - SSL Proxying - Install Charles Root Certificate），Keychain Access 中是否已信任。
-2. 手机上连上代理，访问 <chls.pro/ssl> 下载证书，在 General - Profile 中启用，在 General - About - Certificate Trust Settings 中启用。
+2. 手机上连上代理，访问 <chls.pro/ssl> 下载证书，然后有两个地方要启用：在 General - Profile 中启用，在 General - About - Certificate Trust Settings 中启用。
+
+配置 SSL 代理：
+
+![img](/img/42C0CB22-70B8-43DE-8D10-6E1E23B82D5A.png)
 
 [Charles 在线破解工具](https://www.zzzmode.com/mytools/charles/)
 

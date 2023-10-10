@@ -14,17 +14,24 @@ WHERE t.event_time = #relative_time:1:day:%yyyy-MM-dd HH:mm:ss%#
 GROUP BY 语句用于结合合计函数，根据一个或多个列对结果集进行分组。
 
 ```sql
-SELECT SUBSTRING(event_time, 1, 10) as dateString,
-    regexp_extract(extra, 'ext:[^,]*', 0) AS ext,
-    regexp_extract(extra, 'qdoc_type:[^,]*', 0) AS qdoc_type,
-    count(DISTINCT uin) AS uv,
-    count(*) AS pv
-FROM [14830].[file_key_event] AS t
-WHERE t.event_time = #relative_time:1:day:%yyyy-MM-dd HH:mm:ss%#
-    AND t.eventName = 'doc_exposed'
-GROUP BY ext,
-    qdoc_type
-ORDER BY uv DESC
+select
+    substring(event_time, 1, 10) as datestring
+    , ext
+    , substring(regexp_extract(extra, 'isThirdCall:[^,]*', 0), 13, 100) as isthirdcall
+    , count(distinct uin) as uv
+    , count(*) as pv
+from
+    [14830].[file_key_event] as t
+where
+    t.event_time = #relative_time:7:day:%yyyy-MM-dd HH:mm:ss%#
+    and t.eventname like 'sp_file_intro_page%'
+group by
+    ext
+    , datestring
+    , isthirdcall
+order by
+    datestring desc
+    , uv desc
 ```
 
 ## 开窗函数

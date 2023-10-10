@@ -20,7 +20,7 @@
 
 MD5, SHA-1, SHA-2, SHA-3
 
-```zsh
+```sh
 > md5 -s "abc"
 MD5 ("abc") = 900150983cd24fb0d6963f7d28e17f72
 
@@ -34,9 +34,11 @@ Alice 将消息 m 和其哈希值 h 一起发送给 Bob；Bob 验证 H(m) = h，
 
 但，入侵者也可以假装是 Alice 并且发送 (m', H(m'))，那么如何确保信息就是 Alice 发来的呢？
 
-Alice 和 Bob 需要一个共同的 authentication key _s_，并发送 (m, H(m + s))，H(m + s) 就称为 MAC。
+Alice 和 Bob 需要一个共同的 authentication key `s`，并发送 `(m, H(m + s))`，`H(m + s)` 就称为 MAC (Message authentication code)。
 
-注意，这个过程中并没有涉及明文-密文的转换。MAC 的应用场景通常只关心 message integrity，不关心 message confidentiality。
+注意，这个过程中并没有涉及明文-密文的转换。MAC 的应用场景只关心消息的完整性，不关心消息的保密性。
+
+However, to allow the receiver to be able to detect **replay attacks**, the message itself must contain data that assures that this same message can only be sent once (e.g. **time stamp**, **sequence number** or use of a **one-time MAC**). Otherwise an attacker could – without even understanding its content – record this message and play it back at a later time, producing the same result as the original sender.
 
 ## 数字签名
 
@@ -44,11 +46,13 @@ Bob 使用他的私钥签名一份文件（通常是签名文件摘要/哈希值
 
 当 Alice 收到了 Bob 的数字签名，她需要使用 Bob 的公钥来验证。但，如何保证她手上的公钥就是 Bob 的？
 
-CA 负责颁发证书，证书中包含了 Bob 和他的公钥，以此证明这份公钥就是 Bob 的。CA 是有公信力的机构，是我们可以相信的。
+CA 负责颁发证书，**证书中包含了 Bob 的名字和他的公钥**，以此证明这份公钥就是 Bob 的。CA 是有公信力的机构，是我们可以相信的。
 
-证书由 CA 的私钥进行数字签名，Alice 使用 CA 的公钥解密，证明这份证书是 CA 颁发的。但，如何保证她手上 CA 的公钥就是 CA 的呢？！
+证书由 CA 的私钥进行数字签名，Alice 使用 CA 的公钥解密，证明这份证书是 CA 颁发的。但，如何保证她手上 CA 的公钥就是 CA 的呢？
 
 ![img](/assets/images/截屏2020-10-1116.58.44.png)
+
+在 macOS 中，根证书存储在钥匙串访问（Keychain Access）的系统钥匙串（System Keychain）中。访问“应用程序 > 实用工具 > 钥匙串访问”，在“系统”钥匙串下可以找到根证书。Safari 浏览器使用由 macOS 钥匙串访问管理的证书。
 
 ## 代码签名
 

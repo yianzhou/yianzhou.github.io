@@ -20,7 +20,7 @@ Addresses in the source program are generally symbolic. A compiler typically bin
 
 ## Jetsam event
 
-> [Identifying High-Memory Use with Jetsam Event Reports](https://developer.apple.com/documentation/xcode/diagnosing_issues_using_crash_reports_and_device_logs/identifying_high-memory_use_with_jetsam_event_reports)
+> [Identifying high-memory use with jetsam event reports | Apple Developer Documentation](https://developer.apple.com/documentation/xcode/identifying-high-memory-use-with-jetsam-event-reports)
 
 iOS, iPadOS, watchOS, and tvOS have a virtual memory system that relies on all apps releasing memory when the operating system encounters memory pressure, where available memory is low and the system can’t meet the demands of all running apps. Under memory pressure, apps free memory after receiving a low-memory notification. If all running apps release enough total memory to alleviate memory pressure, your app will continue to run. But, if memory pressure continues because apps haven’t relinquished enough memory, the system frees memory by terminating applications to reclaim their memory. This is a **jetsam event**, and the system creates a jetsam event report with information about why it chose to jettison an app.
 

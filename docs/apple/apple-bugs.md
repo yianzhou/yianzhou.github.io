@@ -164,3 +164,22 @@ AWDL 是苹果公司推出的独家无线直接链接协议，可实现点到点
 `rm -rf ~/Library/Developer/Xcode/DerivedData/ModuleCache.noindex`
 
 还不行的话，`rm -rf ~/Library/Developer/Xcode/DerivedData/`
+
+## 升级Xcode15
+
+下载下不动
+
+![img](/img/C177DC69-65EE-485A-9535-A314D7DDABB6.png)
+
+到开发者网站下载也下不动
+
+![img](/img/498ECB1E-4F24-46C8-988F-5ACB2FDC59A4.png)
+
+下载好了打开Xcode，提示安全问题
+
+![img](/img/71D6C8E5-F6C2-4381-8A1E-CF0DB6EA1CC1.png)
+
+## Xcode15断点调试卡死
+
+1. .xcworkspace 或 .xcodeproj 右键显示包内容
+2. xcuserdata - .xcuserdatad - xcdebugger，删除里面的 breakpoints_v2.plist

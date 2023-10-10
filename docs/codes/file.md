@@ -8,7 +8,17 @@
 NSTemporaryDirectory()
 ```
 
-自动重命名文件：
+## Info.plist
+
+`UIFileSharingEnabled`: If you set this key to YES, your app can share files with the user. Place the files in a Documents folder located in the app’s home directiory. The default value is NO.
+
+`UISupportsDocumentBrowser`: To allow other apps to open and edit the files stored in your app’s Documents folder, set this key to YES. This key also lets users set the app’s default save location in Settings.
+
+`LSSupportsOpeningDocumentsInPlace`: A Boolean value indicating whether the app may open the original document from a file provider, rather than a copy of the document.
+
+`NSExtensionFileProviderSupportsEnumeration`: A Boolean value that indicates whether a File Provider extension enumerates its content.
+
+## 自动重命名文件
 
 ```c
 /// 传入一个文件路径，如果该路径下的文件不存在，则返回它本身；如果已存在，那么会自动重命名文件名，返回一个不冲突的文件路径。
@@ -36,7 +46,7 @@ NSTemporaryDirectory()
 }
 ```
 
-文件大小格式化字符串：
+## 文件大小格式化字符串
 
 ```c
 + (NSString *)displayStringWithFileSize:(NSUInteger)fileSize {

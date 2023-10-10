@@ -14,8 +14,6 @@ AI 写代码：[GitHub Copilot · Your AI pair programmer](https://copilot.githu
 
 ## 常用快捷键
 
-打开内置终端：`` ^ + ` ``
-
 查看、编辑键盘快捷键：`⌘ K + ⌘ S`
 
 Go to file 前往文件 quickopen：`⌘ P`
@@ -34,11 +32,16 @@ workbench.action.openEditorAtIndex1 打开/切换 tab：自定义！
 
 ```json
 {
-  "editor.formatOnType": false,
-  "editor.formatOnSave": false
-  "[markdown]": {
-    "editor.defaultFormatter": "esbenp.prettier-vscode"
+  "editor.formatOnType": true,
+  "editor.formatOnSave": true,
+  "[ruby]": {
+    "editor.defaultFormatter": "jnbt.vscode-rufo"
   },
+  "window.autoDetectColorScheme": true,
+  "workbench.colorTheme": "Default Light Modern",
+  "[markdown]": {
+      "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+  }
 }
 ```
 
@@ -65,13 +68,3 @@ Settings 里面把这个取消勾选。
 ## Ruby 无法高亮
 
 系统要先安装：`gem install rufo`
-
-然后安装 VSCode 插件，然后设置：
-
-```json
-{
-  "[ruby]": {
-    "editor.defaultFormatter": "jnbt.vscode-rufo"
-  }
-}
-```

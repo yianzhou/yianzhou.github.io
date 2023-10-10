@@ -4,6 +4,49 @@
 
 Today CMake generates modern buildsystems such as Ninja as well as project files for IDEs such as Visual Studio and Xcode.
 
+## A Basic Starting Point
+
+[Step 1: A Basic Starting Point](https://cmake.org/cmake/help/latest/guide/tutorial/A%20Basic%20Starting%20Point.html)
+
+The most basic CMake project is an executable built from a single source code file. For simple projects like this, a `CMakeLists.txt` file with three commands is all that is required:
+
+- `cmake_minimum_required()`: establishes policy settings and ensures that the following CMake functions are run with a compatible version of CMake
+- `project()`: set the project name
+- `add_executable()`: tells CMake to create an executable using the specified source code files
+
+[Step 2: Adding a Library](https://cmake.org/cmake/help/latest/guide/tutorial/Adding%20a%20Library.html)
+
+To add a library in CMake, use the `add_library()` command and specify which source files should make up the library.
+
+`STATIC`, `SHARED`, or `MODULE` may be given to specify the type of library to be created:
+
+- `STATIC` libraries are archives of object files for use when linking other targets.
+- `SHARED` libraries are linked dynamically and loaded at runtime.
+- `MODULE` libraries are plugins that are not linked into other targets but may be loaded dynamically at runtime using dlopen-like functionality.
+
+```cmake
+add_library(editorFramework SHARED
+            editorFramework.cc
+            editorFramework.h
+)
+```
+
+Rather than placing all of the source files in one directory, we can organize our project with one or more subdirectories. In this case, we will create a subdirectory specifically for our library. Here, we can add a new CMakeLists.txt file and one or more source files. In the top level CMakeLists.txt file, we will use the `add_subdirectory()` command to add the subdirectory to the build.
+
+Once the library is created, it is connected to our executable target with `target_include_directories()` and `target_link_libraries()`.
+
+[Step 3: Adding Usage Requirements for a Library](https://cmake.org/cmake/help/latest/guide/tutorial/Adding%20Usage%20Requirements%20for%20a%20Library.html)
+
+- `target_compile_definitions()`
+- `target_compile_options()`
+- `target_include_directories()`
+- `target_link_directories()`
+- `target_link_options()`
+- `target_precompile_headers()`
+- `target_sources()`
+
+只看官网教程前三步、完成 TODO 基本够用了。
+
 ## CMake Commands
 
 ```
@@ -40,7 +83,7 @@ option(USE_JPEG "Do you want to use the jpeg library")
 set(USE_JPEG ON CACHE BOOL "include jpeg support?")
 ```
 
-When you use the CACHE option, you may also provide the type of the variable and a documentation string.
+When you use the `CACHE` option, you may also provide the type of the variable and a documentation string.
 
 Once a variable is in the cache, its “cache” value cannot normally be modified from a CMakeLists file. A `set(FOO ON CACHE BOOL "doc")` command will typically only do something when the cache doesn’t have the variable in it. Once the variable is in the cache, that command will have no effect.
 

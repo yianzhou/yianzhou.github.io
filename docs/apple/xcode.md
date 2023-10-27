@@ -6,8 +6,6 @@
 
 查看 Xcode SDK 版本：`xcodebuild -version -sdk`
 
-切换 Xcode 版本后出现编译时 SDK 版本不对的问题，解决方法是设置 SYSROOT：`xcode-select -s /Applications/Xcode.app/Contents/Developer`
-
 <https://xcodereleases.com/>
 
 ## 调试技巧

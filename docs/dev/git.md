@@ -137,7 +137,7 @@ The working copies of these files can be repopulated with their full expected co
 
 ## submodule
 
-To suppress listing of 'modified content'/dirty submodule entries in status, diff, etc? Just add one line to that .gitmodules file:
+To suppress listing of 'modified content'/dirty submodule entries in status, diff, etc? Just add one line to that `.gitmodules` file:
 
 ```
 [submodule "bundle/fugitive"]
@@ -145,3 +145,15 @@ To suppress listing of 'modified content'/dirty submodule entries in status, dif
     url = git://github.com/tpope/vim-fugitive.git
     ignore = dirty
 ```
+
+`git submodule add <repository> [<path>]` 默认将子模块 clone 到当前工作目录下
+
+`git submodule init` 此命令通常仅在添加新子模块后（使用 `git submodule add`）运行一次
+
+`git submodule update` 将子模块更新为父仓库指定的 commit
+
+`git submodule update --remote` 更新子模块到上游仓库的最新 commit
+
+`git submodule update --init --recursive` 递归地初始化并更新子模块及所有嵌套的子模块
+
+`git submodule status` 列出所有子模块的当前状态

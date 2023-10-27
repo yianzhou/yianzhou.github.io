@@ -52,9 +52,9 @@ tbd 里面记录了包括动态库导出的符号、架构、依赖等信息。
 
 ## AFNetworking 静态库
 
-通过 Pod 安装 `AFNetworking`，找到 `Pods/AFNetworking` 下面的源码，拷贝出来。
+首先找到 AFNetworking 的源码，也就是 https://github.com/AFNetworking/AFNetworking/tree/master/AFNetworking 这个目录下的所有文件。
 
-新建一个 Xcode Project，平台选择为 macOS（因为后面我们会直接运行程序），target 为静态库，然后把源码拖进去。构建，然后在 DerivedData 里找到产物。
+新建一个 Xcode Project，平台选择为 macOS（因为后面我们会直接运行程序），模板选择静态库，然后把源码拖进去。构建，然后在 DerivedData 里找到产物，得到 libAFNetworking.a
 
 `ar -t libAFNetworking.a` 列出静态库里面所有的目标文件。静态库就是 `.o` 文件的集合，既然它是目标文件的集合，它可以被进一步地链接，从而生成动态库。
 
@@ -85,7 +85,7 @@ clang \
 -c main.m -o main.o
 ```
 
-在编译目标文件时，我们使用的 `AFHTTPSessionManager` 不需要源码，也不需要动态库，只要头文件能找到它的符号即可。这些符号会被放入目标文件的重定位符号表，在之后链接的过程中，会确定这些符号的地址。
+在编译目标文件时，我们不需要 `AFHTTPSessionManager` 的源码，也不需要 AFNetworking 库，只需要在 HEADER_SEARCH_PATHS 里能找到 AFNetworking.h 头文件就可以了（头文件里有`AFHTTPSessionManager`符号），这个符号会被放入目标文件的重定位符号表，在之后链接的过程中，会确定符号的地址。
 
 ```bash
 # 将目标文件与静态库进行链接
@@ -111,7 +111,7 @@ main.o -o main
 -isysroot /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS.sdk \
 ```
 
-将静态库手动组织成 Framework 也十分简单，`mkdir AFNetworking.framework`，将静态库文件重命名为 `AFNetworking` 后放入，再将头文件放入 `Headers` 目录下即可。
+静态库可以手动组织成 Framework，`mkdir AFNetworking.framework`，将静态库文件重命名为 `AFNetworking` 后放入，再将头文件放入 `Headers` 目录下即可。
 
 ```bash
 # 将目标文件与 Framework 进行链接
@@ -141,8 +141,6 @@ OTHER_LDFLAGS=-Xlinker -ObjC # 加载所有 objc 符号
 OTHER_LDFLAGS=-Xlinker -force_load # 加载指定静态库里面的所有符号
 ```
 
-查看链接器参数的含义：`man ld`
-
 在 `clang` 命令中使用 Dead Code Stripping：
 
 ```bash
@@ -161,7 +159,7 @@ main.o -o main
 
 ## AFNetworking 动态库
 
-同样地，新建一个 Xcode Project，平台选择为 macOS（因为后面我们会直接运行二进制），target 为动态库，然后把源码拖进去。
+同样地，新建一个 Xcode Project，平台选择为 macOS（因为后面我们会直接运行二进制），模板选择动态库，然后把源码拖进去。
 
 动态库是运行时加载的，加载的话就会需要一个路径，这个路径就是 install_name。新建的 Xcode 动态库工程，如果不做修改的话，会是这样的：
 

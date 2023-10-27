@@ -1,5 +1,7 @@
 # 文件相关
 
+读文件头签名：`xxd -l 128`
+
 文件在 App 内打开后，会自动放在 `Documents/Inbox` 文件夹下。
 
 ```objc

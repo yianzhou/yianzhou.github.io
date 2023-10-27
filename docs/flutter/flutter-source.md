@@ -15,10 +15,10 @@
 # 可以把 depot_tools 单独放，或者放到 flutter_source 目录里
 mkdir flutter_source
 cd flutter_source
+
 git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 
 # Add depot_tools to the front of your PATH
-# 也可以加到 ~/.zshrc 里
 export PATH=`pwd`/depot_tools:$PATH
 
 # A configuration file for you source checkout
@@ -32,7 +32,7 @@ solutions = [
   {
     "managed": False,
     "name": "src/flutter",
-    "url": "git@github.com:flutter/engine.git", // 这里可以换成自己维护的引擎仓库地址
+    "url": "git@github.com:flutter/engine.git@origin/yourBranch", // 这里可以换成自己维护的引擎仓库地址
     "custom_deps": {},
     "deps_file": "DEPS",
     "safesync_url": "",
@@ -55,7 +55,7 @@ Editor autocomplete support: On Mac, you can simply use Xcode (e.g., open `out/h
 
 切换引擎分支：打开 `src/flutter/.git`，这是一个 git 仓库，在这里切换
 
-## 编译
+## Debug 编译
 
 参考文档：[Compiling the engine · flutter/flutter Wiki](https://github.com/flutter/flutter/wiki/Compiling-the-engine)
 
@@ -76,6 +76,24 @@ ninja -C out/ios_debug_unopt_arm64 && ninja -C out/host_debug_unopt_arm64
 ```
 
 iOS expect both a `host` and `ios` build. It is critical to recompile the `host` build after upgrading the Dart SDK (e.g. via a `gclient sync` after merging up to head), since artifacts from the `host` build need to be version matched to artifacts in the `iOS` build.
+
+## Release 编译
+
+```bash
+cd src
+
+# 生产 out/ios_release_arm64
+./flutter/tools/gn --ios --runtime-mode=release --mac-cpu=arm64 --ios-cpu=arm64
+
+# 编译源码（M1）
+ninja -C out/ios_release_arm64
+
+# 脱去所有本地符号
+strip -x out/ios_release_arm64/Flutter.framework/Flutter
+
+# 提取符号表
+dsymutil out/ios_release_arm64/libFlutter.dylib
+```
 
 ## 源码调试
 
@@ -110,6 +128,8 @@ You can also set the environment variable `$FLUTTER_ENGINE` instead of specifyin
 
 ## 错误解决
 
+### fatal: bad object
+
 ```
 ➜  flutter_source gclient sync -D
 Syncing projects: 100% (123/123), done.
@@ -123,7 +143,7 @@ fatal: bad object 210a80013067672b52847ec7aa70ff78b2f4d77e
 
 将 `src/third_party/vulkan-deps` 文件夹删掉就好了。
 
-编译命令：`./flutter/tools/gn --ios --runtime-mode=release --mac-cpu=arm64 && ninja -C out/ios_release_arm64`
+### Cannot find gen_snapshot
 
 ```
 ➜  src git:(886fd09) ninja -C out/ios_release_arm64
@@ -142,12 +162,16 @@ ninja: build stopped: subcommand failed.
 
 [use host_cpu in BUILD.gn to determine where to find gen_snapshot by flar · Pull Request #34870 · flutter/engine](https://github.com/flutter/engine/pull/34870)
 
+### vpython3: No such file or directory
+
 ```
 /Users/yianzhou/Documents/flutter_source/depot_tools/vpython3: line 45: /Users/yianzhou/Documents/flutter_source/depot_tools/.cipd_bin/vpython3: No such file or directory
 /Users/yianzhou/Documents/flutter_source/depot_tools/vpython3: line 45: exec: /Users/yianzhou/Documents/flutter_source/depot_tools/.cipd_bin/vpython3: cannot execute: No such file or directory
 ```
 
 这个问题，我把 `flutter_source/depot_tools` 目录执行 `git pull`，多试了几次，就好了。
+
+### Undefined symbols for architecture arm64
 
 ```
 Undefined symbols for architecture arm64:
@@ -175,6 +199,8 @@ clang-14: error: linker command failed with exit code 1 (use -v to see invocatio
 
 这个问题其实是因为我的编译指令没有指定到 arm64 架构。注意 Intel 和 M1 芯片要用不同的命令。
 
+### Simulator not implemented
+
 ```
 ../../third_party/dart/runtime/vm/simulator.h:12:2: error: Simulator not implemented.
 #error Simulator not implemented.
@@ -190,6 +216,8 @@ M1 电脑没法使用 `--local-engine`：[arm64 engine builds not compatible wit
 
 这个问题最后我通过把 `flutter_source/src/out/host_debug_unopt_arm64` 目录直接重命名为 `host_debug_unopt` 解决。
 
+### BUILD.gn
+
 ```
 Generating GN files in: out/ios_debug_unopt_arm64
 ERROR at //flutter/shell/gpu/BUILD.gn:62:37: Can't load input file.
@@ -202,6 +230,8 @@ I also checked in the secondary tree for:
 ```
 
 这个问题的原因是 `flutter_source/src/flutter/impeller` 子仓库存在变更，把变更丢弃，然后再 `gclient sync` 即可。
+
+### Could not find Ninja
 
 ```
 depot_tools/ninja.py: Could not find Ninja in the third_party of the current project, nor in your PATH.
@@ -216,7 +246,11 @@ See also https://crbug.com/1340825
 
 解决：`brew install ninja`
 
-```
+### cxxabi
+
+3.0.4 版本，目前还没解决
+
+```c
 ../../flutter/fml/backtrace.cc:7:10: fatal error: 'cxxabi.h' file not found
 #include <cxxabi.h>
          ^~~~~~~~~~
@@ -227,22 +261,4 @@ In file included from ../../third_party/abseil-cpp/absl/debugging/symbolize.cc:3
 #include <cxxabi.h>
          ^~~~~~~~~~
 1 error generated.
-```
-
-## Release 产物
-
-```bash
-cd src
-
-# 生产 out/ios_release_arm64
-./flutter/tools/gn --ios --runtime-mode=release --mac-cpu=arm64 --ios-cpu=arm64
-
-# 编译源码（M1）
-ninja -C out/ios_release_arm64
-
-# 脱去所有本地符号
-strip -x out/ios_release_arm64/Flutter.framework/Flutter
-
-# 提取符号表
-dsymutil out/ios_release_arm64/libFlutter.dylib
 ```

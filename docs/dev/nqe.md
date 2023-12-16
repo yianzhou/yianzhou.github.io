@@ -12,18 +12,39 @@ NetworkQuality(const base::TimeDelta& http_rtt,
                 const base::TimeDelta& transport_rtt,
                 int32_t downstream_throughput_kbps);
 
+// 时间戳、连接类型、网络质量
 CachedNetworkQuality(base::TimeTicks last_update_time,
                     const NetworkQuality& network_quality,
-                    EffectiveConnectionType effective_connection_type); // 2/3/4G
+                    EffectiveConnectionType effective_connection_type);
 
-NetworkID(NetworkChangeNotifier::ConnectionType type, // 2/3/4G/WIFI
+class NetworkQualityStore {
+  // Stores the network quality |cached_network_quality| of network with ID
+  // |network_id|.
+  typedef std::map<nqe::internal::NetworkID,
+                   nqe::internal::CachedNetworkQuality> CachedNetworkQualities;
+
+  static const size_t kMaximumNetworkQualityCacheSize = 20;
+}
+
+// Sets the default observation for different connection types. 初始值
+default_observations[NetworkChangeNotifier::CONNECTION_WIFI] =
+      nqe::internal::NetworkQuality(base::Milliseconds(116),
+                                    base::Milliseconds(66), 2658);
+
+// 标识一个网络连接
+NetworkID(NetworkChangeNotifier::ConnectionType type,
             const std::string& id,
             int32_t signal_strength);
 
-class NetworkQualityStore {
-    void Add(const nqe::internal::NetworkID& network_id,
-           const nqe::internal::CachedNetworkQuality& cached_network_quality);
-}
+enum EffectiveConnectionType {
+  EFFECTIVE_CONNECTION_TYPE_UNKNOWN = 0,
+  EFFECTIVE_CONNECTION_TYPE_OFFLINE,
+  EFFECTIVE_CONNECTION_TYPE_SLOW_2G,
+  EFFECTIVE_CONNECTION_TYPE_2G,
+  EFFECTIVE_CONNECTION_TYPE_3G,
+  EFFECTIVE_CONNECTION_TYPE_4G,
+  EFFECTIVE_CONNECTION_TYPE_LAST,
+};
 
 double GetWeightMultiplierPerSecond(
     const std::map<std::string, std::string>& params) {
@@ -41,7 +62,7 @@ void ObservationBuffer::ComputeWeightedObservations(
     // 遍历所有历史观测数据
     for (const auto& observation : observations_) {
         if (observation.timestamp() < begin_timestamp)
-        continue; // 只考虑指定时间戳之后的数据
+            continue; // 只考虑指定时间戳之后的数据
 
         base::TimeDelta time_since_sample_taken = now - observation.timestamp();
         // 默认半衰期为一分钟，距离当前时间戳越远的观测点，衰减越多，权重越低
@@ -50,12 +71,12 @@ void ObservationBuffer::ComputeWeightedObservations(
 
         double signal_strength_weight = 1.0;
         if (current_signal_strength >= 0 && observation.signal_strength() >= 0) {
-        int32_t signal_strength_weight_diff =
-            std::abs(current_signal_strength - observation.signal_strength());
-        // 与当前信号强度差异越大的观测点，权重越低
-        // weight_multiplier_per_signal_level_是一个[0,1]之间的数
-        signal_strength_weight =
-            pow(weight_multiplier_per_signal_level_, signal_strength_weight_diff);
+            int32_t signal_strength_weight_diff =
+                std::abs(current_signal_strength - observation.signal_strength());
+            // 与当前信号强度差异越大的观测点，权重越低
+            // weight_multiplier_per_signal_level_是一个[0,1]之间的数
+            signal_strength_weight =
+                pow(weight_multiplier_per_signal_level_, signal_strength_weight_diff);
         }
 
         // 时间权重 * 信号权重

@@ -97,6 +97,8 @@ ChatGPT 不是“通用人工智能”，而是一个 LLM（Large Language Model
 
 [三星被曝芯片机密代码遭 ChatGPT 泄露，引入不到 20 天就出 3 起事故，内部考虑重新禁用*文化 & 方法*褚杏娟\_InfoQ 精选文章](https://www.infoq.cn/article/48HXL0qs8AowJxDgSpom)
 
+内容从业者（作家、记者、摄影师、歌手、音乐家、演员、导演等等）都将不得不与 AI 竞争。但只要你是依靠人力来创造内容，就会发现越来越难以赢得观众，只有少数头部创作者可以赚到钱。
+
 ## 应用
 
 Whisper Notes: 一个免费的 iOS 应用，在手机上实现了离线 OpenAI Whisper 模型，可以将语音输入以极高的准确率转成文字。

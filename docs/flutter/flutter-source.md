@@ -262,3 +262,7 @@ In file included from ../../third_party/abseil-cpp/absl/debugging/symbolize.cc:3
          ^~~~~~~~~~
 1 error generated.
 ```
+
+找了一圈发现是 macOS 13.3.1 的问题：[Building failed after upgrade to Mac OS 13.3.1 - ROOT - ROOT Forum](https://root-forum.cern.ch/t/building-failed-after-upgrade-to-mac-os-13-3-1/54420)
+
+在蓝盾上使用 macOS 12.5.1 + Xcode 14.2 编译成功了。

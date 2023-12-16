@@ -112,11 +112,9 @@ By default, the property is set to true for any view you programmatically create
 
 ## 横屏
 
-`UIViewController`:
+`-[UIViewController shouldAutorotate]`
 
-`- (BOOL)shouldAutorotate {}`
-
-`- (UIInterfaceOrientationMask)supportedInterfaceOrientations {}`
+`-[UIViewController supportedInterfaceOrientations]`
 
 When the device orientation changes, **the system calls this method on the root view controller or the topmost modal view controller that fills the window**. If the view controller supports the new orientation, the system rotates the window and the view controller. The system only calls this method if the view controller's `shouldAutorotate` method returns `YES`.
 

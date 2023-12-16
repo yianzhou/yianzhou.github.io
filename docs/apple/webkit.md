@@ -52,7 +52,13 @@ UI 进程负责启动其它进程；每个 WKWebView 会有自己独立的 WebCo
 
 ## 证书校验
 
+`NSURLProtectionSpace`: A server or an area on a server, commonly referred to as a realm, that requires authentication.
+
+[Handling an authentication challenge | Apple Developer Documentation](https://developer.apple.com/documentation/foundation/url_loading_system/handling_an_authentication_challenge?language=objc) 服务器需要验证用户的身份，否则就会回 401 Forbidden。
+
 [Performing Manual Server Trust Authentication | Apple Developer Documentation](https://developer.apple.com/documentation/foundation/url_loading_system/handling_an_authentication_challenge/performing_manual_server_trust_authentication?language=objc)（文章不长，多看几遍加深理解）
+
+When you use a secure connection (such as https) with a URL request, your `NSURLSessionDelegate` receives an authentication challenge with an authentication type of `NSURLAuthenticationMethodServerTrust`. **Unlike other challenges where the server is asking your app to authenticate itself, this is an opportunity for you to authenticate the server’s credentials.**
 
 ```c
 - (void)URLSession:(NSURLSession *)session

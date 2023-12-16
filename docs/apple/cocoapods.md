@@ -82,6 +82,8 @@ pod lib lint --verbose --sources='https://demo1.sources.com,https://demo2.source
 
 官方源：`source "https://cdn.cocoapods.org/"`
 
+手动克隆官方源：`pod repo add-cdn trunk https://cdn.cocoapods.org/`
+
 发表到官方仓库需要一个“账户”：[CocoaPods Trunk](https://guides.cocoapods.org/making/getting-setup-with-trunk.html) is an authentication and CocoaPods API service. To publish new or updated libraries to CocoaPods for public release you will need to be registered with Trunk and have a valid Trunk session on your current device.
 
 账户没有密码，是通过 Email 地址完成的：First sign up for an account with your email address. This begins a session on your current device. You must click a link in an email Trunk sends you to verify the connection between your Trunk account and the current computer. Trunk accounts do not have passwords, only per-computer session tokens.
@@ -198,3 +200,7 @@ pod setup
 cd ~/.cocoapods/repos
 pod repo add master https://github.com/CocoaPods/Specs.git
 ```
+
+问题：Couldn't determine repo type for URL: "https://cdn.cocoapods.org/': bad URI(is not URI?): "127.0.0.1:12639"
+
+解决：`unset http_proxy; unset https_proxy`

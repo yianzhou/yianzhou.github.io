@@ -83,7 +83,7 @@ iOS expect both a `host` and `ios` build. It is critical to recompile the `host`
 cd src
 
 # 生产 out/ios_release_arm64
-./flutter/tools/gn --ios --runtime-mode=release --mac-cpu=arm64 --ios-cpu=arm64
+./flutter/tools/gn --no-goma --ios --runtime-mode=release --mac-cpu=arm64 --ios-cpu=arm64
 
 # 编译源码（M1）
 ninja -C out/ios_release_arm64

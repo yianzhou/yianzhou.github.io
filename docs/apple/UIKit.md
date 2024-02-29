@@ -257,3 +257,9 @@ for (UIGestureRecognizer *gestRecognizer in self.navigationController.view.gestu
 For sharing data with any other app, use the systemwide **general pasteboard**.
 
 For sharing data with another app from your team—that has the same team ID as the app to share from—use **named pasteboards**.
+
+## 侧滑返回
+
+`webView.allowsBackForwardNavigationGestures = NO;`
+
+`[self.scrollView.panGestureRecognizer requireGestureRecognizerToFail:self.navigationController.interactivePopGestureRecognizer];`

@@ -57,6 +57,28 @@ class CardShadowContainer extends StatelessWidget {
 
 `Scaffold` 是 Material Design 布局结构的基本实现，属性有 `appBar`, `floatingActionButton`, `drawer` 等。
 
+当键盘弹出时，如果您不想让页面上的组件随之移动，可以在 `Scaffold` 的 `resizeToAvoidBottomInset` 属性设置为 `false`。这将阻止 `Scaffold` 为键盘调整大小，从而使界面中的其他部分保持不变。
+
+```dart
+Scaffold(
+  // 让底部蓝色按钮不跟着移动
+  resizeToAvoidBottomInset: false,
+  body: Column(
+    children: [
+      buildCommonStatusBar(context),
+      _buildNavbar(context),
+      Expanded(
+        child: ListView(),
+      ),
+      // 让键盘弹出时，能够自适应高度
+      SizedBox(height: MediaQuery.of(context).viewInsets.bottom),
+      bottomWidget, // 底部蓝色按钮
+      SizedBox(height: MediaQuery.of(context).padding.bottom),
+    ],
+  ),
+);
+```
+
 `Center` 会将它的 child 居中显示。
 
 `Container` 可设置宽高、圆角、margin、padding 的容器。属性有 `alignment`。
@@ -237,3 +259,18 @@ classDiagram
 ```
 
 `LeafRenderObjectWidget`: 用于没有子节点的 widget，通常基础组件都属于这一类，如 Image。
+
+## Navigator
+
+```dart
+bool isTopMostRoute() {
+  String? top;
+  // the top most route name could be found through this tricky method
+  // which is trying to pop the top most route but prevented by the return value true
+  Navigator.popUntil(context, (route) {
+    top = route.settings.name;
+    return true;
+  });
+  return top == "qb://flutter/file/reader/fileClassify";
+}
+```

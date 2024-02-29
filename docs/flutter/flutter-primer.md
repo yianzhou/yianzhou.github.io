@@ -316,6 +316,8 @@ Add-to-app supports adding multiple instances of Flutter engines, screens, or vi
 
 创建好后，`my_flutter/` 这个文件夹和一般的 flutter 工程无异，可以单独 `flutter run` 或 `flutter build ios`。
 
+用 `flutter devices` 查看可以运行的设备，然后执行 `flutter run -d 00008120-000E089901D2201E`
+
 `.ios/` 这个隐藏的文件夹是自动生成的，不要修改里面的东西，也不要把它加到版本控制里。
 
 用 CocoaPods 集成要求团队所有成员的电脑里都有 Flutter SDK。

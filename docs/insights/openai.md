@@ -106,3 +106,5 @@ Whisper Notes: 一个免费的 iOS 应用，在手机上实现了离线 OpenAI W
 [FreedomGPT](https://freedomgpt.com/): 一个号称完全自由的 GPT 聊天模型，不带有任何内容审查和过滤机制，有 Web 版和桌面端。
 
 Music created by the AI engines: [Streams | Musico](https://www.musi-co.com/listen/streams)
+
+[提示词工程的问题视角 - 少数派](https://sspai.com/post/85484)

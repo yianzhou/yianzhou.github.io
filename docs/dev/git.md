@@ -157,3 +157,25 @@ To suppress listing of 'modified content'/dirty submodule entries in status, dif
 `git submodule update --init --recursive` 递归地初始化并更新子模块及所有嵌套的子模块
 
 `git submodule status` 列出所有子模块的当前状态
+
+## 如何查找被删除的代码
+
+如果你记得删除代码时的提交消息，可以使用以下命令搜索：`git log --grep="关键字"`
+
+如果你记得被删除代码的一部分内容，可以使用 -S 选项来查找添加或删除该内容的提交：`git log -S"代码片段"`
+
+如果你想要搜索的是正则表达式匹配的代码变动，可以使用 -G 选项：`git log -G"正则表达式"`
+
+如果你知道代码被删除的文件名，可以查看该文件的历史：`git log -- 文件名`
+
+如果你不确定代码是在哪个提交中被删除的，可以使用 git bisect 来二分查找：`git bisect start`
+
+- 标记当前版本中代码已经丢失：`git bisect bad`
+- 标记一个你知道代码存在的旧版本：`git bisect good 标签或提交哈希`
+- Git 会检出一个中间的提交，你可以检查代码是否存在。如果代码存在，执行 `git bisect good`，如果代码丢失，执行 `git bisect bad`。
+- 重复上一步骤，直到 Git 找到引入变化的确切提交。
+- 完成查找后，结束二分查找：`git bisect reset`
+
+如果你知道大概的时间范围，可以查看文件在某个时间段内的差异：`git diff 开始哈希..结束哈希 文件名`
+
+如果你的仓库很大，一些命令可能需要较长时间来执行。

@@ -4,13 +4,18 @@
 >
 > [re --- 正则表达式操作 — Python 3.10.0 文档](https://docs.python.org/zh-cn/3/library/re.html)
 >
-> [Regular Expression HOWTO — Python 3.10.1 documentation](https://docs.python.org/3/howto/regex.html#regex-howto)
->
 > [Regex Vis](https://regex-vis.com/)：在线可视化正则编辑器。
+
+以下文章摘自：
+
+- [Regular Expression HOWTO](https://docs.python.org/3/howto/regex.html)
+- [learn-regex](https://github.com/ziishaned/learn-regex/blob/master/translations/README-cn.md)
 
 ## 匹配单个字符
 
-大多数字符匹配它们自己，例如，正则表达式 `test` 将 完全匹配字符串 `test`。
+正则表达式是对文本执行搜索时所指定的“格式”。大多数字符匹配它们自己，例如，正则表达式 `test` 将完全匹配字符串 `test`。
+
+正则表达式是大小写敏感的，所以 `The` 不会匹配 `the`。
 
 有些字符是特殊的**元字符**，有特殊作用，它们不匹配自身：
 
@@ -42,11 +47,13 @@
 
 `.` matches anything except a newline character.
 
+`(xyz)` 字符集，匹配与 `xyz` 完全相等的字符串
+
 ## 匹配多个字符
 
-`*` specifies that the previous character can be matched zero or more times.
+`*` specifies that the previous character can be matched zero or more times. 
 
-`a[bcd]*b` 匹配 a 开头、b 结尾、中间 bcd 任意字符重复任意次。
+- `a[bcd]*b` 匹配 a 开头、b 结尾、中间 bcd 任意字符重复任意次。
 
 `+` matches one or more times.
 

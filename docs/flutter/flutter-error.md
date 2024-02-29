@@ -197,3 +197,11 @@ Under `ListView` don't use `Spacer` Widget.
 ## RenderConstrainedBox object was given an infinite size during layout.
 
 有个需求，需要在 Column 中放个 Webview，用到 RenderUiKitView，根据错误信息描述，原因是在渲染控件时，WebView 是无限大的，在 Column 中是不允许这样的。我们只需要使用 Expanded 将其包裹即可。
+
+## App.framework 如何符号化
+
+![img](/img/6BBA8E49-6F00-40B0-98AE-127DD7EB0EEF.png)
+
+bugly 上 App.framework 看不到符号
+
+[Feat: dSYM debug info for iOS & macOS builds by vaind · Pull Request #101586 · flutter/flutter](https://github.com/flutter/flutter/pull/101586)

@@ -205,3 +205,13 @@ Under `ListView` don't use `Spacer` Widget.
 bugly 上 App.framework 看不到符号
 
 [Feat: dSYM debug info for iOS & macOS builds by vaind · Pull Request #101586 · flutter/flutter](https://github.com/flutter/flutter/pull/101586)
+
+## type 'FlexParentData' is not a subtype of type 'StackParentData' in type cast
+
+调用栈顶：`#0 Positioned.applyParentData (package:flutter/src/widgets/basic.dart:4068)`
+
+原因：`Row` 里面用了 `Positioned`。注意：
+
+1. Under `ListView` don't use `Spacer` Widget
+2. don't use `Positioned` under `Row` or `Column`
+3. `Expanded` can only use it must be a descendant of `Column`, `Row`, `Flex`

@@ -1,5 +1,16 @@
 # 树
 
+```cpp
+struct TreeNode {
+    int val;
+    TreeNode *left;
+    TreeNode *right;
+    TreeNode(int x, TreeNode *left, TreeNode *right) : val(x), left(left), right(right) {}
+    TreeNode() : TreeNode(0, nullptr, nullptr) {}
+    TreeNode(int x) : TreeNode(x, nullptr, nullptr) {}
+};
+```
+
 ## 树的遍历
 
 ### [94-二叉树中序遍历](https://leetcode-cn.com/problems/binary-tree-inorder-traversal/)、[144-二叉树前序遍历](https://leetcode-cn.com/problems/binary-tree-preorder-traversal/)、[145-二叉树后序遍历](https://leetcode-cn.com/problems/binary-tree-postorder-traversal/)

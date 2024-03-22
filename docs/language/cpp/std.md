@@ -100,7 +100,20 @@ struct ErrCode {
 
 ## 顺序容器适配器
 
-标准库定义了三个顺序容器适配器：`stack`, `queue`, `priority_queue`。适配器是一种机制，`stack` 适配器接受一个顺序容器（除 `array`, `forward_list` 外），并使其操作起来像一个 `stack` 一样。
+标准库定义了三个顺序容器适配器：`stack`, `queue`, `priority_queue`。
+
+适配器是一种机制，`stack` 适配器接受一个顺序容器（除 `array`, `forward_list` 外），并使其操作起来像一个 `stack` 一样。
+
+```cpp
+template<class T, class Container = std::deque<T>> class stack;
+// 操作：empty, top, push, pop
+
+template<class T, class Container = std::deque<T>> class queue;
+// 操作：empty, front, back, push, pop
+
+template<class T, class Container = std::vector<T>, class Compare = std::less<typename Container::value_type>> class priority_queue;
+// 操作：empty, top, push, pop
+```
 
 ## 范型算法
 

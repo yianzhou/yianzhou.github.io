@@ -2,6 +2,16 @@
 
 ## 链表
 
+```cpp
+struct ListNode {
+    int val;
+    ListNode *next;
+    ListNode() : val(0), next(nullptr) {}
+    ListNode(int x) : val(x), next(nullptr) {}
+    ListNode(int x, ListNode *next) : val(x), next(next) {}
+};
+```
+
 ### [2-两数相加](https://leetcode-cn.com/problems/add-two-numbers/)
 
 考察链表基本的遍历操作，头部指针的存储（dummy），进位的技巧。

@@ -17,6 +17,10 @@ Xcode 调试无法安装：
 - 删掉所有 appextension target：✅（23/4/10 试了也不行）
 - 删掉 APP 重装：✅
 
+Failed to verify code signature of /var/installd/Library/Caches/com.apple.mobile.installd.staging/temp.nzLxbQ/extracted/Payload/mttlite.app : 0xe800801c (No code signature found.)
+
+Verify that the Developer App certificate for your account is trusted on your device. Open Settings on the device and navigate to General -> VPN & Device Management, then select your Developer App certificate to trust it.
+
 ```
 Details
 
@@ -165,7 +169,7 @@ AWDL 是苹果公司推出的独家无线直接链接协议，可实现点到点
 
 还不行的话，`rm -rf ~/Library/Developer/Xcode/DerivedData/`
 
-## 升级Xcode15
+## 升级 Xcode15
 
 下载下不动
 
@@ -175,11 +179,11 @@ AWDL 是苹果公司推出的独家无线直接链接协议，可实现点到点
 
 ![img](/img/498ECB1E-4F24-46C8-988F-5ACB2FDC59A4.png)
 
-下载好了打开Xcode，提示安全问题
+下载好了打开 Xcode，提示安全问题
 
 ![img](/img/71D6C8E5-F6C2-4381-8A1E-CF0DB6EA1CC1.png)
 
-## Xcode15断点调试卡死
+## Xcode15 断点调试卡死
 
 1. .xcworkspace 或 .xcodeproj 右键显示包内容
 2. xcuserdata - .xcuserdatad - xcdebugger，删除里面的 breakpoints_v2.plist

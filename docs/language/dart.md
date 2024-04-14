@@ -148,6 +148,13 @@ void enableFlags({bool bold = false, bool hidden = false}) {...}
 
 You can create a nameless function called an **anonymous function**, or sometimes a **lambda** or **closure**.
 
+排序：
+
+```dart
+// 从小到大，a.certificateId < b.certificateId
+_models.sort((CertificateInfo a, CertificateInfo b) => b.certificateId.compareTo(a.certificateId));
+```
+
 ### Operators
 
 cast an object to a particular type: `(employee as Person).firstName = 'Bob';`

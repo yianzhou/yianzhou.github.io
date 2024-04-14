@@ -10,6 +10,10 @@ UI 进程负责启动其它进程；每个 WKWebView 会有自己独立的 WebCo
 
 ![img](/img/FD652240-4705-4A98-A144-376D5B624EF2.jpg)
 
+## 网页加载
+
+[Populating the page: how browsers work - Web performance | MDN](https://developer.mozilla.org/en-US/docs/Web/Performance/How_browsers_work)
+
 ## Dark Mode
 
 自己的网站想适配深色模式：[sandoche/Darkmode.js: 🌓 Add a dark-mode / night-mode to your website in a few seconds](https://github.com/sandoche/Darkmode.js)

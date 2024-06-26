@@ -1,12 +1,8 @@
-# 内存优化
-
-> [Virtual Memory: 3 What is Virtual Memory?](https://youtu.be/qlH4-oHnBb8?list=PLiwt1iVUib9s2Uo5BeYmwkDFUh70fJPxX)
+# 内存
 
 ## 基础知识
 
 内存是一个巨大的字节数组，每个字节都有它的地址。操作系统通常在高地址区。
-
-Addresses in the source program are generally symbolic. A compiler typically binds these symbolic addresses to **relocatable addresses** (such as "14 bytes from the beginning of this module"). The linker or loader in turn binds the relocatable addresses to absolute addresses (such as 74014).
 
 虚拟内存会给每个进程创建一个单独的执行环境，进程的内存布局主要由代码段、数据段、堆、栈组成。
 
@@ -17,6 +13,8 @@ Addresses in the source program are generally symbolic. A compiler typically bin
 32 位进程可寻址的地址范围是 2^32 等于 4GB；64 位进程可寻址的范围是 2^64 约等于 18EB。从开发者的角度看，所有 18EB 的虚拟内存空间都是可用的！但如果进程访问了一个不在物理内存中的分页，那么就会发生 page fault，操作系统会将磁盘中的分页读入到主存。
 
 分页交换：内存分页在物理磁盘和主存间交换。
+
+Addresses in the source program are generally symbolic. A compiler typically binds these symbolic addresses to **relocatable addresses** (such as "14 bytes from the beginning of this module"). The linker or loader in turn binds the relocatable addresses to absolute addresses (such as 74014).
 
 ## Jetsam event
 

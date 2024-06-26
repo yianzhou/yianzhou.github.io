@@ -1,4 +1,4 @@
-# 启动时长优化
+# App Startup
 
 ## Mach-O
 
@@ -13,6 +13,8 @@ The most common segment names are `__TEXT`, `__DATA`, `__LINKEDIT`:
 - `__TEXT` contains the Mach header, machine instructions and read-only constants such as C strings
 - `__DATA` segment is read-write and contains global variables, static variables, etc
 - `__LINKEDIT` contains information about your functions and variables such as their names and addresses, the "meta data" about how to load the program
+
+![img](/img/884FA703-0387-4764-B175-CBF6E7B05B74.png)
 
 You may also heard about Mach-O Universal Files, that's merged Mach-O images for different architectures.
 

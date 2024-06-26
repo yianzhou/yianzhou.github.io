@@ -9,6 +9,22 @@ WHERE t.event_time = #relative_time:1:day:%yyyy-MM-dd HH:mm:ss%#
     AND t.eventName = 'tech_webview_finish_navigation'
 ```
 
+```sql
+select
+    substring(event_time, 1, 10) as datestring
+    , count(distinct uin) as uv
+    , count(*) as pv
+from
+    [1035949].[file_key_event] as t
+where
+    t.event_time = #relative_time:14:day:%yyyy-MM-dd HH:mm:ss%#
+    and t.eventname = 'state_intelligent_label'
+group by
+    datestring
+order by
+    datestring desc
+```
+
 ## GROUP BY
 
 GROUP BY 语句用于结合合计函数，根据一个或多个列对结果集进行分组。

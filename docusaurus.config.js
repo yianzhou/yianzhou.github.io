@@ -88,6 +88,16 @@ const config = {
         remarkPlugins: [require('mdx-mermaid')],
       },
     ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "ai",
+        path: "docs/ai",
+        routeBasePath: "docs/ai",
+        sidebarPath: require.resolve("./sidebars.js"),
+        remarkPlugins: [require('mdx-mermaid')],
+      },
+    ],
   ],
 
   themeConfig:
@@ -129,6 +139,11 @@ const config = {
             to: "docs/codes",
             position: "left",
             label: "Codes",
+          },
+          {
+            to: "docs/ai",
+            position: "left",
+            label: "AI",
           },
           {
             href: 'https://github.com/yianzhou/yianzhou.github.io',

@@ -4,7 +4,7 @@
 
 [OpenAI 登录教程（请仔细阅读）](https://www.yuque.com/nishinakuaixiaobinggan-ihyre/kb/xusvxip80buievrx?singleDoc#)
 
-在这里登录上了：https://openai.com/api/
+在这里登录上了：<https://openai.com/api/>
 
 [注册 ChatGPT 全攻略 — BoxChen](https://mirror.xyz/boxchen.eth/9O9CSqyKDj4BKUIil7NC1Sa1LJM-3hsPqaeW_QjfFBc)
 
@@ -66,28 +66,6 @@ chaty run telegram // deploy a telegram chatGPT bot
 [AINav.net - 一个属于 AI 人的导航网站](https://www.ainav.net/)
 
 [AI 导航网 | 收录优质 AI 人工智能项目，与你一起遇见未来！](https://ai.tboxn.com/)
-
-## Prompts
-
-Create a visual representation of the following scene: A cute, plump penguin sitting in front of a computer and typing source code with a keyboard. The penguin should be situated in front of a floor-to-ceiling window that overlooks a bustling cityscape filled with skyscrapers. Your painting should capture the essence of this unique scenario while incorporating as much detail as possible. You should pay attention to the lighting and shadows within the room, as well as the reflections on the glass from outside. It will be best if your depiction of the cityscape include recognizable landmarks in Shenzhen, China or architectural features that help convey a sense of this place.
-
-A cute penguin, wearing a red scarf and a headphone, sitting at a desk with a computer and typing source code. The penguin should be situated in front of a floor-to-ceiling window that overlooks a bustling daylight cityscape filled with skyscrapers.
-
-- Please note the details on the penguin's face and scarf.
-- Draw in Art Nouveau style.
-- Draw in Cartoon style.
-
-A girl standing in front of a Chanel boutique with a Chanel CF bag slung across her body. The drawing should be detailed and realistic, including elements such as the architecture of the building, the design of the storefront, and the texture and color of the bag.
-
-[PromptPerfect - Elevate your prompts to perfection](https://promptperfect.jina.ai/) 将你的提示词提升至完美。
-
-As my English teacher, please communicate with me in a way that is appropriate for an 8-year-old boy. If I speak Chinese, please translate it into English. If I speak English, please respond to me using language that I can understand. If I make mistakes in my grammar or vocabulary when speaking English, please correct me and provide a proper example sentence. Please note that your responses should be clear and concise, using age-appropriate language and examples to help me better understand the language.
-
-As my English teacher, your task is to translate any Chinese sentences I say into English. Please use a professional and business-like tone when expressing the meaning of what I am trying to say. Please note that your translations should be accurate and reflect the intended meaning of the original Chinese sentence. No need to reply. My first sentences are as following:
-
-[Open Prompt](https://openprompt.co/)
-
-[GitHub - f/awesome-chatgpt-prompts: This repo includes ChatGPT prompt curation to use ChatGPT better.](https://github.com/f/awesome-chatgpt-prompts)
 
 ## AGI
 

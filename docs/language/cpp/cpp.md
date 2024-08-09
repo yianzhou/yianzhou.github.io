@@ -1509,10 +1509,6 @@ using std::endl;
 
 ## 特殊工具
 
-### 枚举
-
-`enum color {red, yellow, green};`
-
 ### union
 
 `union`（共用体）是一种特殊的类。它的所有数据成员都共用同一块内存。`union` 的存储空间至少要能容纳它的最大的数据成员。
@@ -1521,36 +1517,31 @@ using std::endl;
 
 ```cpp
 union Date {
-    int year;
-    char month;
-    char day;
+    int year; // 4字节
+    char month; // 1字节
+    char day; // 1字节
 }; // 共用一块4字节内存
 
 int main(int argc, const char * argv[]) {
     union Date date;
 
     date.year = 2012;
-    printf("%d\n", date.year); // 2012
+    printf("%d\n", date.year);
+    // date = (year = 2012, month = '\xdc', day = '\xdc')
+    // 2012的十六进制是0x7DC，整体内存变成DC 70 00 00
 
     date.month = 12;
     printf("%d\n", date.month); // 12
+    // date = (year = 1804, month = '\f', day = '\f')
+    // \f换页符，在ASCII码表中的十进制值是12
+    // char是单字节，Date的最后一个字节被写入0C，整体内存变成0C 70 00 00
 
     date.day = 12;
-    printf("%d\n", date.day); // 12
-
-    printf("%d\n", date.year); // 1804，思考下为什么？——因为最后一个字节被写入了 12
+    printf("%d\n", date.day); // 12，内存0C 70 00 00
 
     return 0;
 }
 ```
-
-### 固有的不可移植的特性
-
-To support low-level programming, C++ defines some features that are inherently **nonportable**.
-
-A nonportable feature is one that is **machine specific**. Programs that use nonportable features often require reprogramming when they are moved from one machine to another. The fact that the sizes of the arithmetic types vary across machines (§ 2.1.1, p. 32) is one such nonportable feature that we have already used.
-
-In this section we’ll cover two additional nonportable features that C++ _inherits from C_: **bit-fields** and the **volatile qualifier**. We’ll also cover **linkage directives**（链接指令）, which is a nonportable feature that C++ adds to those that it inherits from C.
 
 ### bit-field
 

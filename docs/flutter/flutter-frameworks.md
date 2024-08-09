@@ -87,7 +87,7 @@ Provider 是官方推荐的状态管理。
 
 要用 Provider，先了解 3 个概念：`ChangeNotifier`, `ChangeNotifierProvider`, `Consumer`。
 
-If something is a `ChangeNotifier`, you can subscribe to its changes. (It is a form of `Observable`, for those familiar with the term.) `ChangeNotifier` is part of `flutter:foundation`.
+If something is a `ChangeNotifier`, you can subscribe to its changes. (It is a form of "Observable", for those familiar with the term.) `ChangeNotifier` is part of `flutter:foundation`.
 
 `ChangeNotifierProvider` is the widget that provides an instance of a `ChangeNotifier` to its descendants. It comes from the provider package.
 

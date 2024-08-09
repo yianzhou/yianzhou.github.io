@@ -23,7 +23,9 @@ struct _category_t {
 
 可以看出，category 可以添加实例方法，类方法，甚至可以实现协议，添加属性；但无法添加成员变量。
 
-编译后的类，其内存布局已经确定，不能向编译好的类添加实例变量。运行时创建的类，可以调用 `class_addIvar` 添加成员变量。
+编译后的类，其内存布局已经确定，不能向编译好的类添加实例变量。
+
+> 运行时创建的类，可以调用 `class_addIvar` 添加成员变量。
 
 并且，在 cpp 文件里定义了一个类型为 `struct _category_t`、名称为 `_OBJC_$_CATEGORY_Person_$_Eat` 的变量，并进行了初始化：
 
@@ -159,7 +161,11 @@ extension 可以添加成员变量，category 不能。
 
 ## load
 
-`+load` 和其它类方法一样，都是放在元类对象的方法列表里。但是我们一般不会主动去调用，而是在 Runtime 加载类、分类时由系统来调用，且程序运行过程中只调用一次。
+`+load` 和其它类方法一样，都是放在元类对象的方法列表里。
+
+Category 也可以有`+load`方法。
+
+我们一般不会主动去调用，而是在 Runtime 加载类、分类时由系统来调用，且程序运行过程中只调用一次。
 
 调用过程：
 
@@ -286,7 +292,7 @@ void callInitialize(Class cls)
     // 结论：走的 objc_msgSend
     // 因此：
     // 1. 如果分类实现了 +initialize，会覆盖类的 +initialize 的实现
-    // 2. 如果子类没有实现 +initialize，在向子类发送此消失时，会找到父类的 +initialize 方法并调用，所以 +initialize 是可能被调用多次的！
+    // 2. 如果子类没有实现 +initialize，在向子类发送此消息时，会找到父类的 +initialize 方法并调用，所以 +initialize 是可能被调用多次的！
     ((void(*)(Class, SEL))objc_msgSend)(cls, @selector(initialize));
 }
 ```
@@ -343,7 +349,7 @@ Property 'name' requires method 'name' to be defined - use @dynamic or provide a
 
 @implementation Student (Name)
 - (NSString *)name {
-    // 对于 get 方法，还可以写成 objc_getAssociatedObject(self, _cmd)
+    // 对于 get 方法，还可以写成 `objc_getAssociatedObject(self, _cmd)`，`_cmd` 表示当前方法的 selector
     return objc_getAssociatedObject(self, @selector(name));
 }
 
@@ -355,7 +361,9 @@ Property 'name' requires method 'name' to be defined - use @dynamic or provide a
 
 ## DenseMap 与 DisguisedPtr
 
-`DenseMap` 是在 llvm 中用的非常广泛的数据结构，它的实现是一个基于 quadratic probing 的散列表。其中哈希逻辑抽象到了 `DenseMapBase` 中，而内存管理的逻辑留在了 `DenseMap` 和 `SmallDenseMap` 实现。
+`DenseMap` 是在 llvm 中用的非常广泛的数据结构，它的实现是一个基于二次探测的哈希表。其中哈希逻辑抽象到了 `DenseMapBase` 中，而内存管理的逻辑留在了 `DenseMap` 和 `SmallDenseMap` 实现。
+
+> 二次探测（Quadratic Probing）是一种解决哈希冲突的方法，当发生冲突时，算法会根据一个二次函数来计算下一个探测位置。
 
 `DisguisedPtr` 在底层很常用，它直译为伪装指针：
 
@@ -411,17 +419,20 @@ void _object_set_associative_reference(id object, const void *key, id value, uin
     {
         AssociationsManager manager;
         AssociationsHashMap &associations(manager.get());
+        // 根据 value 是否为空进行不同的操作
         if (value) { // 设置关联对象
             // try_emplace 是 std::map 的方法，尝试放置键值对，返回值是 pair<iterator, bool>
+            // try_emplace 方法会尝试插入，如果键已经存在，则不会插入
+            // `ObjectAssociationMap{}` 构建了一个新的 `ObjectAssociationMap`
             auto refs_result = associations.try_emplace(disguised, ObjectAssociationMap{});
 
             /* establish or replace the association */
-            auto &refs = refs_result.first->second;
+            auto &refs = refs_result.first->second; // 获取到 `ObjectAssociationMap`
             auto result = refs.try_emplace(key, std::move(association));
-            if (!result.second) {
-                association.swap(result.first->second);
+            if (!result.second) { // 说明key已经存在
+                association.swap(result.first->second); // 用`association`替换已有的值
             }
-        } else { // 擦除关联对象
+        } else { // 关联对象置空
             auto refs_it = associations.find(disguised);
             if (refs_it != associations.end()) {
                 auto &refs = refs_it->second;

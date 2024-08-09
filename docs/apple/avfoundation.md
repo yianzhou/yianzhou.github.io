@@ -1,10 +1,8 @@
 # AVFoundation
 
-authorizationStatusForMediaType
-
 AVFoundation Stack on iOS:
 
-![img](/assets/images/1_zY4oLLDPVGW1cMdhzSHElg.png)
+![img](/img/470343F1-E457-4832-8198-FA45C415A38E.png)
 
 [Learning-AV-Foundation 示例代码](https://github.com/tapharmonic/Learning-AV-Foundation)
 

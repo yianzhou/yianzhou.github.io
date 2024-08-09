@@ -1,12 +1,24 @@
-# 包体大小优化
+# 包大小
 
 [Apple - Reducing Your App’s Size](https://developer.apple.com/documentation/xcode/reducing_your_app_s_size)
 
 [periphery](https://github.com/peripheryapp/periphery) - A tool to identify unused code in Swift projects.
 
+## 代码清理
+
+### LinkMap 分析
+
+将 Build Setting 里的 Write Link Map File 设置为 Yes，然后指定 Path to Link Map File 的路径就可以得到每次编译后的 LinkMap 文件了。
+
+`$(TARGET_TEMP_DIR)/$(PRODUCT_NAME)-LinkMap-$(CURRENT_VARIANT)-$(CURRENT_ARCH).txt`
+
+展开后：
+
+`/Users/yianzhou/Library/Developer/Xcode/DerivedData/YourProjectName-abc1234567890/Build/Intermediates.noindex/YourTargetName.build/Debug-iphonesimulator/YourTargetName.build/MyApp-LinkMap-normal-x86_64.txt`
+
 ## App Thinning
 
-不同的设备分发不同分辨率的资源文件（通过 xcassets 管理资源文件）、根据不同芯片的指令集优化二进制文件（Xcode 默认）、开启 Bitcode （需设置，优化不明显，有时要依赖第三方）等。
+不同的设备分发不同分辨率的资源文件（通过 xcassets 管理资源文件）、根据不同芯片的指令集优化二进制文件（Xcode 默认）、
 
 ## 清理无用的资源文件
 
@@ -27,9 +39,8 @@ GIF 转为 WebP，可减少大量体积！Google 提供的 WebP 压缩工具可�
 
 首先，找出方法和类的全集；然后，找到**使用到**的方法和类；最后，由人工确认删除无用代码。
 
-1. 通过分析 LinkMap 来获得所有的代码类和方法的信息。获取 LinkMap 可以通过将 Build Setting 里的 Write Link Map File 设置为 Yes，然后指定 Path to Link Map File 的路径就可以得到每次编译后的 LinkMap 文件了。
-2. 通过 [MachOView](https://github.com/gdbinit/MachOView) 工具可以查看 Mach-O 文件里的信息。
-3. 查看 `__objc_selrefs`、`__objc_classrefs`和`__objc_superrefs` 这三个 section。可以找到 Mach-O 文件里用到的方法和类。
+1. 通过 [MachOView](https://github.com/gdbinit/MachOView) 工具可以查看 Mach-O 文件里的信息。
+2. 查看 `__objc_selrefs`、`__objc_classrefs`和`__objc_superrefs` 这三个 section。可以找到 Mach-O 文件里用到的方法和类。
 
 方法二、通过 [AppCode](https://www.jetbrains.com/objc/) 找出无用代码
 

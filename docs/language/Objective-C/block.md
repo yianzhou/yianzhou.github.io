@@ -136,9 +136,13 @@ static void __Person__test_block_func_0(struct __Person__test_block_impl_0 *__cs
     NSLog((NSString *)&__NSConstantStringImpl__var_folders_yb_d6gg31rn7snd9rnp12sctfb00000gn_T_Person_9d4d3e_mi_0, self);
 }
 
-static void __Person__test_block_copy_0(struct __Person__test_block_impl_0*dst, struct __Person__test_block_impl_0*src) {_Block_object_assign((void*)&dst->self, (void*)src->self, 3/*BLOCK_FIELD_IS_OBJECT*/);}
+static void __Person__test_block_copy_0(struct __Person__test_block_impl_0*dst, struct __Person__test_block_impl_0*src) {
+    _Block_object_assign((void*)&dst->self, (void*)src->self, 3/*BLOCK_FIELD_IS_OBJECT*/);
+}
 
-static void __Person__test_block_dispose_0(struct __Person__test_block_impl_0*src) {_Block_object_dispose((void*)src->self, 3/*BLOCK_FIELD_IS_OBJECT*/);}
+static void __Person__test_block_dispose_0(struct __Person__test_block_impl_0*src) {
+    _Block_object_dispose((void*)src->self, 3/*BLOCK_FIELD_IS_OBJECT*/);
+}
 
 static struct __Person__test_block_desc_0 {
   size_t reserved;
@@ -300,6 +304,7 @@ struct __main_block_impl_0 {
   struct __block_impl impl;
   struct __main_block_desc_0* Desc;
   __Block_byref_age_0 *age; // by ref
+
   __main_block_impl_0(void *fp, struct __main_block_desc_0 *desc, __Block_byref_age_0 *_age, int flags=0) : age(_age->__forwarding) {
     impl.isa = &_NSConcreteStackBlock;
     impl.Flags = flags;
@@ -313,9 +318,13 @@ static void __main_block_func_0(struct __main_block_impl_0 *__cself) {
     (age->__forwarding->age)++;
 }
 
-static void __main_block_copy_0(struct __main_block_impl_0*dst, struct __main_block_impl_0*src) {_Block_object_assign((void*)&dst->age, (void*)src->age, 8/*BLOCK_FIELD_IS_BYREF*/);}
+static void __main_block_copy_0(struct __main_block_impl_0*dst, struct __main_block_impl_0*src) {
+    _Block_object_assign((void*)&dst->age, (void*)src->age, 8/*BLOCK_FIELD_IS_BYREF*/);
+}
 
-static void __main_block_dispose_0(struct __main_block_impl_0*src) {_Block_object_dispose((void*)src->age, 8/*BLOCK_FIELD_IS_BYREF*/);}
+static void __main_block_dispose_0(struct __main_block_impl_0*src) {
+    _Block_object_dispose((void*)src->age, 8/*BLOCK_FIELD_IS_BYREF*/);
+}
 
 static struct __main_block_desc_0 {
   size_t reserved;
@@ -453,6 +462,13 @@ weak 引用可以解决循环引用的问题，因为 `__weak` 修饰的变量�
     NSLog(@"%s", __FUNCTION__);
 }
 @end
+```
+
+输出：
+
+```
+-[DetailViewController dealloc]
+self is (null)
 ```
 
 假设执行 block 的时候 `weakSelf` 已经为 nil 了，那么 `strongSelf` 变量也是 nil；假设执行 block 时 `weakSelf` 不为 nil，那么 `strongSelf` 就会强引用这个对象，直到 block 执行完，`strongSelf` 变量销毁。

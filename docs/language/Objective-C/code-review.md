@@ -4,11 +4,6 @@ sidebar_position: 99
 
 # Code Review
 
-- 不允许直接 `git push origin master`，需创建 MR
-- 合并请求必须经过代码评审才可以合并
-- 只允许压缩合并（点击合并时请写好标题）
-- 禁止创建者自己通过评审
-
 [Code Review Developer Guide | eng-practices](https://google.github.io/eng-practices/review/)
 
 [Google Objective-C Style Guide | styleguide](https://google.github.io/styleguide/objcguide.html)

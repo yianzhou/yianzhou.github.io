@@ -215,3 +215,13 @@ bugly 上 App.framework 看不到符号
 1. Under `ListView` don't use `Spacer` Widget
 2. don't use `Positioned` under `Row` or `Column`
 3. `Expanded` can only use it must be a descendant of `Column`, `Row`, `Flex`
+
+## await platform.invokeMethod 没反应
+
+```dart
+// ❌这个写法有问题，类型不正确，但Flutter没有报错也没有提示，现象上看就是await永远不会结束
+final List<String> result = await platform.invokeMethod(NATIVE_METHOD_GET_STRING_LIST, {"key": key});
+
+// ✅改成这个写法后正常
+final result = await platform.invokeMethod(NATIVE_METHOD_GET_STRING_LIST, {"key": key});
+```

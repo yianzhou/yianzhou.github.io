@@ -34,6 +34,8 @@ int main(int argc, char * argv[]) {
 }
 ```
 
+在 Objective-C 中，所有的方法调用都通过 `objc_msgSend` 函数进行。
+
 OC 的面向对象是基于 C/C++ 的数据结构实现的，在上面 `main.cpp` 文件中，找到的重写后的 `NSObject`：
 
 ```c
@@ -49,7 +51,7 @@ struct NSObject_IMPL {
 typedef struct objc_class *Class;
 ```
 
-发现它是一个指针，指针在 64 位系统所占内存空间是 8 个字节。
+`NSObject` 存储的内容就是一个 `isa` 指针，指针在 64 位系统所占内存空间是 8 个字节。
 
 结构体的地址，就是它里面第一个成员的地址。`isa` 指针的地址，也就是 `NSObject_IMPL` 结构体的地址。`isa` 存储的值，就是 `NSObject` 类对象的地址。
 
@@ -199,7 +201,7 @@ NSLog(@"%zd", class_getInstanceSize([Person class])); // 16
 
 现代计算机都是**小端序** (Little-Endian)，即，一个多位数的低位放在较小的地址处，高位放在较大的地址处。
 
-所以这里的内存读取出来不是 `0x40000000`，而是 `0x00000004`。
+所以这里的内存读取出来不是 `0x04000000`，而是 `0x00000004`。
 
 将 `Person` 里的实例变量改为属性：
 
@@ -255,7 +257,7 @@ Student *stu = [[Student alloc] init];
 NSLog(@"%zd", malloc_size((__bridge const void *)stu)); // 16
 ```
 
-题外话：我们可以将 oc 对象的指针转为其底层结构体的指针，因为内存布局相同。
+我们可以将 oc 对象的指针转为其底层结构体的指针，因为内存布局相同。
 
 ```objc
 Student *stu = [[Student alloc] init];

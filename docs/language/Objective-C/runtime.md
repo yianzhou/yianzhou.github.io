@@ -10,7 +10,7 @@ sidebar_position: 5
 
 在 32 位架构时，`isa` 的确是一个普通的指针，存储着类对象的地址。
 
-但在 64 位架构，`isa` 进行了优化，使用了位域 (bit-field) 来存储更多的信息。
+但在 64 位架构，`isa` 进行了优化，使用了 union（共用体）和 bit-field（位域）来存储更多的信息。
 
 ```c title='objc-private.h'
 union isa_t {

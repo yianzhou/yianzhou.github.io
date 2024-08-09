@@ -152,3 +152,17 @@ OTA 方式安装，是通过 WebKit 解析链接中的 itms-services:// 来实�
 打印方法名：`po (SEL)$x1`
 
 打印参数：`po $x2`（以此类推，x3、x4 也可能是参数，如果是 x86 寄存器就是 r0、r1、r2）
+
+## 打包
+
+.xcarchive 是一个 Xcode 归档文件，包含了应用程序的构建产物、符号表、dSYM 文件和其他调试信息。
+
+使用 xcodebuild 命令行工具生成 .xcarchive 文件：
+
+```sh
+xcodebuild -scheme YourScheme -configuration Release -sdk iphoneos -archivePath build/YourApp.xcarchive archive
+```
+
+生成的 .xcarchive 文件通常位于 `build/` 目录下。
+
+生成的 .app 文件通常位于 `build/YourApp.xcarchive/Products/Applications/` 目录下。

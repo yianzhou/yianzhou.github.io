@@ -18,7 +18,7 @@ sidebar_position: 7
 
 串行和并行的区别：串行是一个接一个地执行，并行是同时执行。
 
-`sync` 是在当前线程执行，不能开启新线程，所以就算派发到并发队列，也是串行执行的。（只有一个线程，咋并发呀？）
+`sync` 是在当前线程执行，不能开启新线程。`dispatch_sync` 会在当前线程上等待任务完成。任务会在指定的调度队列上执行，但当前线程会被阻塞，直到任务完成。
 
 > [WWDC 2016 - Concurrent Programming With GCD in Swift 3](https://developer.apple.com/videos/play/wwdc2016/720/?time=257)
 
@@ -189,15 +189,6 @@ dispatch_async(self.serialQueue, ^{
 使用 `dispatch_sync` 往当前队列里添加任务，就会死锁。
 
 **As a performance optimization, this function executes blocks on the current thread whenever possible, with one obvious exception. Specifically, blocks submitted to the main dispatch queue always run on the main thread.**
-
-在主线程使用 `dispatch_sync`，不管派发到主队列还是子队列，都在主线程执行！！
-
-```objc
-// 主线程
-dispatch_sync(任意队列, ^{
-    // 在主线程执行！
-});
-```
 
 在子线程使用 `dispatch_sync`，在当前线程执行！有一个例外，如果提交到主队列的话，在主线程执行！
 

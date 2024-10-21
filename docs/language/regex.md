@@ -76,7 +76,7 @@
 全量格式化处理：
 
 ```bash
-find -E . -regex ".*\.(h|m|mm)" | xargs clang-format -i -style=file
+find -E . -regex ".*\.(h|m|mm|c|cc|cpp)" | xargs clang-format -i -style=file
 ```
 
 on Mac OS X (BSD find): man find says -E uses extended regex support.

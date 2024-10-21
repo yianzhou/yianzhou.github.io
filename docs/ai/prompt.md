@@ -1,24 +1,10 @@
----
-slug: /
----
-
 # Prompt
 
 有人预测十年以后全世界有 50% 工作会是提示词工程（prompt engineering），不会写提示词（prompt）的人会被淘汰。如何通过自然语言把问题向机器描述清楚，将成为以后工作中的基本技能。
 
-[PromptPerfect - Elevate your prompts to perfection](https://promptperfect.jina.ai/) 将你的提示词提升至完美。
-
-[Open Prompt](https://openprompt.co/)
-
-[GitHub - f/awesome-chatgpt-prompts: This repo includes ChatGPT prompt curation to use ChatGPT better.](https://github.com/f/awesome-chatgpt-prompts)
-
-[Best practices for prompt engineering with the OpenAI API | OpenAI Help Center](https://help.openai.com/en/articles/6654000-best-practices-for-prompt-engineering-with-the-openai-api)
-
-## 原理
-
-"one-shot" learning refers to the ability of the model to understand and perform a task after being given just one example. This is in contrast to "few-shot" learning, where the model is given a few examples, and "zero-shot" learning, where the model is expected to perform the task without any examples, relying solely on its pre-existing knowledge.
-
 ## 技巧
+
+> "one-shot" learning refers to the ability of the model to understand and perform a task after being given just one example. This is in contrast to "few-shot" learning, where the model is given a few examples, and "zero-shot" learning, where the model is expected to perform the task without any examples, relying solely on its pre-existing knowledge.
 
 - 给出例子（one-shot, few-shot）
 - 要求模型自检自查
@@ -48,7 +34,7 @@ slug: /
 2.目标属于难以量化
 3.关键结果（KR）无法支撑目标（O）
 
-从上面描述的三类问题中，帮我诊断下面OKR有哪类问题？如果没有问题，仅提出表扬就可以。 输出格式如下：
+从上面描述的三类问题中，帮我诊断下面OKR有哪类问题？如果没有问题，仅提出表扬就可以。输出格式如下：
 """
 - 问题 1：xxxxxx
 - 建议：xxxxx
@@ -64,7 +50,12 @@ OKR初稿：
 
 描述生成结果的“过程”：
 
-你是互联网招聘经理，你要招聘的岗位名称：[岗位名称]，使命是：[使命] 。希望你通过下面的步骤来生成 JD。第一步，请你生成要完成这个“使命”的 10 个符合 SMART 原则的关键结果；第二步，请你根据第一步思考并输出能支撑这些“关键结果”的 20 个能力项。第三步，依据第二步的“关键结果”，生成一份完整的 JD。
+```
+你是互联网招聘经理，你要招聘的岗位名称：[岗位名称]，使命是：[使命] 。希望你通过下面的步骤来生成 JD。
+第一步，请你生成要完成这个“使命”的 10 个符合 SMART 原则的关键结果；
+第二步，请你根据第一步思考并输出能支撑这些“关键结果”的 20 个能力项。
+第三步，依据第二步的“关键结果”，生成一份完整的 JD。
+```
 
 ## 文本框架
 

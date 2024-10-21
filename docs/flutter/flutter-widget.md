@@ -274,3 +274,12 @@ bool isTopMostRoute() {
   return top == "qb://flutter/file/reader/fileClassify";
 }
 ```
+
+## PageRouteBuilder
+
+以本例为例对 animation 和 secondaryAnimation 做说明：
+
+1. 当 push 了 \_Page2 时，则 \_Page2 做 animation 正向动画
+2. 如果当前显示的是 \_Page2，当你 pop 了这个 \_Page2 时，则这个 \_Page2 会做 animation 反向动画
+3. 如果当前显示的是 \_Page2，当你 push 了其他页的时候，则这个 \_Page2 会做 secondaryAnimation 正向动画
+4. 如果 \_Page2 是路由栈中从栈顶开始数的第 2 个路由，则栈顶 pop 后，这个 \_Page2 会做 secondaryAnimation 反向动画

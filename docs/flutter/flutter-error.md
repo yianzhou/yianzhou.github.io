@@ -225,3 +225,11 @@ final List<String> result = await platform.invokeMethod(NATIVE_METHOD_GET_STRING
 // ✅改成这个写法后正常
 final result = await platform.invokeMethod(NATIVE_METHOD_GET_STRING_LIST, {"key": key});
 ```
+
+## Xcode 16 编译 3.0.4 Flutter 问题
+
+`where flutter` 找到本地 Flutter SDK，找到文件：`flutter/packages/flutter_tools/lib/src/build_system/targets/ios.dart`
+
+注释掉 `-fembed-bitcode-marker`，然后删除`flutter/bin/cache/flutter_tools.snapshot` 和`flutter/bin/cache/flutter_tools.stamp`
+
+执行 `flutter doctor` 重新编译 flutter_tools

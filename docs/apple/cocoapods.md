@@ -204,3 +204,26 @@ pod repo add master https://github.com/CocoaPods/Specs.git
 问题：Couldn't determine repo type for URL: "https://cdn.cocoapods.org/': bad URI(is not URI?): "127.0.0.1:12639"
 
 解决：`unset http_proxy; unset https_proxy`
+
+## 问题：NoMethodError - undefined method `each' for nil:NilClass
+
+增加 DailyBuild.xcconfig 后 pod install 出现以下错误：
+
+```
+NoMethodError - undefined method `each' for nil:NilClass
+
+      dependent_targets.each do |target|
+                       ^^^^^
+```
+
+这里注释掉一行就好了：
+
+```
+project 'Runner', {
+  'Debug' => :debug,
+  # 'DailyBuild' => :dailybuild,
+  'Release' => :release,
+}
+```
+
+注意：CocoaPods 只有 debug 和 release 两种配置。如果你有自定义的构建配置（如 DailyBuild），你需要将其映射到 debug 或 release。

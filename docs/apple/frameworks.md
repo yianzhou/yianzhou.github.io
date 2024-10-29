@@ -250,11 +250,21 @@ App -> 动态库 A -> 动态库 B，要在 App 内使用动态库 B 的代码：
 
 ### 2. 动态库链接静态库
 
+editorFramework 是动态库，它链接了十几个静态库
+
 App -> 动态库 A -> 静态库 B，动态库 A 的链接阶段就会把静态库 B 的符号都载入进来，因此，静态库 B 的导出符号也就成为动态库 A 的导出符号，对 App 自然也是可见的，App 使用静态库 B 没有问题。
 
 如果不想把静态库 B 的符号暴露给 App，可以传链接器参数，告诉链接器隐藏静态库 B 的符号：
 
 `OTHER_LDFLAGS = $(inherited) -Xlinker -hidden-l"B"`
+
+The 'Pods-Runner' target has transitive dependencies that include statically linked binaries
+
+这个错误提示表明你的 Pods-Runner 目标包含了一个静态链接的二进制文件 QimeiSDK.xcframework，而这个文件是通过传递依赖关系引入的。CocoaPods 默认情况下不支持将静态库作为动态库的一部分进行链接，这可能会导致链接错误。
+
+问题：QBFrame 依赖 QimeiSDK，QBFrame 是动态库，QimeiSDK 是静态库
+
+解决：QBFrame 改为静态库
 
 ### 3. 静态库链接静态库
 

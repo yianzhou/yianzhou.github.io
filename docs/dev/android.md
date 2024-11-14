@@ -68,4 +68,12 @@ Android Go——取代 Android One 成为专为低端设备优化的安卓系统
 
 国内的原厂系统接近原生，而且口碑还可以的基本上就是一加了，但是一加 6 变成 AB 分区后，刷机什么的比较麻烦，之前的机型还可以。华为锁了 bootloader，不能自己解锁，OV 两家也是很少有 rom，基本上只有小米比较适合搞机。
 
-## Android Studio
+## gradle
+
+`build.gradle`: 用于定义项目和模块的构建配置和依赖项。项目级别的 `build.gradle` 配置整个项目，模块级别的 `build.gradle` 配置具体模块。
+
+`settings.gradle`: 用于定义项目的设置，它告诉 Gradle 哪些模块是项目的一部分。
+
+`gradle.properties`: 用于定义全局的 Gradle 属性和配置参数，影响整个构建过程。
+
+`build.gradle.kts` 文件使用 Kotlin 语言编写，提供了更强的类型安全和更好的 IDE 支持。

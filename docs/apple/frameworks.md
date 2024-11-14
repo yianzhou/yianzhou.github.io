@@ -139,6 +139,7 @@ main.o -o main
 OTHER_LDFLAGS=-Xlinker -all_load # 加载所有符号，clang -Xlinker -all_load
 OTHER_LDFLAGS=-Xlinker -ObjC # 加载所有 objc 符号
 OTHER_LDFLAGS=-Xlinker -force_load # 加载指定静态库里面的所有符号
+OTHER_LDFLAGS=-Xlinker -load_hidden # 隐藏指定静态库里面的所有全局符号
 ```
 
 在 `clang` 命令中使用 Dead Code Stripping：
@@ -233,7 +234,7 @@ main.o -o main
 
 ![img](/img/D71F841E-F60F-49B9-8C70-4972EAA2B51E.png)
 
-## 四种链接情况
+## 不同的链接情况
 
 ### 1. 动态库链接动态库
 
@@ -275,6 +276,10 @@ App -> 静态库 A -> 静态库 B，需要配置 `HEADER_SEARCH_PATHS` 和 `OTHE
 ### 4. 静态库链接动态库
 
 App -> 静态库 A -> 动态库 B，配置 `FRAMEWORK_SEARCH_PATHS` 让动态库 B 对 App 可见，同时参考 1 中的做法，通过脚本拷贝 Framework 或者通过 pod 安装。
+
+### 5. APP 链接多个静态库
+
+`233 duplicate symbols for architecture arm64` 符号冲突
 
 ## Cocoapods 集成
 

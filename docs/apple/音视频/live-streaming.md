@@ -78,3 +78,9 @@ enum {
 ```
 
 音视频同步的模式，业界普遍使用的（ffplay 的默认策略）：音频时钟作为主时钟。主要原因是人眼对帧率不敏感。如果视频超前，则暂停以等待音频；如果视频落后，则丢弃掉一些帧追赶音频（丢弃 P 帧或 B 帧，不能丢弃 I 帧）。人眼很难察觉。
+
+## M3U8
+
+下载一个 m3u8 视频打开后，里面会有 `index.m3u8` 文件，文件内容可以比对官方文档：[Video on Demand playlist construction](https://developer.apple.com/documentation/http-live-streaming/video-on-demand-playlist-construction)
+
+`EXT-X-PLAYLIST-TYPE` 中 `EVENT` 代表直播，`VOD` 代表点播。

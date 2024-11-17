@@ -6,6 +6,8 @@
 >
 > [Flutter Widget 101](https://www.youtube.com/playlist?list=PLOU2XLYxmsIJyiwUPCou_OVTpRIn_8UMd)
 
+SNH48 JSON API 地址：https://h5.48.cn/resource/jsonp/allmembers.php?gid=10
+
 ## Widget 原理
 
 In Flutter, almost everything is a widget.
@@ -283,3 +285,29 @@ bool isTopMostRoute() {
 2. 如果当前显示的是 \_Page2，当你 pop 了这个 \_Page2 时，则这个 \_Page2 会做 animation 反向动画
 3. 如果当前显示的是 \_Page2，当你 push 了其他页的时候，则这个 \_Page2 会做 secondaryAnimation 正向动画
 4. 如果 \_Page2 是路由栈中从栈顶开始数的第 2 个路由，则栈顶 pop 后，这个 \_Page2 会做 secondaryAnimation 反向动画
+
+## Sliver
+
+CustomScrollView 创建一个视窗，视窗可以理解为 contentSize 比 bounds 大的一个窗口。
+
+`slivers` 只能传 Sliver 家族的成员：例如 `SliverToBoxAdapter` + `SliverGrid` + `SliverList`
+
+`SliverToBoxAdapter` 用于将 `Container`, `Column` 等 `RenderBox` 组件转为 sliver
+
+`SliverFixedExtentList` 固定每一行的行高
+
+`SliverPrototypeExtentList` 根据 prototypeItem 预计算每一行的布局高度，然后将这一高度应用到真正布局时的行高
+
+`SliverFillViewport` 每一行都会填满视窗的高度，视窗就是你刚才创建的那个 `CustomScrollView`
+
+下拉二楼的效果可以用 `SliverAppBar` 的 `flexibleSpace` 来实现，传入 `FlexibleSpaceBar`
+
+`SliverFillRemaining` 可以填充满 viewport，但是会额外多滑出一个 viewport 高度的距离
+
+`SliverLayoutBuilder` 可以查看布局约束
+
+`SliverPersistentHeader` 类似 UItableView 的 section header
+
+## 下拉刷新
+
+`CustomScrollView` 外面包一层 `RefreshIndicator`

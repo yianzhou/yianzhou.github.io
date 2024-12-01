@@ -81,6 +81,16 @@ const config = {
     [
       "@docusaurus/plugin-content-docs",
       {
+        id: "invest",
+        path: "docs/invest",
+        routeBasePath: "docs/invest",
+        sidebarPath: require.resolve("./sidebars.js"),
+        remarkPlugins: [require('mdx-mermaid')],
+      },
+    ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
         id: "codes",
         path: "docs/codes",
         routeBasePath: "docs/codes",
@@ -134,6 +144,11 @@ const config = {
             to: "docs/insights",
             position: "left",
             label: "Insights",
+          },
+          {
+            to: "docs/invest",
+            position: "left",
+            label: "投资",
           },
           {
             to: "docs/codes",

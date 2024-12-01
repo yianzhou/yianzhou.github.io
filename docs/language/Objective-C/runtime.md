@@ -765,7 +765,7 @@ static id storeWeak(id *location, objc_object *newObj)
 }
 ```
 
-SideTables 是一个全局的 StripedMap，是一个固定容量为 64 的数组。
+SideTable 用于管理对象的引用计数和弱引用，是一个固定容量为 64 的数组。
 
 ```cpp
 static StripedMap<SideTable>& SideTables() {
@@ -773,11 +773,11 @@ static StripedMap<SideTable>& SideTables() {
 }
 ```
 
-该数据结构通过实现 `[]` 操作，实现了类似字典的功能：可通过传入一个对象作为 key 值，来获取对应的 item。对于任何一个对象，都能根据其地址对应到具体的一个 SideTable 上。
+传入一个对象，根据其内存地址对应到具体的一个 SideTable 上。
 
 ```cpp
 struct SideTable {
-    spinlock_t slock;
+    spinlock_t slock; // 自旋锁，用于保护 SideTable 的并发访问
     RefcountMap refcnts; // 引用计数表
     weak_table_t weak_table; // 弱引用表
     // ...

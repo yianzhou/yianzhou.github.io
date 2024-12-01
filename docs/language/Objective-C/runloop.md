@@ -354,8 +354,63 @@ Invokes a method of the receiver on the current thread using the default (runloo
 
 ```objc
 - (void)performSelectorOnMainThread:(SEL)aSelector withObject:(nullable id)arg waitUntilDone:(BOOL)wait;
-- (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(nullable id)arg waitUntilDone:(BOOL)wait);
-- (void)performSelectorInBackground:(SEL)aSelector withObject:(nullable id)arg);
+- (void)performSelector:(SEL)aSelector onThread:(NSThread *)thr withObject:(nullable id)arg waitUntilDone:(BOOL)wait;
+- (void)performSelectorInBackground:(SEL)aSelector withObject:(nullable id)arg;
 ```
 
 Invokes a method of the receiver on the specified thread using the default (runloop) mode. 创建一个 Timer 并加到对应线程的 Runloop 中，同样的，如果对应线程没有 RunLoop 该方法也会失效。
+
+## autoreleasepool
+
+进入 RunLoop 时，创建一个 `autoreleasepool`；
+
+RunLoop 进入休眠之前，会先释放掉 `autoreleasepool`，然后创建一个新的 `autoreleasepool`；
+
+退出 RunLoop 时，释放掉 `autoreleasepool`
+
+当一个对象调用 `autorelease` 方法时，会将这个对象放到栈顶的释放池自动释放池中。
+
+iOS 5 引入 ARC 后，`release`、`retain`、`retainCount`、`autorelease` 等函数被禁止调用，编译器在合适的地方自动插入指令做了这项工作
+
+`autoreleasepool` 是以 `AutoreleasePoolPage` 为结点的双向链表来实现的，主要通过下列三个函数完成：
+
+- objc_autoreleasepoolPush
+- objc_autoreleasepoolPop
+- objc_autorelease
+
+```c
+for (int i = 0; i < 10e5; i++) {
+    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"10-14-Day-6k" ofType:@"jpg"];
+    UIImage *image = [[UIImage alloc] initWithContentsOfFile:filePath];
+    NSLog(@"%@", image);
+}
+```
+
+以上代码会 OOM：
+
+<img alt="" src="/img/E438B32D-BC37-4190-BFB1-A86A9EA33B93.png" />
+
+```c
+// 降低内存峰值
+for (int i = 0; i < 10e5; i++) {
+    @autoreleasepool {
+        NSString *filePath = [[NSBundle mainBundle] pathForResource:@"10-14-Day-6k" ofType:@"jpg"];
+        UIImage *image = [[UIImage alloc] initWithContentsOfFile:filePath];
+        NSLog(@"%@", image);
+    }
+}
+```
+
+以上代码内存非常平稳：
+
+<img alt="" src="/img/70D8F38E-6E24-4A00-B161-172CBD699F0A.png" />
+
+所以，`autorelease` 在 ARC 不能用；`@autoreleasepool`看情况用；那么`__autoreleasing`什么时候用呢？
+
+构造一个很大的链表，在 `head` 释放时，它的属性 `next` 会先释放，如此递归下去会造成 Stack Overflow 引发 `EXC_BAD_ACCESS`：
+
+<img alt="" src="/img/E4EA19F5-B0E8-4015-BD08-435FFCF51F80.png" />
+
+解决方法是使用`__autoreleasing`将`next`的释放交给 `autoreleasepool` 管理：
+
+<img alt="" src="/img/013C4D8E-A12A-4163-A580-D302C06C0969.png" />

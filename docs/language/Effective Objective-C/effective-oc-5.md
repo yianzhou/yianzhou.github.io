@@ -162,23 +162,6 @@ Autorelease pools can be thought of as being in a stack. When an autorelease poo
 
 The need to make this additional pool optimization depends entirely on your application. It is certainly not something that should be done without first monitoring the memory footprint to decide whether a problem needs addressing. Autorelease pool blocks do not incur too much overhead, but they do incur at least some overhead, so if the extra autorelease pool can be avoided, it should be.
 
-```objc
-for (int i = 0; i < 10e5; i++) {
-    NSString *filePath = [[NSBundle mainBundle] pathForResource:@"10-14-Day-6k" ofType:@"jpg"];
-    UIImage *image = [[UIImage alloc] initWithContentsOfFile:filePath];
-    NSLog(@"%@", image);
-}
-
-// 降低内存峰值
-for (int i = 0; i < 10e5; i++) {
-    @autoreleasepool {
-        NSString *filePath = [[NSBundle mainBundle] pathForResource:@"10-14-Day-6k" ofType:@"jpg"];
-        UIImage *image = [[UIImage alloc] initWithContentsOfFile:filePath];
-        NSLog(@"%@", image);
-    }
-}
-```
-
 ## 35: Use Zombies to Help Debug Memory-Management Problems
 
 启用了 "Zombie Object" 这个调试功能之后，Runtime 会把所有已经释放的实例转化为特殊的僵尸对象，而不会真正回收他们。僵尸对象所在的核心内存无法被重用，不可能被覆写，当尝试向僵尸对象发送消息时，程序会抛出异常，其中准确说明了发送过来的消息，并描述了回收之前的那个对象。僵尸对象是调试内存管理问题的最佳方式。

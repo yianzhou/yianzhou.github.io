@@ -44,6 +44,8 @@ FFmpeg Libraries for developers:
 - libswscale 图像处理
 - libswresample 音频处理
 
+`ffmpeg -ss 00:24:41.400 -to 00:25:10.600 -i input.mp4 -c copy output1.mp4`
+
 ## 使用 Metal 渲染视频并播放
 
 平时我们用到的播放框架：

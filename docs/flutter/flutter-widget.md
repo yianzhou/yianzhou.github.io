@@ -163,6 +163,24 @@ Scaffold(
 
 `void dispose ()` Called when this object is removed from the tree permanently.
 
+## AppLifeCycle
+
+```dart
+// with WidgetsBindingObserver
+@override
+void didChangeAppLifecycleState(AppLifecycleState state) {
+  super.didChangeAppLifecycleState(state);
+}
+```
+
+前台退后台（切换到其他APP）：inactive-hidden-paused
+
+后台进前台：hidden-inactive-resumed
+
+打开系统通知中心：inactive
+
+关闭系统通知中心：resumed
+
 ## Widget 与 Element
 
 > [Flutter 教程 Key-2 Widget 和 Element 的对应关系](https://www.bilibili.com/video/BV15k4y1B74z)

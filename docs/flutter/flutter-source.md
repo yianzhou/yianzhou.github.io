@@ -33,7 +33,9 @@ solutions = [
     "managed": False,
     "name": "src/flutter",
     "url": "git@github.com:flutter/engine.git@origin/yourBranch", // 这里可以换成自己维护的引擎仓库地址
-    "custom_deps": {},
+    "custom_deps": {
+      "src/third_party/skia": "git@github.com:flutter/skia.git@origin/yourBranch", // 这里可以换成自己维护的引擎仓库地址
+    },
     "deps_file": "DEPS",
     "safesync_url": "",
   },

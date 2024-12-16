@@ -85,15 +85,6 @@ const config = {
     [
       "@docusaurus/plugin-content-docs",
       {
-        id: "codes",
-        path: "docs/codes",
-        routeBasePath: "docs/codes",
-        sidebarPath: require.resolve("./sidebars.js"),
-      },
-    ],
-    [
-      "@docusaurus/plugin-content-docs",
-      {
         id: "ai",
         path: "docs/ai",
         routeBasePath: "docs/ai",
@@ -141,11 +132,6 @@ const config = {
             to: "docs/invest",
             position: "left",
             label: "投资",
-          },
-          {
-            to: "docs/codes",
-            position: "left",
-            label: "Codes",
           },
           {
             to: "docs/ai",

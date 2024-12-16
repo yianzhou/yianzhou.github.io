@@ -297,6 +297,8 @@ When you're not sure if he wants to be there
 
 [Chorus]
 
+Oh, the tragedy
+
 Just how low did you
 
 Think I'd go 'fore I'd self-**implode** 内爆?

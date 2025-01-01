@@ -20,7 +20,7 @@ iCloud 云盘强制与 AppleID 绑定，登录逻辑很重；同步不稳定，�
 
 ![img](/img/12F0B68F-3C0C-48CE-A0D2-7A5E02CFBF6C.png)
 
-<https://photos.google.com/albums> 500 无法访问，也看不到自己分类好的相册
+[https://photos.google.com/albums](https://photos.google.com/albums) 500 无法访问，也看不到自己分类好的相册
 
 [无法访问相册（错误 500）：r/googlephotos --- Can't Access Album (error 500) : r/googlephotos](https://www.reddit.com/r/googlephotos/comments/1ez3zct/cant_access_album_error_500/) 网上也有讨论，已有 4 天了
 

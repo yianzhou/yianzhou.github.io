@@ -84,14 +84,14 @@ dlclose(FTServicesHandle);
 
 ## 网络
 
-可供调试的接口：<http://requestbin.net/>，<https://httpbin.org/get>，<https://httpbin.org/post>
+可供调试的接口：`http://requestbin.net/`，`https://httpbin.org/get`，`https://httpbin.org/post`
 
 模拟器用的网络调节器：先[下载](https://developer.apple.com/download/more/?=for%20Xcode)，copying the .prefPane file to: `/Library/PreferencePanes`
 
 Charles HTTPS 抓包检查：
 
 1. 电脑上的证书是否已安装好（Help - SSL Proxying - Install Charles Root Certificate），Keychain Access 中是否已信任。
-2. 手机上连上代理，访问 <chls.pro/ssl> 下载证书，然后有两个地方要启用：在 General - Profile 中启用，在 General - About - Certificate Trust Settings 中启用。
+2. 手机上连上代理，访问 `chls.pro/ssl` 下载证书，然后有两个地方要启用：在 General - Profile 中启用，在 General - About - Certificate Trust Settings 中启用。
 
 配置 SSL 代理：
 

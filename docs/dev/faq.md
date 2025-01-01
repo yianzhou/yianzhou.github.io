@@ -8,7 +8,7 @@
 
 [What Is My IP Address? Free IP Lookup](https://www.ipaddress.com/)
 
-查 IP：<https://www.ip138.com/>
+查 IP：[https://www.ip138.com/](https://www.ip138.com/)
 
 ## facebook SDK 引发崩溃
 
@@ -20,7 +20,7 @@
 
 ## github.io 无法连接
 
-<https://github.com/diamont1001/blog/issues/29>
+`https://github.com/diamont1001/blog/issues/29`
 
 `sudo code /etc/hosts`
 
@@ -50,32 +50,4 @@
 
 刷新 DNS：`sudo killall -HUP mDNSResponder`
 
-注：可通过 <https://www.ipaddress.com/> 查询 github 最新的 ip 地址
-
-## 第三方平台集成
-
-### Facebook
-
-测试打点：Event Manager
-
-查看测试事件：<https://www.facebook.com/events_manager2/list/>
-
-如何关联的：
-
-1. 确保你在测试手机上登录了 Facebook 应用
-2. 确保你的应用已安装 Facebook 应用 SDK
-3. 用同一个账号在 Facebook Developer 登录
-
-### AppsFlyer
-
-测试打点：sdk-integration-test -> inapp-events
-
-### 神策
-
-神策引入了 UIWebView 和 NSLocationWhenInUseUsageDescription 导致应用被拒。
-
-修复：
-
-```
-pod 'SensorsAnalyticsSDK', '2.1.9', :subspecs => ['DISABLE_UIWEBVIEW', 'DISABLE_TRACK_GPS']
-```
+注：可通过 [https://www.ipaddress.com/](https://www.ipaddress.com/) 查询 github 最新的 ip 地址

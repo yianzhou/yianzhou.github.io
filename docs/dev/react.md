@@ -373,13 +373,3 @@ void Instance::initializeBridge(
   });
 }
 ```
-
-## Hippy
-
-> <https://github.com/Tencent/Hippy/>
->
-> <https://hippyjs.org/>
-
-clone 代码仓库：`git clone https://github.com/Tencent/Hippy.git`，按照[教程](https://github.com/Tencent/Hippy/blob/master/README.zh_CN.md)安装。
-
-遇到问题的解决方法：更新 npm 的版本；`npm audit fix`；设置代理、网络波动时多试几次。

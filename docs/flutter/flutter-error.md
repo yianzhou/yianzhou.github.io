@@ -180,7 +180,7 @@ switch (config.priority) {
 
 ## An error occurred while processing the post-install hook of the Podfile
 
-Issue: [Error running pod install, undefined local variable or method 'continue' for #<Pod::Podfile:0x00000001095c1188 @defined_in_file=#<Pathname:/path/to/ios/Podfile> · Issue #104118 · flutter/flutter](https://github.com/flutter/flutter/issues/104118)
+Issue: [Error running pod install, undefined local variable or method 'continue' Issue #104118 · flutter/flutter](https://github.com/flutter/flutter/issues/104118)
 
 fix: [continue->next in Ruby script by jmagman · Pull Request #104296 · flutter/flutter](https://github.com/flutter/flutter/pull/104296)
 

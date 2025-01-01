@@ -6,7 +6,7 @@
 
 查看 Xcode SDK 版本：`xcodebuild -version -sdk`
 
-<https://xcodereleases.com/>
+[https://xcodereleases.com/](https://xcodereleases.com/)
 
 ## 调试技巧
 

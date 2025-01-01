@@ -8,7 +8,7 @@
 
 Top seven factors that are likely to affect:
 
-- Critically low battery (iPhone battery <= 20%)
+- Critically low battery (iPhone battery \<= 20%)
 - Low Power Mode:
   - `ProcessInfo.processInfo.isLowPowerModeEnabled`
   - `NSProcessInfoPowerStateDidChange`

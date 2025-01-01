@@ -380,7 +380,7 @@ When using TCP Fast Open, you have to be careful that you only send idempotent r
 
 > [WWDC 2015 - Your App and Next Generation Networks](https://developer.apple.com/videos/play/wwdc2015/719/)
 
-Test IPv6: <https://test-ipv6.com/index.html.zh_CN>
+Test IPv6: [https://test-ipv6.com/index.html.zh_CN](https://test-ipv6.com/index.html.zh_CN)
 
 Test IPv6 network: Mac - System Preferences - Sharing - Internet Sharing - Create NAT64 Network.
 

@@ -164,7 +164,7 @@ Xcode 中必须要有对应版本系统的 iOS DeviceSupport 文件，否则符�
 open /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/DeviceSupport
 ```
 
-下载 DeviceSupport：<https://github.com/iGhibli/iOS-DeviceSupport>
+下载 DeviceSupport：[https://github.com/iGhibli/iOS-DeviceSupport](https://github.com/iGhibli/iOS-DeviceSupport)
 
 使用 symbolicatecrash 工具进行符号化。symbolicatecrash 是 Xcode 自带的符号化工具，但是不在系统的 PATH 内，因此运行该命令需要修改 PATH 变量，在终端执行如下命令：
 

@@ -109,5 +109,5 @@ git push -u origin master
 
 参考:
 
-- <http://mtasuandi.com/2015/11/19/git-smart-http-transport/>
+- `http://mtasuandi.com/2015/11/19/git-smart-http-transport/`
 - ProGit, Chapter 4, Smart HTTP

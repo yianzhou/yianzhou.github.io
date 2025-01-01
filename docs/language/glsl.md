@@ -99,7 +99,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 }
 ```
 
-查看 `smoothstep` 函数曲线：<https://fordhurley.com/glsl-grapher/#smoothstep>
+查看 `smoothstep` 函数曲线：[https://fordhurley.com/glsl-grapher/#smoothstep](https://fordhurley.com/glsl-grapher/#smoothstepp)
 
 同心圆：
 
@@ -127,7 +127,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 }
 ```
 
-<https://graphtoy.com/> 函数图像
+[https://graphtoy.com/](https://graphtoy.com/) 函数图像
 
 添加色彩：
 

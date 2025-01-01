@@ -139,7 +139,7 @@ Timestamp: 2023-03-28T15:33:56+08:00
 
 ## 模拟器读不了剪贴板
 
-<https://developer.apple.com/forums/thread/682395>
+[https://developer.apple.com/forums/thread/682395](https://developer.apple.com/forums/thread/682395)
 
 ```
 2022-06-10 14:20:49.799939+0800 mttlite[95986:1163105] [claims] Upload preparation for claim 86E693B5-3C42-4D3C-961F-D765CBD0DCAC completed with error: Error Domain=NSCocoaErrorDomain Code=256 "未能打开文件“62a2509f882bf7cad1f2c3e8d11735b88a810281”。" UserInfo={NSURL=file:///Users/yianzhou/Library/Developer/CoreSimulator/Devices/2B208B55-99BE-4A23-901D-D8A88D07452B/data/Library/Caches/com.apple.Pasteboard/eb77e5f8f043896faf63b5041f0fbd121db984dd/62a2509f882bf7cad1f2c3e8d11735b88a810281, NSFilePath=/Users/yianzhou/Library/Developer/CoreSimulator/Devices/2B208B55-99BE-4A23-901D-D8A88D07452B/data/Library/Caches/com.apple.Pasteboard/eb77e5f8f043896faf63b5041f0fbd121db984dd/62a2509f882bf7cad1f2c3e8d11735b88a810281, NSUnderlyingError=0x600000a59770 {Error Domain=NSOSStatusErrorDomain Code=-10817 "(null)"}}

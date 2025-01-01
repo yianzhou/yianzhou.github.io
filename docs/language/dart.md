@@ -18,8 +18,6 @@ For apps targeting mobile and desktop devices, Dart includes both a Dart VM with
 
 For apps targeting the web, Dart includes compilers translate Dart into JavaScript.
 
-在浏览器试用 Dart：<https://dart.dev/tools/dartpad>
-
 ## Runtime
 
 > [Dart overview | Dart](https://dart.dev/overview)

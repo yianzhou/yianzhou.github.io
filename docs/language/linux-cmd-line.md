@@ -2,7 +2,7 @@
 
 书在这里下载：[The Linux Command Line by William Shotts](http://linuxcommand.org/tlcl.php)
 
-参考手册：<https://devhints.io/bash>
+参考手册：[https://devhints.io/bash](https://devhints.io/bash)
 
 [LinuxCommand.org: Writing shell scripts.](http://linuxcommand.org/lc3_writing_shell_scripts.php)
 
@@ -432,7 +432,7 @@ The program we will write is a report generator. It will present various statist
 
 ### set
 
-The `Set` Builtin: <https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html>
+The `Set` Builtin: [https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html](https://www.gnu.org/software/bash/manual/html_node/The-Set-Builtin.html)
 
 `-e`: Exit immediately if a command returns a non-zero status.
 
@@ -442,7 +442,7 @@ The `Set` Builtin: <https://www.gnu.org/software/bash/manual/html_node/The-Set-B
 
 ### eval
 
-The `eval` function: <https://www.gnu.org/software/make/manual/html_node/Eval-Function.html>
+The `eval` function: [https://www.gnu.org/software/make/manual/html_node/Eval-Function.html](https://www.gnu.org/software/make/manual/html_node/Eval-Function.html)
 
 ```bash
 FORMAT_CMD="git diff --cached --name-only -- '*.dart'"

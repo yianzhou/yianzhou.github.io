@@ -69,7 +69,7 @@ cmake ./CMakeLists.txt \
 
 `CMAKE_TOOLCHAIN_FILE`: a file which is read early in the CMake run and which specifies target platform and compiler related information.
 
-`PLATFORM=OS64COMBINED`: `ios.toolchain.cmake` 文件里定义的，这个文件可以在 <https://github.com/leetal/ios-cmake> 下载
+`PLATFORM=OS64COMBINED`: `ios.toolchain.cmake` 文件里定义的，这个文件可以在 [https://github.com/leetal/ios-cmake](https://github.com/leetal/ios-cmake) 下载
 
 ## CMake Cache
 

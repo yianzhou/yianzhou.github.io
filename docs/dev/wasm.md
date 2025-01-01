@@ -2,7 +2,7 @@
 
 When you've written a new code module in a language like C/C++, you can compile it into WebAssembly using a tool like Emscripten.
 
-Get the Emscripten SDK, using these instructions: <https://emscripten.org/docs/getting_started/downloads.html>
+Get the Emscripten SDK, using these instructions: [https://emscripten.org/docs/getting_started/downloads.html](https://emscripten.org/docs/getting_started/downloads.html)
 
 每次用终端窗口，先到 emsdk 目录执行：
 

@@ -4,7 +4,7 @@
 
 给定一个整数数组 nums 和一个目标值 target，在数组中找出和为 target 的两个整数，并返回他们的索引。
 
-用哈希表存储 {key: nums[i], value: i}，看要找的数是否在哈希表中。
+用哈希表存储 `{key: nums[i], value: i}`，看要找的数是否在哈希表中。
 
 ```cpp
 class Solution {

@@ -40,7 +40,7 @@ Framework 是一种打包方式。将库的二进制、头文件、资源文件�
 
 ## tdb
 
-<https://opensource.apple.com/source/tapi/tapi-1100.0.11/docs/TBD.rst.auto.html>
+`https://opensource.apple.com/source/tapi/tapi-1100.0.11/docs/TBD.rst.auto.html`
 
 Text-based Dynamic Library Stubs (.tbd) are a new representation for dynamic libraries and frameworks in Apple's SDKs.
 
@@ -306,7 +306,7 @@ end
 
 头文件也要编译，尤其对于 C++ 来说，头文件几乎包含了所有语法特性。
 
-<https://clang.llvm.org/docs/Modules.html>
+`https://clang.llvm.org/docs/Modules.html`
 
 Most software is built using a number of software libraries. For each library, one needs to access both its interface (API) and its implementation.
 

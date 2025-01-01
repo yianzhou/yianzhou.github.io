@@ -155,9 +155,7 @@ dart 调用原生，要在 root Isolate：When invoking channels in Flutter dest
 
 ### 数据类型
 
-Dart 数据类型对应平台的数据类型：
-
-<https://docs.flutter.dev/development/platform-integration/platform-channels?tab=type-mappings-obj-c-tab#codec>
+[Dart 数据类型对应平台的数据类型](https://docs.flutter.dev/development/platform-integration/platform-channels?tab=type-mappings-obj-c-tab#codec)
 
 ## Dart packages and Plugin packages
 
@@ -264,7 +262,7 @@ export PUB_HOSTED_URL=https://pub.flutter-io.cn
 export FLUTTER_STORAGE_BASE_URL=https://storage.flutter-io.cn
 ```
 
-如何指定版本 You can express version constraints using either caret syntax (^1.2.3) or traditional syntax ('>=1.2.3 <2.0.0').
+如何指定版本 You can express version constraints using either caret syntax (^1.2.3) or traditional syntax (`'>=1.2.3 <2.0.0'`).
 
 ```yaml
 dependencies:
@@ -417,12 +415,14 @@ classDiagram
 
 ## 全家桶
 
-- <https://github.com/flutter/flutter>
-- <https://github.com/flutter/engine>
-- <https://github.com/dart-lang/sdk>
-- <https://github.com/google/skia>
+```
+https://github.com/flutter/flutter
+https://github.com/flutter/engine
+https://github.com/dart-lang/sdk
+https://github.com/google/skia
 
-dSYM: <https://storage.cloud.google.com/flutter_infra_release/flutter/6ba2af10bb05c88a2731482cedf2cfd11cf5af0b/ios-release/Flutter.dSYM.zip>
+dSYM: https://storage.cloud.google.com/flutter_infra_release/flutter/6ba2af10bb05c88a2731482cedf2cfd11cf5af0b/ios-release/Flutter.dSYM.zip
+```
 
 `flutter/bin/internal/engine.version` 查看 hash，把上面链接的 hash 替换成当前 flutter 版本的 hash。
 

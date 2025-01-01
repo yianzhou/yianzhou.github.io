@@ -6,9 +6,9 @@ sidebar_position: 1
 
 ## NSObject 内存布局
 
-下载 objc 源码：<https://opensource.apple.com/tarballs/objc4/>，github 仓库：<https://github.com/opensource-apple/objc4>
+下载 objc 源码：`https://opensource.apple.com/tarballs/objc4/`，github 仓库：`https://github.com/opensource-apple/objc4`
 
-下载 CoreFoundation 源码：<https://opensource.apple.com/tarballs/CF/>，github 仓库：<https://github.com/opensource-apple/CF>
+下载 CoreFoundation 源码：`https://opensource.apple.com/tarballs/CF/`，github 仓库：`https://github.com/opensource-apple/CF`
 
 OC 代码经过编译器的 rewrite 后，会变成 C/C++代码，这是 OC 的底层。
 
@@ -281,7 +281,7 @@ NSLog(@"%zd", malloc_size((__bridge const void *)stu)); // 32
 
 ## 内存分配
 
-下载 libmalloc 源码：<https://opensource.apple.com/tarballs/libmalloc/>
+下载 libmalloc 源码：[https://opensource.apple.com/tarballs/libmalloc/](https://opensource.apple.com/tarballs/libmalloc/)
 
 ```c title='malloc.c'
 void *calloc(size_t num_items, size_t size)
@@ -362,7 +362,7 @@ void *calloc(size_t num_items, size_t size)
 
 > GNU is a recursive acronym for "GNU's Not Unix!", chosen because GNU's design is Unix-like, but differs from Unix by being free software and containing no Unix code.
 
-下载 glibc 源码：<https://www.gnu.org/software/libc/sources.html>
+下载 glibc 源码：[https://www.gnu.org/software/libc/sources.html](https://www.gnu.org/software/libc/sources.html)
 
 ```c title='sysdeps/i386/malloc-alignment.h'
 // 在 i386 架构下，内存对齐系数是 16

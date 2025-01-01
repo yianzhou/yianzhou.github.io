@@ -1,6 +1,6 @@
 # Flutter FFI
 
-<https://docs.flutter.dev/development/platform-integration/ios/c-interop>
+`https://docs.flutter.dev/development/platform-integration/ios/c-interop`
 
 FFI stands for **foreign function interface**. Other terms for similar functionality include _native interface_ and _language bindings_.
 

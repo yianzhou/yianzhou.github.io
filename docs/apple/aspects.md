@@ -12,7 +12,7 @@ Aspect-oriented programming (AOP) is used to encapsulate "cross-cutting" concern
 - Whenever a user interacts with the store, a genius suggestion should be presented, based on their interaction.
 - All calls should be logged.
 
-参考开源库：<https://github.com/steipete/Aspects> Think of Aspects as method swizzling on steroids 类固醇. It allows you to add code to existing methods per class or per instance, whilst thinking of the insertion point e.g. before/instead/after. Aspects automatically deals with calling super and is easier to use than regular method swizzling.
+参考开源库：`https://github.com/steipete/Aspects` Think of Aspects as method swizzling on steroids 类固醇. It allows you to add code to existing methods per class or per instance, whilst thinking of the insertion point e.g. before/instead/after. Aspects automatically deals with calling super and is easier to use than regular method swizzling.
 
 ## Aspects 实现原理
 

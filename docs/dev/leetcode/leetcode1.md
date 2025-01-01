@@ -627,7 +627,7 @@ public:
 
 如果 prefixSum(i) + target == prefixSum(j)，那么(i, j] 的区间的数的和一定为 target。
 
-本题的关键技巧，是用哈希表记录 {key: 前缀和；value: 出现次数}。
+本题的关键技巧，是用哈希表记录 `{key: 前缀和；value: 出现次数}`。
 
 ```cpp
 class Solution {
@@ -654,7 +654,7 @@ private:
 
 ### [560-目标和子数组](https://leetcode-cn.com/problems/subarray-sum-equals-k/)（前缀和）
 
-前缀和对于连续子数组求和问题特别有用！用哈希表记录 {key: 前缀和；value: 出现次数}。
+前缀和对于连续子数组求和问题特别有用！用哈希表记录 `{key: 前缀和；value: 出现次数}`。
 
 ```cpp
 class Solution {

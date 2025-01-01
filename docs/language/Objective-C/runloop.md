@@ -21,7 +21,7 @@ iOS 中有 2 套 API 可以访问 RunLoop：
 - Foundation: `NSRunLoop` (ObjC)
 - Core Foundation: `CFRunLoopRef` (C)
 
-`CFRunLoopRef` 是开源的：<https://opensource.apple.com/tarballs/CF/>，`NSRunLoop` 是基于 `CFRunLoopRef` 的封装。
+`CFRunLoopRef` 是开源的：`https://opensource.apple.com/tarballs/CF/`，`NSRunLoop` 是基于 `CFRunLoopRef` 的封装。
 
 RunLoop 的基本知识：
 

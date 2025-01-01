@@ -168,7 +168,7 @@ If your app contains code in Objectice-C, C, or C++, run the static analyzer, an
 
 ## 捕获崩溃
 
-示例代码：<https://github.com/Haley-Wong/RunLoopDemos/tree/master/RunLoopDemo04/RunLoopDemo04>
+示例代码：`https://github.com/Haley-Wong/RunLoopDemos/tree/master/RunLoopDemo04/RunLoopDemo04`
 
 ```objc
 - (void)setCatchExceptionHandler

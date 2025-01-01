@@ -547,7 +547,7 @@ L_objc_msgSendSuper2_body:
 
 ![img](/img/530905B9-3C3A-4B69-AADC-A40308661394.png)
 
-还有一种方法可以窥探底层实现。苹果在真正编译我们的程序时，在 objc 和汇编代码的中间，并不是 cpp，而是一种中间代码，后缀为 `ll`（代表 LLVM），其语法可参考 <https://llvm.org/docs/LangRef.html>。
+还有一种方法可以窥探底层实现。苹果在真正编译我们的程序时，在 objc 和汇编代码的中间，并不是 cpp，而是一种中间代码，后缀为 `ll`（代表 LLVM），其语法可参考 `https://llvm.org/docs/LangRef.html`
 
 中间代码是平台无关的。编译时，高级语言的代码先转成中间代码，再转成具体架构的汇编代码，最后转成机器码。
 

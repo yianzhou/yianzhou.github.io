@@ -12,4 +12,6 @@
 
 （我在本机设置好了用 SSH 连接 github，所以部署命令里用了 `USE_SSH=true`。）
 
-更新：`yarn upgrade @docusaurus/core@latest @docusaurus/preset-classic@latest`
+`npx docusaurus start`
+
+[updating-your-docusaurus-version | Installation | Docusaurus](https://docusaurus.io/docs/installation#updating-your-docusaurus-version)

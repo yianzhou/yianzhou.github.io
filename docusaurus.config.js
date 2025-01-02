@@ -1,37 +1,36 @@
 // @ts-check
 // Note: type annotations allow type checking and IDEs autocompletion
 
-const lightCodeTheme = require('prism-react-renderer/themes/github');
-const darkCodeTheme = require('prism-react-renderer/themes/dracula');
+const lightCodeTheme = require("prism-react-renderer/themes/github");
+const darkCodeTheme = require("prism-react-renderer/themes/dracula");
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'yianzhou',
-  tagline: 'Welcome',
-  url: 'https://yianzhou.github.io',
-  baseUrl: '/',
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
-  organizationName: 'yianzhou', // GitHub Pages 部署用
-  projectName: 'yianzhou.github.io', // GitHub Pages 部署用
-  deploymentBranch: 'gh-pages', // GitHub Pages 部署用
+  title: "yianzhou",
+  tagline: "Welcome",
+  url: "https://yianzhou.github.io",
+  baseUrl: "/",
+  onBrokenLinks: "throw",
+  onBrokenMarkdownLinks: "warn",
+  favicon: "img/favicon.ico",
+  organizationName: "yianzhou", // GitHub Pages 部署用
+  projectName: "yianzhou.github.io", // GitHub Pages 部署用
+  deploymentBranch: "gh-pages", // GitHub Pages 部署用
   trailingSlash: false,
 
   presets: [
     [
-      '@docusaurus/preset-classic',
+      "@docusaurus/preset-classic",
       /** @type {import('@docusaurus/preset-classic').Options} */
       ({
         docs: {
           path: "docs/apple",
           routeBasePath: "docs/apple",
-          sidebarPath: require.resolve('./sidebars.js'),
-          editUrl: 'https://github.com/yianzhou/yianzhou.github.io',
-          remarkPlugins: [require('mdx-mermaid')],
+          sidebarPath: require.resolve("./sidebars.js"),
+          editUrl: "https://github.com/yianzhou/yianzhou.github.io",
         },
         theme: {
-          customCss: require.resolve('./src/css/custom.css'),
+          customCss: require.resolve("./src/css/custom.css"),
         },
       }),
     ],
@@ -45,7 +44,6 @@ const config = {
         path: "docs/dev",
         routeBasePath: "docs/dev",
         sidebarPath: require.resolve("./sidebars.js"),
-        remarkPlugins: [require('mdx-mermaid')],
       },
     ],
     [
@@ -55,7 +53,6 @@ const config = {
         path: "docs/language",
         routeBasePath: "docs/language",
         sidebarPath: require.resolve("./sidebars.js"),
-        remarkPlugins: [require('mdx-mermaid')],
       },
     ],
     [
@@ -65,7 +62,6 @@ const config = {
         path: "docs/flutter",
         routeBasePath: "docs/flutter",
         sidebarPath: require.resolve("./sidebars.js"),
-        remarkPlugins: [require('mdx-mermaid')],
       },
     ],
     [
@@ -75,7 +71,6 @@ const config = {
         path: "docs/insights",
         routeBasePath: "docs/insights",
         sidebarPath: require.resolve("./sidebars.js"),
-        remarkPlugins: [require('mdx-mermaid')],
       },
     ],
     [
@@ -85,7 +80,6 @@ const config = {
         path: "docs/invest",
         routeBasePath: "docs/invest",
         sidebarPath: require.resolve("./sidebars.js"),
-        remarkPlugins: [require('mdx-mermaid')],
       },
     ],
     [
@@ -95,7 +89,6 @@ const config = {
         path: "docs/codes",
         routeBasePath: "docs/codes",
         sidebarPath: require.resolve("./sidebars.js"),
-        remarkPlugins: [require('mdx-mermaid')],
       },
     ],
     [
@@ -105,7 +98,6 @@ const config = {
         path: "docs/ai",
         routeBasePath: "docs/ai",
         sidebarPath: require.resolve("./sidebars.js"),
-        remarkPlugins: [require('mdx-mermaid')],
       },
     ],
   ],
@@ -114,10 +106,10 @@ const config = {
     /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
     ({
       navbar: {
-        title: 'yianzhou',
+        title: "yianzhou",
         logo: {
-          alt: 'yianzhou',
-          src: 'img/logo.svg',
+          alt: "yianzhou",
+          src: "img/logo.svg",
         },
         items: [
           {
@@ -161,22 +153,26 @@ const config = {
             label: "AI",
           },
           {
-            href: 'https://github.com/yianzhou/yianzhou.github.io',
-            label: 'GitHub',
-            position: 'right',
+            href: "https://github.com/yianzhou/yianzhou.github.io",
+            label: "GitHub",
+            position: "right",
           },
         ],
       },
       footer: {
-        style: 'dark',
+        style: "dark",
         copyright: `粤ICP备15029205号 Copyright © ${new Date().getFullYear()} yianzhou`,
       },
       prism: {
         theme: lightCodeTheme,
         darkTheme: darkCodeTheme,
-        additionalLanguages: ['dart', 'swift'],
+        additionalLanguages: ["dart", "swift"],
       },
     }),
+  markdown: {
+    mermaid: true,
+  },
+  themes: ["@docusaurus/theme-mermaid"],
 };
 
 module.exports = config;

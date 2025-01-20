@@ -1,6 +1,6 @@
 # Flutter Image
 
-## Image (Widget)
+## Image
 
 ```dart title='flutter/packages/flutter/lib/src/widgets/image.dart'
 /// A widget that displays an image.
@@ -105,6 +105,7 @@ class _ImageState extends State<Image> {
 - Image（消费者）：想要展示一张图片。
 - ImageProvider（生产者）：负责提供图片数据，从不同的来源获取图片（如网络、文件、内存等）。
 - ImageStream（传送带）：负责传递图片数据。
+- ImageStreamCompleter: 管理图像加载和解码的过程
 - ImageStreamListener（监听者）：监听图片传送过程中的变化（如图片加载完成、加载进度、错误等）并做出相应处理。
 
 Widget 需要显示图片时，调用 `provider.resolve` 得到 ImageStream，通过它来接收图片数据并交给 `listener` 处理。如果是动图，会持续传送新的图片帧。
@@ -209,12 +210,16 @@ classDiagram
 
 ## NetworkImage
 
-```dart
+```dart title='flutter/packages/flutter/lib/src/painting/_network_image_io.dart'
 @override
 ImageStreamCompleter loadImage(NetworkImage key, ImageDecoderCallback decode) {
     final StreamController<ImageChunkEvent> chunkEvents = StreamController<ImageChunkEvent>();
     return MultiFrameImageStreamCompleter(
+        /// The `codec` parameter is a future for an initialized [ui.Codec] that will
+        /// be used to decode the image.
         codec: _loadAsync(key as NetworkImage, chunkEvents, decode: decode),
+        /// The `chunkEvents` parameter is an optional stream of notifications about
+        /// the loading progress of the image.
         chunkEvents: chunkEvents.stream,
         scale: key.scale,
     );
@@ -246,5 +251,49 @@ Future<ui.Codec> _loadAsync(
 ```
 
 Codec（编解码器）是 "Coder/Decoder" 的缩写。
+
+```dart title='flutter/packages/flutter/lib/src/painting/image_stream.dart'
+MultiFrameImageStreamCompleter({
+    required Future<ui.Codec> codec,
+    required double scale,
+    String? debugLabel,
+    Stream<ImageChunkEvent>? chunkEvents,
+    InformationCollector? informationCollector,
+  }) : _informationCollector = informationCollector,
+       _scale = scale {
+  codec.then<void>(_handleCodecReady);
+}
+
+void _handleCodecReady(ui.Codec codec) {
+  _codec = codec;
+  if (hasListeners) {
+    _decodeNextFrameAndSchedule();
+  }
+}
+
+Future<void> _decodeNextFrameAndSchedule() async {
+  _nextFrame?.image.dispose();
+  _nextFrame = null;
+  _nextFrame = await _codec!.getNextFrame();
+  
+  if (_codec!.frameCount == 1) {
+    if (!hasListeners) {
+      return;
+    }
+    _emitFrame(ImageInfo(
+      image: _nextFrame!.image.clone(),
+      scale: _scale,
+    ));
+    _nextFrame!.image.dispose();
+    _nextFrame = null;
+    return;
+  }
+  _scheduleAppFrame();
+}
+
+void _scheduleAppFrame() {
+  SchedulerBinding.instance.scheduleFrameCallback(_handleAppFrame);
+}
+```
 
 ## cached_network_image

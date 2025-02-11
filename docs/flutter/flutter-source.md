@@ -23,8 +23,6 @@ git clone https://chromium.googlesource.com/chromium/tools/depot_tools.git
 export PATH=`pwd`/depot_tools:$PATH
 ```
 
-Editor autocomplete support: On Mac, you can simply use Xcode (e.g., open `out/ios_debug_unopt_arm64/flutter_engine.xcodeproj`).
-
 ### 准备 gclient
 
 Flutter 的引擎版本在`flutter/bin/internal/engine.version`文件里
@@ -103,6 +101,8 @@ ninja -C out/ios_debug_unopt && ninja -C out/host_debug_unopt
 ninja -C out/ios_debug_unopt_arm64 && ninja -C out/host_debug_unopt_arm64
 ```
 
+Goma 是 Google 开发的一个分布式编译系统，旨在加速大型代码库的编译过程。它通过将编译任务分发到多个机器上并行处理，从而显著减少编译时间。如果你在本地机器上编译，并且没有设置或无法使用 Goma，可以使用 `--no-goma` 参数来禁用 Goma。
+
 host_debug_unopt 是必须要编译的，否则在执行本地引擎时就会报错。
 
 iOS expect both a `host` and `ios` build. It is critical to recompile the `host` build after upgrading the Dart SDK (e.g. via a `gclient sync` after merging up to head), since artifacts from the `host` build need to be version matched to artifacts in the `iOS` build.
@@ -133,11 +133,11 @@ dsymutil out/ios_release_arm64/libFlutter.dylib
 
 ```bash
 # 新建项目
-./flutter/bin/flutter create my_app --local-engine-src-path src --local-engine=ios_debug_unopt_arm64
+flutter create my_app --local-engine-src-path src --local-engine=ios_debug_unopt_arm64
 
 # 运行项目
 cd my_app
-../flutter/bin/flutter run --local-engine-src-path ../src --local-engine=ios_debug_unopt_arm64
+flutter run --local-engine-src-path ../src --local-engine=ios_debug_unopt_arm64
 ```
 
 在 Android Studio 中运行 my_app，即可调试 framework 源码。
@@ -148,7 +148,7 @@ export FLUTTER_ENGINE=$HOME/Documents/flutter_source/src/
 flutter build ios --debug --local-engine ios_debug_unopt_arm64
 ```
 
-官方说了，只能符号断点调试：
+符号断点调试：
 
 > Add an engine symbol breakpoint via Debug > Breakpoints > Create Symbolic Breakpoint.... The Symbol field should be the engine symbol you're interested in, like -[FlutterEngine runWithEntrypoint:] (note the -[ prefix has no space).
 
@@ -283,8 +283,6 @@ See also https://crbug.com/1340825
 解决：`brew install ninja`
 
 ### cxxabi
-
-3.0.4 版本，目前还没解决
 
 ```c
 ../../flutter/fml/backtrace.cc:7:10: fatal error: 'cxxabi.h' file not found

@@ -1,5 +1,25 @@
 # Flutter News
 
+## 3.29
+
+从 3.29 开始，显示多个背景滤镜的应用现在可以使用新的 BackdropGroup 和新的 BackdropFilter.grouped 提高多个模糊的性能。
+
+新的 ImageFilter 构造函数允许将自定义着色器应用于任何子 Widget。
+
+3.29 开始，Android 和 iOS 上的 Flutter 将在应用的主线程上执行 Dart 代码，并且不再有单独的 Dart UI 线程。双方处于同一个线程下时，同步响应和调用可以更好处理一些平台事件处理、文本输入、插件调用和辅助功能等。
+
+特别是在对于 PlatformView 混合渲染等场景，如果处于同一线程之上，那么一些场景下的 PlatformView 由于不同线程导致的闪烁或者同步问题或者也可以得到改善。
+
+在整个 Flutter 团队的目标里，完全剔除 platform/message channels 是必然的方向。
+
+3.29 移除了 Flutter Gradle 插件，这个在很久之前就提到了，该插件其实自 3.19 起已被弃用，后续将把 Flutter Gradle 插件从 Groovy 转换为 Kotlin，并将其迁移到使用 AGP 公共 API，这个改动有望降低发布新 AGP 版本时损坏的频率，并减少基于构建的回归。
+
+## 3.27
+
+Flutter 在高帧率设备上将更一致地达到 120Hz。
+
+3.27 支持 DisplayP3 色彩空间中的颜色定义 UI，之前只支持 P3 图片效果。
+
 ## 3.10
 
 [What’s new in Flutter 3.10. Seamless web and mobile integration… | by Kevin Chisholm | Flutter | May, 2023 | Medium](https://medium.com/flutter/whats-new-in-flutter-3-10-b21db2c38c73)

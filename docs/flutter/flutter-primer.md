@@ -430,6 +430,14 @@ dSYM: https://storage.cloud.google.com/flutter_infra_release/flutter/6ba2af10bb0
 
 `engine/DEPS` 这个文件记录了引擎用的 dart 版本、skia 版本等信息。
 
+## Impeller and Skia
+
+Impeller 的核心就是负责绘制应用的界面，包括布局计算、纹理映射和动画处理等等。
+
+Skia 肯定是一个优秀的通用 2D 图形库，Google Chrome 等应用都是使用 Skia ，但是也因为它的「通用性」，它不专属于 Flutter，它无法专门针对 Flutter 的要求去进行优化调整，例如 Skia 附带的许多功能超出了 Flutter 的要求，其中一些可能会导致不必要的开销并导致渲染时间变慢，而目前来看，Skia 的通用性给 Flutter 带来了性能瓶颈。
+
+而 Impeller 是专门为 Flutter 而生，在 Flutter 上能更有效地利用 GPU，从而提高渲染性能。另外 Impeller 还会采用 tessellation 和着色器预编译来优化图形渲染。
+
 ## Navigator
 
 对于非常重的页面（例如有视频、图片等资源），在多次 Push 之后可能会出现 OOM 的情况，如何解决？

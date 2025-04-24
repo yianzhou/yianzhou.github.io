@@ -233,3 +233,7 @@ final result = await platform.invokeMethod(NATIVE_METHOD_GET_STRING_LIST, {"key"
 注释掉 `-fembed-bitcode-marker`，然后删除`flutter/bin/cache/flutter_tools.snapshot` 和`flutter/bin/cache/flutter_tools.stamp`
 
 执行 `flutter doctor` 重新编译 flutter_tools
+
+## Flutter 窗口无法编译 Android
+
+`flutter config --jdk-dir=$HOME/Documents/jdk-11.0.26.jdk/Contents/Home`

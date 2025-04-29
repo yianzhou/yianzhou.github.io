@@ -202,3 +202,13 @@ clang: error: linker command failed with exit code 1 (use -v to see invocation)
 1 error generated.
 2 errors generated.
 ```
+
+## Changes not staged for commit
+
+`modified:   Runner/Assets.xcassets/AppIcon.appiconset/114.png`
+
+Encountered 14 files that should have been pointers, but weren't:
+
+```
+git lfs uninstall && git reset --hard && git lfs install && git lfs pull
+```

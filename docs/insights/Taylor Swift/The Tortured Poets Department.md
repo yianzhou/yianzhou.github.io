@@ -4,7 +4,7 @@
 
 [Verse 1: Taylor Swift]
 
-I was supposed to be sent away
+I was **supposed to be** sent away
 
 But they forgot to come and get me
 
@@ -12,13 +12,13 @@ I was a **functioning alcoholic** 功能性酗酒者
 
 'Til nobody noticed my new **aesthetic** 美学的；美感的；
 
-All of this to say I hope you're okay
+**All of this to say** I hope you're okay
 
 But you're the reason
 
 And no one here's to blame 这不能怪任何人
 
-But what about your quiet **treason** 背叛；不忠 ?
+But what about your quiet **treason** 背叛；不忠
 
 [Chorus: Taylor Swift]
 
@@ -34,7 +34,7 @@ Your wife waters flowers, I wanna kill her
 
 All my mornings are Mondays stuck in an endless February
 
-I took the **miracle** 奇迹；不可思议的事 **move-on** 前进 drug, the effects were temporary
+I took the **miracle** **move-on** drug, the effects were temporary 神奇的忘情水
 
 And I love you, it's ruining my life
 
@@ -87,9 +87,9 @@ sabotage 破坏 self-sabotage 自暴自弃
 
 :::
 
-Throwing **spikes** 尖刺 down on the road
+Throwing **spikes** down on the road
 
-But I've seen this **episode** 电视剧里的一集 and still loved the show
+But I've seen this **episode** and still loved the show
 
 Who else decodes you?
 
@@ -109,11 +109,11 @@ You smokеd, then ate seven bars of chocolate
 
 We declared Charlie Puth should be a bigger artist
 
-I **scratch** 抓伤；划破 your head, you fall asleep like a tattooed **golden retriever** 金毛猎犬
+I **scratch** your head, you fall asleep like a tattooed **golden retriever**
 
 But you awaken with **dread** 恐惧
 
-**Pounding nails** 敲钉子 in your head
+**Pounding nails** in your head
 
 But I've read this one where you come undone
 
@@ -125,7 +125,7 @@ Sometimes, I wonder if you're gonna **screw** this **up** with me
 
 But you told Lucy you'd kill yourself if I ever leave
 
-And I had said that to Jack about you, so I felt seen
+And I had said that to Jack about you, so **I felt seen**
 
 Everyone we know understands why it's **meant to be** 命中注定的
 
@@ -143,7 +143,7 @@ And that's the closest I've come to my heart exploding
 
 [Verse 1]
 
-Did you really **beam** 传送 me up
+Did you really **beam** me up
 
 In a cloud of sparkling dust
 
@@ -165,7 +165,7 @@ Then sent me back where I came from
 
 [Pre-Chorus]
 
-For a moment, I knew **cosmic** 宇宙的 love
+For a moment, I knew **cosmic** love
 
 [Chorus]
 
@@ -193,33 +193,33 @@ Just to leave me here, naked and alone
 
 In a field in my same old town
 
-That somehow seems so **hollow** 空洞的；空虚的 now?
+That somehow seems so **hollow** now?
 
-They'll say I'm **nuts** 发疯的；精神失常的 if I talk about the existence of you
+They'll say I'm **nuts** if I talk about the existence of you
 
 [Bridge]
 
-I loved your **hostile** 敌对的；敌意的 takeovers 收购；接管
+I loved your **hostile** **takeovers**
 
-**Encounters** 邂逅；对峙；交锋 closer and closer
+**Encounters** closer and closer
 
-All your **indecent** 猥亵的；下流的 exposures
+All your **indecent** exposures
 
 How dare you say that it's—
 
-I'll build you a **fort** 堡垒；要塞 on some planet
+I'll build you a **fort** on some planet
 
 Where they can all understand it
 
 How dare you think it's romantic
 
-Leaving me safe and **stranded** 搁浅的；困于某地的
+Leaving me safe and **stranded**
 
 ## So Long, London
 
 [Verse 1]
 
-I saw in my mind **fairy lights** 小彩灯 through the **mist** 薄雾
+I saw in my mind **fairy lights** through the **mist**
 
 :::tip
 
@@ -227,21 +227,21 @@ fairy 小仙女
 
 :::
 
-I kept calm and carried the weight of the **rift** 裂痕；裂缝
+I kept calm and carried the weight of the **rift**
 
-Pulled him in tighter each time he was **drift**in' 漂流；飘移 away
+Pulled him in tighter each time he was **drift**in' away
 
-My **spine** 脊柱 split from carrying us up the hill
+My **spine** split from carrying us up the hill
 
-**Wet through** 湿透了 my clothes, **weary** 疲倦的 bones caught the **chill** 寒冷；着凉
+**Wet through** my clothes, **weary** bones caught the **chill**
 
-I stopped tryna make him laugh, stopped tryna **drill** 钻 the safe
+I stopped tryna make him laugh, stopped tryna **drill** the safe
 
 [Chorus]
 
 Thinkin', "How much sad did you think I had, did you think I had, in me?"
 
-Oh, the **tragedy** 悲剧
+Oh, the **tragedy**
 
 So long, London
 
@@ -249,13 +249,13 @@ You'll find someone
 
 [Verse 2]
 
-I didn't **opt in** 选择加入；同意参与 to be your odd man out
+I didn't **opt in** to be your odd man out
 
 I founded the club she's heard great things about
 
-I left all I knew, you left me at the house by the **Heath** 荒地；荒野
+I left all I knew, you left me at the house by the **Heath**
 
-I stoppеd CPR 心肺复苏术, after all, it's no use
+I stoppеd CPR after all, it's no use
 
 The spirit was gonе, we would never come to
 
@@ -265,7 +265,7 @@ And I'm pissed off you let me give you all that youth for free
 
 For so long, London
 
-**Stitches** 缝线 undone
+**Stitches** undone
 
 Two graves, one gun
 
@@ -277,7 +277,7 @@ And you say I abandoned the ship
 
 But I was going down with it
 
-My **white-knuckle** 惊险的；令人胆战心惊的 dying **grip** 握紧；抓牢
+My **white-knuckle** dying **grip**
 
 :::tip
 
@@ -285,13 +285,13 @@ knuckle 指关节
 
 :::
 
-Holding tight to your quiet **resentment** 怨恨；不满
+Holding tight to your quiet **resentment**
 
 And my friends said it isn't right to be scared
 
 Every day of a love affair
 
-Every breath feels like **rarest** 半熟半生的；罕见的 air
+Every breath feels like **rarest** air
 
 When you're not sure if he wants to be there
 
@@ -301,7 +301,7 @@ Oh, the tragedy
 
 Just how low did you
 
-Think I'd go 'fore I'd self-**implode** 内爆?
+Think I'd go 'fore I'd self-**implode**?
 
 'Fore I'd have to go be free?
 
@@ -309,13 +309,125 @@ Think I'd go 'fore I'd self-**implode** 内爆?
 
 You swore that you loved me, but where were the clues?
 
-I died on the **altar** 祭坛 waitin' for the proof
+I died on the **altar** waitin' for the proof
 
 You sacrificed us to the gods of your bluest days
 
 And I'm just getting color back into my face
 
 I'm just mad as hell 'cause I loved this place for
+
+## But Daddy I Love Him
+
+I forget how the West was won
+
+I forget if this was ever fun
+
+I just learned these people only raise you to cage you
+
+Sarahs and Hannahs in their **Sunday best**
+
+**Clutching** their pearls, sighing "What a mess"
+
+I just learned these people try and save you cause they hate you
+
+Too high a horse
+
+For a simple girl to rise above it
+
+They slammed the door on my whole world
+
+The one thing I wanted
+
+Now I'm running with my dress unbuttoned
+
+Screaming "But Daddy I love him!"
+
+I'm having his baby
+
+No, I'm not, but you should see your faces
+
+I'm telling him to **floor** it through the **fences**
+
+No, I'm not coming to my senses
+
+I know he's crazy but he's the one I want
+
+**Dutiful** daughter, all my plans were laid
+
+**Tendrils** tucked into a **woven braid**
+
+Growing up **precocious** sometimes means not growing up at all
+
+He was chaos, he was **revelry**
+
+**Bedroom eyes** like a **remedy**
+
+Soon enough the elders had **convened down** at the city hall
+
+"Stay away from her"
+
+The **saboteurs** protested too much
+
+Lord knows the words we never heard
+
+Just **screeching tires** and true love
+
+I'll tell you something right now
+
+I'd rather burn my whole life down
+
+Than listen to one more second of all this **griping** and **moaning**
+
+I'll tell you something about my good name
+
+It's mine alone to **disgrace**
+
+I don't cater to all these vipers dressed in empath's clothing
+
+God save the most **judgmental** **creeps**
+
+Who say they want what's best for me
+
+**Sanctimoniously** performing **soliloquies** I'll never see
+
+Thinking it can change the beat of my heart when he touches me
+
+And counteract the chemistry and undo the destiny
+
+You ain't gotta pray for me
+
+Me and my wild boy
+
+And all this wild joy
+
+If all you want is gray for me
+
+Then it's just white noise
+
+And it's just my choice
+
+There's a lot of people in town that I
+
+**Bestow** upon my fakest smiles
+
+**Scandal** does funny things to pride
+
+But brings lovers closer
+
+We came back when the heat died down
+
+Went to my parents and they came around
+
+All the wine moms are still holding out
+
+But it's over.
+
+Time, doesn't it give some **perspective**
+
+No, you can't come to the wedding
+
+I know he's crazy but he's the one I want
 
 ## Florida!!!
 
@@ -329,13 +441,13 @@ There’s a **pun** on the word "heat":
 
 - trying to cool down in hot weather, in places such as Florida.
 - increased police attention
-- abuse (虐待；辱骂；滥用) or criticism
+- abuse or criticism
 
 :::
 
 They said I was a cheat, I guess it must be true
 
-And my friends all smell like **weed** 杂草；烟草；大麻 or little babies
+And my friends all smell like **weed** or little babies
 
 :::tip
 
@@ -343,7 +455,7 @@ alluding to the feeling of all her friends being in different life stages
 
 :::
 
-And this city reeks of driving myself crazy
+And this city **reeks of** driving myself crazy
 
 :::tip
 
@@ -369,7 +481,7 @@ Destin is a city in Florida that serves as a popular tourist destination.
 
 [Chorus: Taylor Swift & Florence Welch, Taylor Swift]
 
-Florida is one hell of a drug. Florida Can I **use** you **up**? 用完；耗尽
+Florida is one hell of a drug. Florida Can I **use** you **up**?
 
 :::tip
 
@@ -383,9 +495,9 @@ The **hurricane** with my name when it came
 
 I got drunk and I dared it to **wash** me **away** 冲走
 
-**Barricaded** 封锁；路障 in the bathroom with a bottle of wine
+**Barricaded** in the bathroom with a bottle of wine
 
-Well, me and my ghosts, wе had **a hell of a time** 糟糕的/痛苦的时光
+Well, me and my ghosts, wе had a hell of a time
 
 Yes, I'm hauntеd, but I'm feeling just fine
 
@@ -395,9 +507,9 @@ And your cheating husband disappeared, well
 
 No one asks any questions here
 
-So I did my best to **lay to rest** 入土为安；安息吧
+So I did my best to **lay to rest**
 
-All of the bodies that have ever been on my body and in my mind, they sink into the **swamp** 沼泽；湿地
+All of the bodies that have ever been on my body and in my mind, they sink into the **swamp**
 
 Is that a bad thing to say in a song?
 
@@ -417,9 +529,9 @@ You gotta **pack** all your cares **away** 把你的忧虑收拾起来扔掉
 
 I need to forget, so take me to Florida
 
-I've got some **regrets** 后悔；遗憾, I'll bury them in Florida
+I've got some **regrets**, I'll bury them in Florida
 
-Tell me I'm despicable 卑鄙的；下流的, say it's unforgivable
+Tell me I'm despicable, say it's unforgivable
 
 At least the dolls are beautiful, fuck me up, Florida
 

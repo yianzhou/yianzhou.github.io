@@ -271,3 +271,17 @@ page fault 在较差的情况下耗时超过 1ms，在较正常的情况下也�
 如果我们能让启动期间需要执行的指令，都紧凑地排列在相邻的内存分页，那么就能尽可能地减少 page fault 的次数，这就是二进制重排的目的。
 
 Xcode 对二进制重排提供了支持，只需要在编译设置里指定一个 Order File 即可 (Build Settings - Linking - Order File)，例如 objc 的源码就使用了这项技术（源码文件夹下的 libobjc.order 文件）。编译器会按照这个文件指定的符号顺序来排列二进制代码段，达到优化的目的。
+
+## AppDelegate
+
+![img](/img/F8302ED0-ACFC-476A-B1F2-C6BCDC4A1B34.webp)
+
+App 启动与退出事件的采集，应当在这些方法与通知中寻找思路。下面列举下常见的运行状态变化的场景：
+
+1. 冷启动，也即 Kill App 之后启动，或 App 安装后第一次启动（Not Running -> Inactive -> Active）；
+2. App 返回主屏幕（Active -> Inactive -> Background -> Suspended）。若在 Info.plist 中设置 Application does not run in background 为 YES，则 App 返回主屏幕后会立即被 Kill（Active -> Inactive -> Background -> Suspended -> Not Running）；
+3. App 内进入 App 切换器，然后直接返回 App（Active -> Inactive -> Active）；
+4. App 内进入 App 切换器，然后进入主屏幕（Active -> Inactive -> Background -> Suspended）；
+5. App 内进入 App 切换器，然后 Kill App（Active -> Inactive -> Background -> Suspended -> Not Running）；
+6. App 挂起状态重新运行，即热启动（Suspended -> Background -> Inactive -> Active）；
+7. App 挂起状态时 Kill App 或直接删除 App（Suspended -> Not Running）。

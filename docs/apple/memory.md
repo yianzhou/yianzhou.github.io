@@ -311,3 +311,37 @@ self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 repeats:YES block:^(NST
 ```objc
 self.timer = [NSTimer scheduledTimerWithTimeInterval:1.0 target:[[MyProxy alloc]initWithTarget:self] selector:@selector(testPrint) userInfo:nil repeats:YES];
 ```
+
+## 虚拟内存
+
+看下面的一个内存导致的崩溃，JSC 在使用 bmalloc 尝试进行内存分配时，提示 OOM 导致了 SIGTRAP。
+
+```
+Last Exception :
+0  JavaScriptCore                 0x000000018b777570 _pas_panic_on_out_of_memory_error
+1  JavaScriptCore                 0x000000018b72e918 _bmalloc_try_iso_allocate_impl_impl_slow
+2  JavaScriptCore                 0x000000018b73d3d8 _bmalloc_heap_config_specialized_local_allocator_try_allocate_small_segregated_slow +  5952
+3  JavaScriptCore                 0x000000018b7276f8 _bmalloc_allocate_impl_casual_case +  800
+```
+
+按照常规的理解，当 App 内存不足的时候，正常会触发系统的 Jetsam 机制杀死 App。在系统日志中会留下 Jetsam 相关日志，理论上不会在 Bugly 等异常上报中发现。但这一类崩溃却一直在产生上报，并且**低内存的崩溃堆栈表现形式**有很多种。（看经验来识别？）虽然堆栈上有明确的原因说明是 OOM，但我们观察到有不少用户实际上物理内存空间还是足够的，例如 633MB。
+
+翻阅相关 JavaScriptCore、DartVM 等虚拟机的内存管理相关代码，可以找到底层的内存分配基本实现都是基于 mmap 实现的。虽然 mmap 主要用于文件映射，但也可以用于分配匿名内存。通过指定特殊的参数（MAP_ANONYMOUS 或 MAP_ANON），mmap 可以创建一段与任何文件都不关联的内存区域，用于动态分配内存。这种方式在某些情况下比传统的 malloc 函数分配内存更灵活。
+
+​​MAP_ANONYMOUS​​: 表示分配匿名内存（不与文件关联）。
+
+mmap 通过系统调用将一个文件或设备的内容映射到进程的虚拟地址空间中。mmap 能分配的内存受到设备的最大虚拟内存限制。
+
+根据 XNU 内核源码和开发者实践验证，iOS 对单个进程的虚拟内存地址空间确实存在硬件相关的动态限制。当设备 RAM 小于 3GB 时，虚拟地址空间上限为 ​​9.375GB​​，这一限制源于 XNU 内核中 pmap.c 文件的内存分配机制。
+
+[Size Matters: An Exploration of Virtual Memory on iOS | Always Processing](https://alwaysprocessing.blog/2022/02/20/size-matters)
+
+pmap.c 中还透露了内核内存分配存在 jumbo 机制。当 iOS App 带有指定的能力声明时，xnu 内核将会以 jumbo 模式运行，虚拟内存地址空间将会直接分配为最大值 64GB：
+
+iOS 14.0+ 可开启虚拟内存地址拓展。当开启 com.apple.developer.kernel.extended-virtual-addressing 时，内核的虚拟内存可分配空间有明显提升。
+
+内存扩展前 malloc 失败阈值约 `7065482 * 1009 = 6.63 GB`
+
+内存扩展后 malloc 失败阈值约 `56753881 * 1009 = 53.33 GB`
+
+苹果在 iOS15 上增加了 com.apple.developer.kernel.increased-memory-limit 的能力声明，实测在 iPhone 13 Pro 下可以增加 1GB 的可用物理内存。

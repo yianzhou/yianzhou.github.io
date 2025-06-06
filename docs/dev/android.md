@@ -77,3 +77,10 @@ Android Go——取代 Android One 成为专为低端设备优化的安卓系统
 `gradle.properties`: 用于定义全局的 Gradle 属性和配置参数，影响整个构建过程。
 
 `build.gradle.kts` 文件使用 Kotlin 语言编写，提供了更强的类型安全和更好的 IDE 支持。
+
+## Android Studio
+
+Unresolved reference: ...
+
+1. 在项目的工程根目录中找到名为 `.idea` 的文件夹，进入该文件夹后，再找到里面的 “libraries” 文件夹，将 “libraries” 文件夹下的所有文件都删除。
+2. 导航栏 - File - Invalidate Caches...

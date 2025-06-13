@@ -320,15 +320,9 @@ The `~/.bashrc` file is probably the most important startup file from the ordina
 
 ## 13 - Customizing the Prompt
 
-查看当前系统已安装的 shell：`cat /etc/shells`
+看教程，有配置步骤，用 `brew install`
 
-切换成 zsh：`chsh -s /bin/zsh`
-
-安装 [ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)
-
-编辑配置文件：`~/.zshrc`
-
-安装 [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)：`brew install zsh-syntax-highlighting`
+安装 [zsh-syntax-highlighting](https://github.com/zsh-users/zsh-syntax-highlighting/blob/master/INSTALL.md)
 
 安装 [zsh-autosuggestions](https://github.com/zsh-users/zsh-autosuggestions/blob/master/INSTALL.md)
 

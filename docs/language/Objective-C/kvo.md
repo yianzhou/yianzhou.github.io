@@ -110,3 +110,11 @@ KVC 赋值的全过程（取值的全过程与赋值是类似的）：
 KVC 的方法调用会触发 KVO，哪怕对象没有 `set` 方法：
 
 ![img](/img/151725FA-69C8-473F-9230-17B295C2280C.png)
+
+如果找不到 set 方法和实例变量，会抛出异常：
+
+```
+*** Terminating app due to uncaught exception 'NSUnknownKeyException',
+reason: '[<WKPreferences 0x30240e200> setValue:forUndefinedKey:]:
+this class is not key value coding-compliant for the key upgradeMixedContentEnabled.'
+```

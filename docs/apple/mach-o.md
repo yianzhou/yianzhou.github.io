@@ -25,7 +25,7 @@ int global_int_value = 1; // 全局变量
 static int static_int_value = 2; // 静态变量
 
 int main () {
-	global_int_value = 10;
+    global_int_value = 10;
     static_int_value = 20;
     return 0;
 }
@@ -307,7 +307,7 @@ SYMBOL TABLE:
 ```c
 void test() {}
 int main () {
-	test();
+    test();
     return 0;
 }
 ```

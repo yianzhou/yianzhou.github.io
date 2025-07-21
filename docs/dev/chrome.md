@@ -1,3 +1,0 @@
-# Chrome
-
-`defaults write com.google.Chrome AppleEnableSwipeNavigateWithScrolls -bool FALSE`

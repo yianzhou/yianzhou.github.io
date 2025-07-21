@@ -27,3 +27,7 @@ iCloud 云盘强制与 AppleID 绑定，登录逻辑很重；同步不稳定，�
 ## Huawei
 
 享界 S9 袁启聪测评后被新浪微博禁言。
+
+## Facebook sdk crash
+
+[2020 活久见：欧美主流 app「熔断」了](https://cloud.tencent.com/developer/article/1627302)

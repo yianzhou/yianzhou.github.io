@@ -6,26 +6,6 @@
 
 先说项目中用到了哪些设计模式，再说整个技术方案是如何遵循六大设计原则。
 
-## MVC, MVP, MVVM
-
-大家在使用 MVC 的过程中遇到的问题：
-
-- View 依赖 Model 来渲染，并且会修改 Model 的东西
-- VC 里包含了大量的 UI 和布局代码：图形界面应该放在 View 里
-- VC 里实现了大量的协议：协议应该由专门的类来实现
-- VC 变得非常臃肿：VC 的作用是控制 View 和 Model 之间的关系！
-
-随着 Swift 的兴起，MVP 也在兴起。
-
-代理的三个部分：协议、委托方、代理方
-
-代理的三个步骤
-
-- 委托方：声明协议、**弱引用**遵循协议的对象、调用代理方法
-- 代理方：遵循协议、实现协议方法、设置代理对象
-
-MVVM 存在的问题：依赖 block 进行数据的传递，不安全（数据越多人知道就越不安全）、调试难度大、可读性差。目前正在慢慢被摒弃，只在一些小型组件或模块里面使用。
-
 ## UML 类图
 
 ```mermaid
@@ -62,15 +42,6 @@ classDiagram
 
 创建型模式 (Creational Pattern) 对类的实例化过程进行了抽象，能够将软件模块中对象的创建和对象的使用分离。为了使软件的结构更加清晰，外界对于这些对象只需要知道它们共同的接口，而不清楚其具体的实现细节，使整个系统的设计更加符合单一职责原则。
 
-| 设计模式                         | 重要程度 |
-| -------------------------------- | -------- |
-| 简单工厂模式（Simple Factory）   | 4        |
-| 工厂方法模式（Factory Method）   | 5        |
-| 抽象工厂模式（Abstract Factory） | 5        |
-| 建造者模式（Builder）            | 2        |
-| 原型模式（Prototype）            | 3        |
-| 单例模式（Singleton）            | 4        |
-
 简单工厂模式主要解决不同情况下，需要创建不同子类，而这些子类又需要转化为公共父类让外界去使用的问题。Foundation 框架中的 `NSNumber` 所应用的就是简单工厂模式。类似的还有 `NSArray`、`UIButton` 等。
 
 ```swift
@@ -102,16 +73,6 @@ let url = components.url // 建造完成
 
 结构型模式 (Structural Pattern) 描述如何将类或者对象结合在一起形成更大的结构，就像搭积木，可以通过简单积木的组合形成复杂的、功能更为强大的结构。
 
-| 设计模式            | 重要程度 |
-| ------------------- | -------- |
-| 适配器模式(Adapter) | 4        |
-| 桥接模式(Bridge)    | 3        |
-| 组合模式(Composite) | 4        |
-| 装饰模式(Decorator) | 3        |
-| 外观模式(Facade)    | 5        |
-| 享元模式(Flyweight) | 1        |
-| 代理模式(Proxy)     | 4        |
-
 适配器模式：将一个类的接口转换成客户端希望的另外一个接口，适配器模式使得原本由于接口不兼容而不能一起工作的类可以一起工作。如，数据上报迁移过程中使用的两套接口。
 
 组合模式就是将对象组合成树形结构，而且单个对象和组合对象的接口一致（同一个类）。数据结构中的树用 `TreeNode` 表示树的每个节点，就是组合模式。`UIView` 组成的视图层级、`CALayer` 组成的图层层级，是经典的组合模式。
@@ -124,22 +85,6 @@ let url = components.url // 建造完成
 
 行为型模式(Behavioral Pattern)是对在不同的对象之间划分责任和算法的抽象化。
 
-| 设计模式                            | 重要程度 |
-| ----------------------------------- | -------- |
-| 职责链模式(Chain of Responsibility) | 3        |
-| 命令模式(Command)                   | 4        |
-| 解释器模式(Interpreter)             | 1        |
-| 迭代器模式(Iterator)                | 5        |
-| 中介者模式(Mediator)                | 2        |
-| 备忘录模式(Memento)                 | 2        |
-| 观察者模式(Observer)                | 5        |
-| 状态模式(State)                     | 3        |
-| 策略模式(Strategy)                  | 4        |
-| 模板方法模式(Template Method)       | 3        |
-| 访问者模式(Visitor)                 | 1        |
-
-例子：
-
 职责链模式：`UIResponder`。
 
 观察者模式：`NSNotificationCenter` 添加观察者 `addObserver:selector:name:object:`。
@@ -148,34 +93,16 @@ let url = components.url // 建造完成
 
 ## 六大设计原则
 
-### 单一职责原则（Single Responsibility Principle）
+单一职责原则（Single Responsibility Principle）：简单讲就是一个类只做一件事，`CALayer` 负责动画和视图的显示；`UIView` 负责事件传递、事件响应。
 
-简单讲就是一个类只做一件事，`CALayer` 负责动画和视图的显示；`UIView` 负责事件传递、事件响应。
+开闭原则（Open Closed Principle）：对修改关闭，对扩展开放。模块通过扩展的方式去应对需求的变化，应该尽量在不修改源代码的基础上面扩展组件。通过扩展去应对需求变化，就要求我们必须要面向接口编程，或者说面向抽象编程。所有参数类型、引用传递的对象必须使用抽象（接口或者抽象类）的方式定义，不能使用实现类的方式定义。总的来说，开闭原则提高系统的可维护性和代码的重用性。
 
-### 开闭原则（Open Closed Principle）
+里氏替换原则（Liskov Substitution Principle）：In a computer program, if S is a subtype of T, then objects of type T may be replaced with objects of type S without altering any of the desirable properties of the program (correctness, task performed, etc.) 父类可以被子类无缝替换，且原有的功能不受任何影响。
 
-对修改关闭，对扩展开放。模块通过扩展的方式去应对需求的变化，应该尽量在不修改源代码的基础上面扩展组件。
+迪米特法则（Law Of Demeter）：一个对象应当对其他对象尽可能少的了解，实现高聚合、低耦合。
 
-通过扩展去应对需求变化，就要求我们必须要面向接口编程，或者说面向抽象编程。所有参数类型、引用传递的对象必须使用抽象（接口或者抽象类）的方式定义，不能使用实现类的方式定义。总的来说，开闭原则提高系统的可维护性和代码的重用性。
+接口隔离原则（Interface Segregation Principle）：使用多个专门的协议、而不是一个庞大臃肿的协议，如 `UITableviewDelegate` 和 `UITableViewDataSource`。
 
-### 里氏替换原则（Liskov Substitution Principle）
-
-In a computer program, if S is a subtype of T, then objects of type T may be replaced with objects of type S without altering any of the desirable properties of the program (correctness, task performed, etc.)
-
-父类可以被子类无缝替换，且原有的功能不受任何影响。
-
-### 迪米特法则（Law Of Demeter）
-
-一个对象应当对其他对象尽可能少的了解，实现高聚合、低耦合。
-
-### 接口隔离原则（Interface Segregation Principle）
-
-使用多个专门的协议、而不是一个庞大臃肿的协议，如 `UITableviewDelegate` 和 `UITableViewDataSource`。
-
-### 依赖倒置原则（Dependence Inversion Principle）
-
-抽象不应该依赖于具体实现、具体实现可以依赖于抽象。（调用接口感觉不到内部是如何操作的）
-
-### 应用
+依赖倒置原则（Dependence Inversion Principle）：抽象不应该依赖于具体实现、具体实现可以依赖于抽象。（调用接口感觉不到内部是如何操作的）
 
 对这六个原则的遵守并不是是和否的问题，而是遵守程度的多少，要根据实际情况灵活运用。对他们的遵守程度只要在一个合理的范围内，就算是良好的设计。

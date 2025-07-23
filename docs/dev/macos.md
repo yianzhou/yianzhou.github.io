@@ -63,20 +63,6 @@ Turn off mojave screenshot previews:
 - From the toolbar of icons at the bottom of the screen, select Options.
 - Click once to uncheck Show Floating Thumbnail.
 
-## Apache 快速开始
-
-打开终端，启动内置 Apache：`sudo apachectl start`
-
-打开浏览器，输入 `localhost`，即可看见 "It works!"。
-
-也可以通过 [127.0.0.1](http://127.0.0.1) 访问。
-
-文件目录：`open /Library/WebServer/Documents`
-
-配置文件：`/etc/apache2/httpd.conf`
-
-停止：`sudo apachectl stop`
-
 ## Chrome
 
 [SwitchyOmega](https://github.com/FelisCatus/SwitchyOmega/releases)，如果遇到最新版本不能安装的，可以试试旧版本。

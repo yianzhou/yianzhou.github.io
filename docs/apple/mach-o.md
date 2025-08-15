@@ -45,7 +45,7 @@ otool -l machoinfo # print the load commands
 
 ## Load Commands
 
-<img src="/img/C9FFD4FE-5A6C-4626-9D09-B827730216EF.png" width="400" />
+![img](/img/C9FFD4FE-5A6C-4626-9D09-B827730216EF.png)
 
 Load Commands 是“告诉 dyld 怎么把这个 Mach-O 加载到内存并运行”的指令表。
 
@@ -72,6 +72,31 @@ LC_DYSYMTAB 是动态符号表。它并不直接存储符号名称，它更像�
 
 LC_SYMTAB 是完整的符号表。它为静态链接器 (ld) 和调试器 (lldb) 服务，包含了程序中所有的符号信息。LC_DYSYMTAB 是动态符号表。它为动态链接器 (dyld) 服务，可以看作是 LC_SYMTAB 的一个子集和索引，只包含与动态链接（跨模块调用）相关的符号。在 Mach-O 的设计中，这种分离非常高效。调试和静态链接时可以使用全部信息，而运行时 dyld 只需要加载和解析与动态链接相关的、更小的一部分信息，从而加快了程序的启动速度。
 
+## LC_SEGMENT_64
+
+```c
+// 这是 LC_SEGMENT_64 命令在 C 语言中的结构体定义
+struct segment_command_64 {
+    uint32_t    cmd;        // 命令类型, 对于这个命令, 值是 LC_SEGMENT_64
+    uint32_t    cmdsize;    // 这条命令的总大小 (包括它后面的 section 定义)
+    char        segname[16];// Segment 的名字, 如 "__TEXT", "__DATA"
+    uint64_t    vmaddr;     // Segment 在虚拟内存中的起始地址 (VM Address)
+    uint64_t    vmsize;     // Segment 在虚拟内存中占据的大小 (VM Size)
+    uint64_t    fileoff;    // Segment 在文件中的起始偏移 (File Offset)
+    uint64_t    filesize;   // Segment 在文件中占据的大小 (File Size)
+    vm_prot_t   maxprot;    // 内存页面的最大允许权限 (Maximum VM Protection)
+    vm_prot_t   initprot;   // 内存页面的初始权限 (Initial VM Protection)
+    uint32_t    nsects;     // 这个 Segment 包含的 Section 数量
+    uint32_t    flags;      // 标志位
+};
+```
+
+vmaddr: 当这个 Segment 被加载到内存后，它应该被放置在的虚拟地址。这是程序链接时就已经计算和分配好的一个理想地址。
+
+vmsize: 这个 Segment 在内存中总共需要多大的空间。这个值通常会向上取整到系统内存页（Page）的整数倍（在 ARM64 上是 16KB）。因为操作系统是以页为单位管理内存的。
+
+fileoff: 这个 Segment 的内容，是从 Mach-O 文件的第几个字节开始的。
+
 ## 编译链接
 
 假设你的代码中调用了 `printf` 函数。编译时，编译器看到 `printf` 调用，第一步不是生成代码，而是检查合法性。因为你在文件开头写了 `#include <stdio.h>`，编译器会去查找这个头文件。
@@ -84,11 +109,11 @@ LC_SYMTAB 是完整的符号表。它为静态链接器 (ld) 和调试器 (lldb)
 
 但编译器不知道 `printf` 的地址。`printf` 是一个外部函数，它的代码在 C 标准库 (libc 或在苹果系统上的 libSystem) 里，而不在你写的 `main.c` 文件里。
 
-所以，编译器会做以下三件事，将这个问题留给下一个阶段——链接器 (Linker, ld)。
+所以，编译器会做以下三件事，然后将这个问题留给链接器。
 
-1. 生成一个带“占位符”的 call 指令，但这条指令的目标地址是一个无效的或临时的值（比如 0x00000000）。
-2. 编译器在生成的中间文件（称为目标文件，main.o）中，有一个符号表 (Symbol Table)。它会在这个表里添加一条记录，内容是一个名为 `_printf` 的外部符号 (External Symbol)。（注意：C 语言的函数在底层通常会加一个下划线前缀）。
-3. 编译器会在 main.o 的重定位表里写下这样一条指令：“链接器！请在我生成的代码的第 N 个字节处（就是那个带占位符的 call 指令），把它后面的地址，替换成你找到的 `_printf` 符号的最终地址。”
+1. 生成一个带“占位符”的 `call` 指令，但这条指令的目标地址是一个无效的或临时的值（比如 0x00000000）。
+2. 编译器在生成的中间文件（称为目标文件，`main.o`）中，有一个符号表 (Symbol Table)。它会在这个表里添加一条记录，内容是一个名为 `_printf` 的外部符号 (External Symbol)。（注意：C 语言的函数在底层通常会加一个下划线前缀）。
+3. 编译器会在 `main.o` 的重定位表里写下这样一条指令：“链接器！请在我生成的代码的第 N 个字节处（就是那个带占位符的 call 指令），把它后面的地址，替换成你找到的 `_printf` 符号的最终地址。”
 
 链接器的任务是把所有独立的零件（目标文件 .o 和库文件 .dylib/.a）组装成一个完整的、可以运行的最终产品（可执行文件或动态库）。
 
@@ -101,9 +126,21 @@ LC_SYMTAB 是完整的符号表。它为静态链接器 (ld) 和调试器 (lldb)
 
 如果链接器找不到某个未定义符号的定义，就会发生 "Undefined symbols for architecture..." 错误。
 
-链接器确定所有符号的最终归属后，就可以处理编译器留下的那些重定位条目了。对于 `main.o` 中对 `_printf` 的调用，链接器知道 `_printf` 来自一个动态库，这意味着它的真实内存地址在程序运行时才能确定。直接填一个固定的地址是行不通的。链接器会生成：
+链接器确定所有符号的最终归属后，就可以处理编译器留下的那些重定位条目了。对于 `main.o` 中 `_printf` 的调用，链接器知道 `_printf` 来自一个动态库，这意味着它的真实内存地址在程序运行时才能确定。直接填一个固定的地址是行不通的。链接器会生成：
 
-- 一个 `printf` 的符号桩 (stub) 在 `__stubs` 节中。
-- 一个为 `printf` 准备的指针槽位在 `__la_symbol_ptr` 节中。
+- 一个 `printf` 的符号桩 (Symbol stub) 在 `__TEXT` segment 的 `__stubs` section 中。这是一个只读可执行的区域，为每一个导入的外部函数都生成了一小段固定的跳板代码。
+- 一个为 `printf` 准备的指针槽位在 `__DATA` segment 的 `__la_symbol_ptr` section 中。Lazy Symbol Pointers 这是一个指针数组，专门用于懒加载的函数。
 
 你的代码中的 `call printf` 指令，实际上被改成了 `call <printf_stub_address>`。
+
+函数的真实地址最终被回填到 `__la_symbol_ptr` 指针表中的对应条目里。
+
+程序启动后，dyld 会加载程序和它依赖的 libSystem 库。此时 `__la_symbol_ptr` 中为 `printf` 准备的那个指针槽位，它的值并不是 `printf` 的真实地址，而是指向 dyld 的一个辅助函数，即 dyld_stub_binder。
+
+当代码执行到 `call` 指令时，跳转到 `__stubs` 节中的 `printf` 符号桩。符号桩的代码非常简单，本质上就是一条间接跳转指令，类似于这样 `jmp *(__la_symbol_ptr + offset_for_printf)`。它会去读取 `__la_symbol_ptr` 表里 `printf` 对应槽位的值，然后跳转到那个值所指向的地址。
+
+因为是第一次调用，`__la_symbol_ptr` 里的地址是 `dyld_stub_binder`。所以，程序跳转到了 dyld 的绑定辅助函数。
+
+`dyld_stub_binder` 被触发后，它知道是哪个函数（`printf`）需要解析。它在所有已加载的动态库中查找 `_printf` 这个符号。它在 `libSystem.B.dylib` 中找到了 `_printf` 的真实内存地址（比如 0x7fffae123456）。
+
+`dyld_stub_binder` 将这个真实地址 `0x7fffae123456` 写回到 `__la_symbol_ptr` 表中 `printf` 对应的那个槽位里，最后，`dyld_stub_binder` 跳转到刚刚找到的 `printf` 的真实地址，执行 `printf` 函数。

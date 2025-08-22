@@ -6,19 +6,9 @@
 
 ![img](/img/33DB6234-84C6-41FA-B8F3-BAFE8D2F2C42.png)
 
-## 插件
-
-统计代码行数：VS Code Counter
-
-AI 写代码：[GitHub Copilot · Your AI pair programmer](https://copilot.github.com/)
-
 ## 常用快捷键
 
 查看、编辑键盘快捷键：`⌘ K + ⌘ S`
-
-Go to file 前往文件 quickopen：`⌘ P`
-
-workbench.action.openEditorAtIndex1 打开/切换 tab：自定义！
 
 ## Preferences - User Settings
 
@@ -40,7 +30,7 @@ workbench.action.openEditorAtIndex1 打开/切换 tab：自定义！
   "window.autoDetectColorScheme": true,
   "workbench.colorTheme": "Default Light Modern",
   "[markdown]": {
-      "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
+    "editor.defaultFormatter": "DavidAnson.vscode-markdownlint"
   }
 }
 ```

@@ -1,5 +1,23 @@
 # Unity
 
+## Get started with the Unity Editor
+
+[Get started with the Unity Editor - Unity Learn](https://learn.unity.com/tutorial/get-started-with-the-unity-editor?version=2022.3)
+
+Hold down the right mouse button and move the mouse to **look around**. hold Option and left-click, then drag your mouse to **orbit the view**. 感受这两种操作的区别
+
+frame in on object: **double-clicking** on objects in the Hierarchy window or select them in the Scene view and then **press the F key**
+
+Use the **Scene gizmo**, click the negative Y cone and zoom in or out
+
+Orthographic (also known as **iso**metric) limits you to a 2D perspective, sort of like you’re looking down at a map.
+
+Hierarchy > Game Object > 3D Object > Plane: act as the ground for your game
+
+A Unity **material** is an asset that helps you change how 3D objects look by using colors, textures, and special effects.
+
+## C#
+
 任何在 `Update()` 或 `FixedUpdate()` 中进行的、需要随时间连续变化的操作（如移动、旋转、缩放、计时器、颜色渐变等），都应该乘以 `Time.deltaTime`，以确保其行为与帧率无关。
 
 在 Unity 中，GameObject 本身只是一个空壳，一个坐标点。它的所有功能和行为都来自于附加在它上面的组件 (Components)。而你的 C# 脚本，就是你自定义的一种组件。一个 GameObject 上可以附加多个脚本组件，每个组件各自负责一部分特定的功能。请务必拥抱“一个 GameObject，多个小脚本”的设计模式。每个脚本都只做一件事（移动、血量、攻击等），并且做得很好。这使得代码更容易理解、测试和维护。

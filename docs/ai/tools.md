@@ -20,3 +20,5 @@ AI 网站全栈开发：
 [AGI-Eval 评测社区](https://agi-eval.cn/mvp/topRanking)
 
 [OpenCompass 司南 - 评测榜单](https://rank.opencompass.org.cn/leaderboard-llm)
+
+NB 最牛逼的地方是其具备超强的人物一致性和超快的生图响应速度，而且具备推理能力，复杂指令理解也相当到位。应用：品牌设计与周边、游客照优化、多图混合

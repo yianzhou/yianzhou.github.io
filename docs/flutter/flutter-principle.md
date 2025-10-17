@@ -6,7 +6,7 @@ JavaScript 之父 Brendan Eich 曾在一次采访中说，JavaScript“几天就
 
 原本 JavaScript 只能在浏览器中运行，但 Node.js 的出现让它开始有能力运行在服务端；很快手机应用与桌面应用也成为了 JavaScript 的宿主容器，一些明星项目比如 React、React Native、Vue、Electron、NW (node-webkit) 等框架如雨后春笋般崛起。
 
-2011 年，Google 发布 Dart 语言。正如 Objective-C -> Swift，Java -> Kotlin；Dart 的诞生正是要解决 JavaScript 存在的、在语言本质上无法改进的缺陷。
+2011 年，Google 发布 Dart 语言。Dart 的诞生正是要解决 JavaScript 存在的、在语言本质上无法改进的缺陷。
 
 ## Flutter vs React Native 性能对比
 

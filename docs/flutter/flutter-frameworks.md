@@ -1,24 +1,5 @@
 # Flutter Frameworks
 
-## Nested
-
-[nested | Flutter Package](https://pub.dev/packages/nested)
-
-`Nested`: A widget that simplify the writing of deeply nested widget trees.
-
-```mermaid
-classDiagram
-    Widget <|-- StatelessWidget : extends
-    Widget <|-- StatefulWidget : extends
-    StatelessWidget <|-- Nested : extends
-    Widget <|.. SingleChildWidget : implements
-    SingleChildWidget <|.. Nested : implements
-    StatelessWidget <|-- SingleChildStatelessWidget : extends
-    SingleChildWidget <|.. SingleChildStatelessWidget : implements
-    StatefulWidget <|-- SingleChildStatefulWidget : extends
-    SingleChildWidget <|.. SingleChildStatefulWidget : implements
-```
-
 ## Provider
 
 Provider 是官方推荐的状态管理。

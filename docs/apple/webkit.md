@@ -2,13 +2,13 @@
 
 ## WKWebView
 
-打开活动监视器，然后在模拟器打开 QB，会看到 WebKit 新创建了几个进程：
-
-![img](/img/FBDEC325-1D0A-447E-BC89-801904697B7C.png)
-
-在一个客户端中，多个 WKWebView 实例共享一个 UI 进程（和 App 进程共享），共享一个 Networking 进程，每个 WKWebView 实例独享一个 Web 进程。
+在一个客户端中，多个 WKWebView 实例共享一个 UI 进程（和 App 进程共享），共享一个 Networking 进程，每个 WKWebView 实例独享一个 WebContent 进程。
 
 ![img](/img/FD652240-4705-4A98-A144-376D5B624EF2.jpg)
+
+WebContent 进程负责将网页代码转换为用户可见的页面。解析 HTML 构建 DOM 树，解释和执行 JavaScript 代码，排版布局，提交绘制指令等。Safari 默认采用 “每标签页一进程” (Per-tab process) 的策略。如果一个网页（比如某个复杂的 Web App）崩溃了，只会导致这一个 WebContent 进程退出，该标签页变为空白，而不会导致整个浏览器或其他标签页崩溃。
+
+Networking 进程负责所有的网络资源加载和管理。执行 DNS 查询、建立 HTTPS 连接，安全地存储和读取 Cookie。它作为所有 WebContent 进程的共享资源，可以统一管理连接池，提高网络效率。
 
 ## 网页加载
 

@@ -6,10 +6,6 @@ slug: /
 
 ## 概念
 
-Mach-O (Mach Object) 文件格式是苹果 macOS 和 iOS 系统使用的可执行、可链接的 ABI 文件格式。Mach-O 文件是代码与数据的集合，体现了在苹果定义的一套规则下，程序文件是如何构成的，程序的链接、装载是如何发生的。
-
-ABI 文件是操作系统的基石。学习认识一个新的 OS，理解它的 ABI 文件是非常好的切入点，对于苹果系统同样如此。
-
 Mach-O 官方文档：`https://github.com/aidansteele/osx-abi-macho-file-format-reference/blob/master/Mach-O_File_Format.pdf`
 
 Mach-O 源码：`https://github.com/apple/darwin-xnu/blob/main/EXTERNAL_HEADERS/mach-o/loader.h`
@@ -17,8 +13,6 @@ Mach-O 源码：`https://github.com/apple/darwin-xnu/blob/main/EXTERNAL_HEADERS/
 Mach-O 文件格式：
 
 ![img](/img/184275AA-0107-4039-BA26-F6D1B7EDF5ED.png)
-
-Mach-O 内信息的排列，是按照约定的格式（一个个的结构体）来对齐的。ABI 即对应 Mach-O 的格式，也就对应了一套读取的规则。ABI 稳定也就是说 Mach-O 内部的格式不会再变了，那么编译器、链接器才能稳定地向后兼容。
 
 查看 Mach-O 的工具：`https://github.com/fangshufeng/MachOView`
 

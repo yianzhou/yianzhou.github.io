@@ -750,7 +750,7 @@ The MSL is the maximum amount of time that a TCP segment can live in the network
 
 TCP 拥塞控制的方法是让每一个发送方根据所感知到的网络拥塞程度来限制其发送流量的速率。
 
-The TCP congestion-control mechanism operating at the **sender** keeps track of an additional variable, the **congestion window**, denoted `cwnd`. Specifically, the amount of unacknowledged data at a sender may not exceed the minimum of `cwnd` and `rwnd`, that is: `LastByteSent – LastByteAcked <= min{cwnd, rwnd}`.（TCP 流水线中可以同时发送的、即未经 ACK 确认的数据量，不能超过拥塞窗口和接收窗口中的较小值）
+The TCP congestion-control mechanism operating at the **sender** keeps track of an additional variable, the **congestion window**, denoted `cwnd`. Specifically, the amount of unacknowledged data at a sender may not exceed the minimum of `cwnd` and `rwnd`, that is: `LastByteSent – LastByteAcked <= min{cwnd, rwnd}`.（TCP 流水线中未经 ACK 确认的数据量不能超过拥塞窗口和接收窗口中的较小值）
 
 The constraint above limits the amount of unacknowledged data at the sender and therefore indirectly limits the sender’s send rate.
 
@@ -773,7 +773,7 @@ In **fast recovery state**, the value of `cwnd` is increased by 1 MSS for every 
 
 - Timeout: `ssthresh = cwnd/2; cwnd = 1 MSS;`, begins the slow start process anew.
 
-> [1] ssthresh: slow start threshold.
+> [1] ssthresh: slow start threshold. 用于划分“慢启动”和“拥塞避免”两个关键阶段的边界。
 >
 > [2] Adding in 3 MSS for good measure to account for the triple duplicate ACKs received. This artificially "inflates" the congestion window by the number of segments (three) that have left the network and which the receiver has buffered [RFC 2582].
 

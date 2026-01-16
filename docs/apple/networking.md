@@ -45,9 +45,7 @@ It is important to configure your `URLSessionConfiguration` object appropriately
 
 ### waitsForConnectivity
 
-`var waitsForConnectivity: Bool`
-
-“Please fetch me this resource when the network is available.” No longer a need to monitor connectivity and manually retry requests.
+"Please fetch me this resource when the network is available." No longer a need to monitor connectivity and manually retry requests.
 
 You would create and resume the `URLSessionTask` as before. If the device can't connect to the server, we'd call a delegate callback if you implemented it, once for each task.
 
@@ -64,7 +62,7 @@ This API only has an effect for non-background sessions, it's not necessary for 
 
 There are some cases where you need a protocol other than HTTP or HTTPS, and you want to do something custom directly on top of TCP/IP networking. `NSURLSessionStreamTask` is a Foundation extraction, directly over a TCP connection.
 
-What we have new for you in iOS 11 is automatic navigation of authenticating proxies. If the proxy requires credentials, then we will automatically extract those from the key chain or promptly the user on your behalf.
+What we have new for you in iOS 11 is automatic navigation of authenticating proxies. If the proxy requires credentials, then we will automatically extract those from the keychain or prompt the user on your behalf.
 
 ### Progress
 
@@ -81,7 +79,7 @@ The binding between a `URLSessionTask` and the progress object is bidirectional.
 Using `URLSession` on the client will negotiate HTTP/2 by default if it is enabled on the server.
 So double-check your server settings to make sure HTTP/2 is enabled. By the way, `URLSession` supports HTTP/2 protocol only over an encrypted connection.
 
-`URLSession` 运行在 HTTP/1.1 时，对同一个 IP 地址的请求，会创建多个并行的 TCP 连接，每个连接的建立都会带来资源消耗（见 [`httpMaximumConnectionsPerHost`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration/1407597-httpmaximumconnectionsperhost)）；而在 HTTP/2，由于分帧和多路复用，一个 TCP 连接就可以处理多个资源请求。
+`URLSession` 运行在 HTTP/1.1 时，对同一个 IP 地址的请求，会创建多个并行的 TCP 连接，每个连接的建立都会带来资源消耗（见 [`httpMaximumConnectionsPerHost`](https://developer.apple.com/documentation/foundation/urlsessionconfiguration/httpmaximumconnectionsperhost)）；而在 HTTP/2，由于分帧和多路复用，一个 TCP 连接就可以处理多个资源请求。
 
 In [iOS 12](https://developer.apple.com/videos/play/wwdc2018/714), we have something new in `URLSession`, **HTTP/2 Connection Coalescing**. It is going to be automatically done on for all your apps using `URLSession`. 相同证书、相同 IP 地址的服务器，可以复用 TCP 连接。
 
@@ -90,6 +88,8 @@ In [iOS 12](https://developer.apple.com/videos/play/wwdc2018/714), we have somet
 The first certificate presented to us covers all the subdomains under example.com. Also notice that delivery.example.com, it results to the same IP address as the first connection. It's safe to assume we're talking to the same endpoint and reuse the connection instead of opening a new one when we want to fetch the second resource.
 
 Two to three times faster if you configure the **Server Push** on your HTTP/2 server! And you don't even have to change any code in your app! The data for your `URLSessionDataTask` will be delivered out of the Server Push storage directly to your application.
+
+HTTP/2 支持服务器在客户端未主动请求的情况下，提前将客户端后续可能需要的资源（如网页依赖的 CSS、JS、图片等）主动推送到客户端并存储在 “Server Push 存储区”。当客户端通过 `URLSessionDataTask` 发起对这些已推送资源的请求时，无需再通过网络向服务器重新获取 ——URLSession 会直接从本地的 Server Push 存储区读取数据并交付给应用，省去了网络请求的往返耗时，提升资源加载效率。
 
 ## Optimistic DNS
 
@@ -147,7 +147,7 @@ HTTPS response header `Content-Encoding: br` supported in `URLSession`. Requires
 
 **WebSocket** allows bidirectional communication over a single HTTP connection. This enables developers to write applications like chat, multiplayer games, and other real-time applications.
 
-Web applications were originally developed around a client/server model, where the Web client is always the initiator of transactions, requesting data from the server. Thus, there was no mechanism for the server to independently send, or push, data to the client without the client first making a request.
+Web applications were originally developed around a client/server model, where the Web client is always the initiator of transactions, requesting data from the server. Thus, there was no mechanism for the server to independently send, or push data to the client without the client first making a request.
 
 To overcome this deficiency, Web app developers can implement a technique called **HTTP Long-Polling**. When a client wants to receive a response from the server, it sends out a request. The server responds with a 200 status code immediately, but it does not send out the response body because it doesn't have one at this point. Sometime in the future, once the server has a response ready for the client, it sends it out to the client. At which point, the client sends a new request, indicating that it wants to receive the next message.
 
@@ -203,7 +203,7 @@ The [URL Loading System](https://developer.apple.com/documentation/foundation/ur
 
 Currently, only HTTP and HTTPS responses are cached.
 
-Caching is a great way of reducing latency but it's important to note that caching might result in disk IO. Also, `usePrococolCachePolicy` caches HTTPS responses to disk, which may be undesirable for securing user data. Consider adopting the delegate method to decide what resources should be cached:
+Caching is a great way of reducing latency but it's important to note that caching might result in disk IO. Also, `useProtocolCachePolicy` caches HTTPS responses to disk, which may be undesirable for securing user data. Consider adopting the delegate method to decide what resources should be cached:
 
 ```swift
 func urlSession(_ session: URLSession, dataTask: URLSessionDataTask,
@@ -280,7 +280,7 @@ If you are building your application on top of the `URLSession` API, Multipath T
 
 You will need to update or change your server infrastructure to start supporting Multipath TCP.（咨询你的服务器供应商是否支持这个协议；或者更新服务器 Linux 内核以支持这个协议，AWE/GCE 都已经有可用的镜像）
 
-We are exposing [two types of different services](https://developer.apple.com/documentation/foundation/urlsessionconfiguration/multipathservicetype) using MPTCP.
+We are exposing two types of different services using MPTCP.
 
 The first one is the handover mode which provides a high reliability for your long-length, hard-to-recover connections. In Wi-Fi Assist we have limits that try to limit the amount of data that we are sending on the cellular link. So we encourage you to use the handover mode only for low volume connections.
 
@@ -290,7 +290,9 @@ The second is the interactive mode, this one provides a low latency response for
 
 > [WWDC 2016 - Networking for the Modern Internet](https://developer.apple.com/videos/play/wwdc2016/714/)
 
-You might be familiar with five QoS classes associated with dispatch queues and `Operation` objects. `URLSession` is QoS-aware which means it will capture the QoS off the queue on which you call `task.resume()`. And all the messages that it sends to your delegates will respect this QoS. For example, if your app wants to fetch some data which is not time critical, consider resuming that task on a queue which has background QoS to make sure this task does not contend for CPU with other higher priority work that your app might be doing.
+You might be familiar with five QoS classes associated with dispatch queues and `Operation` objects. `URLSession` is QoS-aware which means it will capture the QoS off the queue on which you call `task.resume()`. And all the messages that it sends to your delegates will respect this QoS.
+
+For example, if your app wants to fetch some data which is not time critical, consider resuming that task on a queue which has background QoS to make sure this task does not contend for CPU with other higher priority work that your app might be doing.
 
 Starting in iOS 5 we had the [`networkServiceType`](https://developer.apple.com/documentation/foundation/nsurlrequest/networkservicetype) API allowing you to classify your network traffic that helps the system prioritize the data leaving the device. It's a way expressing whether you want low throughput and low latency or high throughput and moderate latency.
 

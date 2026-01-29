@@ -1,5 +1,11 @@
 # 计算机科学
 
+## 兼容
+
+向下兼容：新去适应旧，高版本能兼容低版本。Word 2021 软件能打开 2003 年创建的 .doc 格式文档。
+
+向上兼容：旧能适应新，低版本能兼容高版本。旧的 2.0 接口插了新的 3.0 U 盘，依然能读写数据；后端接口更新了，返回了新的字段，旧版 App 收到这个新数据包后，没有报错崩溃，说明你的旧版 App 对新版接口数据具备向上兼容性（通常也被称为鲁棒性设计）。
+
 ## 原码、反码、补码、移码
 
 The four best-known methods of extending the binary numeral system to represent signed numbers are:

@@ -91,6 +91,15 @@ const config = {
         sidebarPath: require.resolve("./sidebars.js"),
       },
     ],
+    [
+      "@docusaurus/plugin-content-docs",
+      {
+        id: "agent",
+        path: "docs/agent",
+        routeBasePath: "docs/agent",
+        sidebarPath: require.resolve("./sidebars.js"),
+      },
+    ],
   ],
 
   themeConfig:
@@ -137,6 +146,11 @@ const config = {
             to: "docs/ai",
             position: "left",
             label: "AI",
+          },
+          {
+            to: "docs/agent",
+            position: "left",
+            label: "Agent",
           },
           {
             href: "https://github.com/yianzhou/yianzhou.github.io",

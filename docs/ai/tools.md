@@ -1,5 +1,7 @@
 # 工具
 
+开源模型：GLM(智谱)、Kimi(月之暗面)、Qwen(阿里)、MiniMax(MiniMax)、DeepSeek(深度求索)
+
 [Chatbot Arena (formerly LMSYS): Free AI Chat to Compare & Test Best AI Chatbots](https://lmarena.ai/?leaderboard)
 
 [AI 工具集导航 | 500+ AI 工具导航和 AI 工具箱集合，国内外 AI 工具集合网站大全](https://ai-bot.cn/)
@@ -21,16 +23,3 @@
 本周五，特朗普在社交媒体上发帖，指责人工智能公司 Anthropic 试图坚守 AI 不被用于自主杀人和大规模监控的底线，并指示所有联邦机构「立即停止」使用其产品并不再与 Anthropic 开展合作。这一宣布后不久，美战争部长海格塞斯将该公司列为「对国家安全的供应链风险」，这意味着任何与军方合作的承包商或供应商都不得与 Anthropic 进行业务往来。
 
 > [特朗普封杀 Anthropic 引爆硅谷，死对头奥特曼都来声援了](https://mp.weixin.qq.com/s/kyxoX0QNBvF_aC1FrVwxzQ)
-
-## Coding Agent 三巨头
-
-|          | [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | [OpenCode](https://opencode.ai/)                       | [Codex CLI](https://github.com/openai/codex) |
-| -------- | ------------------------------------------------------------- | ------------------------------------------------------ | -------------------------------------------- |
-| 开发商   | Anthropic                                                     | 社区开源（anomalyco）                                  | OpenAI                                       |
-| 运行环境 | 终端 CLI                                                      | 终端 TUI + 桌面应用                                    | 终端 CLI                                     |
-| 底层模型 | 仅限 Anthropic                                                | 支持 75+ 模型提供商（Claude、GPT、Gemini、本地模型等） | 仅限 OpenAI                                  |
-| 费用     | API 按量付费，或 Claude Max 订阅（$100/$200/月）              | 免费，内置免费模型，也可自带 API Key                   | API 按量付费                                 |
-
-CLI（Command-Line Interface，命令行界面）：纯文本交互，用户输入命令、程序输出结果，没有任何界面元素，例如 `git`、`curl`。
-
-TUI（Text-based User Interface，文本用户界面）：在终端里用字符绘制出窗口、面板、按钮、滚动条等可视化界面，支持键盘快捷键导航，例如 `vim`、`htop`。简单来说，TUI 是「终端里的 GUI」。

@@ -29,15 +29,11 @@ scp -P 8022 u0_a390@30.22.249.13:~/.openclaw/openclaw.json ~/Downloads/
 
 你叫 YIANZHOU-MC6，作为我的 AI 助理，帮助我完成一些日常的自动化任务，可以叫我安哥。
 
-exec: 当前我的桌面有哪些文件
-
-write: 帮我把以上的信息新建一个 md 文件记录下来，放在桌面
-
-read, edit: 修改一下刚才创建的 md 文件，其中关于图片的描述，要包括图片具体的内容，不能只有一个文件名
-
-web_search: 网络搜索一下有小熊图案的卫衣是什么品牌，并写到一个新的 md 文件里
-
-web_fetch: 总结一下这篇文章的内容：https://news.qq.com/rain/a/20260308A060NZ00
+- exec: 当前我的桌面有哪些文件
+- write: 帮我把以上的信息新建一个 md 文件记录下来，放在桌面
+- read, edit: 修改一下刚才创建的 md 文件，其中关于图片的描述，要包括图片具体的内容，不能只有一个文件名
+- web_search: 网络搜索一下有小熊图案的卫衣是什么品牌，并写到一个新的 md 文件里
+- web_fetch: 总结一下这篇文章的内容：https://news.qq.com/rain/a/20260308A060NZ00
 
 ## 问题解决
 
@@ -81,10 +77,6 @@ OpenClaw v2026.3.2 升级后，tools.profile 的默认值从 full 变成了 mess
 │   └── gateway.log  # 网关常规运行日志
 ├── openclaw.json  # OpenClaw 主配置文件（模型、通道、工具、网关等）
 ├── openclaw.json.bak  # 主配置文件的最近一次备份
-├── openclaw.json.bak.1  # 更早一版主配置备份
-├── openclaw.json.bak.2  # 更早一版主配置备份
-├── openclaw.json.bak.3  # 更早一版主配置备份
-├── openclaw.json.bak.4  # 更早一版主配置备份
 ├── subagents  # 子代理运行状态目录
 │   └── runs.json  # 子代理运行记录索引
 ├── telegram  # Telegram 渠道的运行时状态与缓存目录
@@ -100,3 +92,7 @@ OpenClaw v2026.3.2 升级后，tools.profile 的默认值从 full 变成了 mess
     ├── TOOLS.md  # 本地环境专属工具笔记与速查信息
     └── USER.md  # 当前用户的称呼、偏好与背景信息
 ```
+
+## 任务成功率最高的模型
+
+[PinchBench - Success Rate Leaderboard](https://pinchbench.com/)

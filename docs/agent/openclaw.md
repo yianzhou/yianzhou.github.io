@@ -39,6 +39,10 @@ scp -P 8022 u0_a390@30.22.249.13:~/.openclaw/openclaw.json ~/Downloads/
 
 OpenClaw v2026.3.2 升级后，tools.profile 的默认值从 full 变成了 messaging，导致文件系统操作、命令执行等工具默认被禁用了，只保留了聊天/消息功能。所以它才说"没有文件系统操作工具"。别的博主教程是基于旧版本写的，那时候默认就是 full，开箱即用。
 
+⚠️ API rate limit reached. Please try again later.
+
+[充值与限速 - Moonshot AI 开放平台 - Kimi K2.5 大模型 API 服务](https://platform.moonshot.cn/docs/pricing/limits)
+
 ## 工作区
 
 配置文件：`~/.openclaw/openclaw.json`
@@ -96,3 +100,11 @@ OpenClaw v2026.3.2 升级后，tools.profile 的默认值从 full 变成了 mess
 ## 任务成功率最高的模型
 
 [PinchBench - Success Rate Leaderboard](https://pinchbench.com/)
+
+## 数据提供商
+
+[Agent Skills & Data Unified Interface for LLMs | QVeris AI](https://www.qveris.ai/)
+
+## Agent
+
+Agent 不是常驻进程，而是 per-session 的瞬态实例。每个对话都是一次完整的加载-执行-销毁循环。

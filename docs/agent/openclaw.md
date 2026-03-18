@@ -1,5 +1,11 @@
 # OpenClaw
 
+## 进展
+
+英伟达联合以 OpenClaw 创始人 Peter Steinberger 为代表的团队，召集了一批顶级安全与计算专家，推出 NeMoClaw 参考架构。
+
+Windows→PC时代，Linux→服务器时代，HTML→互联网时代，Kubernetes→云时代，OpenClaw→Agent时代。
+
 ## 安装
 
 按照官网提示安装失败，问题在这里有详细解释：[Fix OpenClaw Install Failed on Mac: EACCES Permission Denied | Vibe Coding Academy](https://www.vibecodingacademy.club/fix-openclaw-install-mac/)

@@ -29,3 +29,15 @@ CodeBuddy, WorkBuddy
 ## 云端 Agent
 
 Happycapy 把 agent 需要的一切变成一个一体化的云端电脑：在浏览器里打开就能跑。
+
+## 大事件
+
+2025 年，被资本市场定义为「Agent 元年」。Manus、Lovart、Fellou 等多 Agent 应用吸引了相当多的眼球，它们自动化程度高，泛化能力强。
+
+## PPT
+
+[Vedas](https://vedas.woa.com/#/agent/home)
+
+[扣子，你的 AI 办公助手](https://www.coze.cn/)
+
+[扣子编程，你的 AI 开发伙伴，Vibe Coding 基础设施，自然语言对话开发智能体、工作流、网页应用、移动应用，一键部署上线](https://code.coze.cn/home)

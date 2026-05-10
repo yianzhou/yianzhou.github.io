@@ -34,6 +34,8 @@ Happycapy 把 agent 需要的一切变成一个一体化的云端电脑：在浏
 
 2025 年，被资本市场定义为「Agent 元年」。Manus、Lovart、Fellou 等多 Agent 应用吸引了相当多的眼球，它们自动化程度高，泛化能力强。
 
+Harness Engineering 是模型之外所有支撑 Agent 工作的基础设施的总称——记忆管理、上下文管理、工具调用管理、规划与编排、多 Agent 协同。
+
 ## PPT
 
 [Vedas](https://vedas.woa.com/#/agent/home)
